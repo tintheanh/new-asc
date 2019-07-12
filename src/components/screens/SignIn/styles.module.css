@@ -1,0 +1,18 @@
+.container {
+	margin: auto 284px;
+	text-align: center;
+}
+
+.logo {
+	height: 200px;
+}
+
+.instruction {
+	border: 1px solid #ccc;
+}
+
+.formContainer {
+	display: grid;
+	justify-content: center;
+	grid-template-columns: auto auto;
+}

@@ -1,0 +1,10 @@
+.container {
+	background: rgb(49, 129, 246);
+}
+
+.title {
+  color: #fff;
+  text-align: center;
+  margin: 0;
+  padding: 8px 0;
+}

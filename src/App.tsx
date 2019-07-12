@@ -1,26 +1,49 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import * as React from 'react';
+import { HashRouter, Route, Switch } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import { SignIn, Admin } from './components/screens';
+import Report, { TutorWorkTrackReport, TutorScheduleReport, TutorSubjectReport } from './components/screens/Reports';
+import configureStore from './redux/configureStore';
 
-const App: React.FC = () => {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+	private configureStore: any;
+
+	constructor(props: any) {
+		super(props);
+
+		this.configureStore = configureStore();
+	}
+
+	render() {
+		return (
+			<Provider store={this.configureStore.store}>
+				<PersistGate loading={null} persistor={this.configureStore.persistor}>
+					{/* One route for each screen */}
+					<HashRouter>
+						<Switch>
+							<Route exact path="/" component={SignIn} />
+							<Route exact path="/admin" component={Admin} />
+							<Route
+								path="/tutor-work-report"
+								component={() => <Report component={<TutorWorkTrackReport />} />}
+							/>
+							<Route
+								exact
+								path="/tutor-schedule-report"
+								component={() => <Report component={<TutorScheduleReport />} />}
+							/>
+							<Route
+								exact
+								path="/tutor-subject-report"
+								component={() => <Report component={<TutorSubjectReport />} />}
+							/>
+						</Switch>
+					</HashRouter>
+				</PersistGate>
+			</Provider>
+		);
+	}
 }
 
 export default App;
