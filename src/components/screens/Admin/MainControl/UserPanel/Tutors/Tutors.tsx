@@ -71,8 +71,11 @@ class Tutors extends React.Component<TutorsProps, TutorsStates> {
 					if (selected) {
 						switch (type) {
 							case 'add': {
-								const newSubjects = selected.subjects.concat(subjects);
-								const tutor = { ...selected, subjects: newSubjects };
+								const existingSubjects = [ ...selected.subjects ];
+								for (const subject of subjects) {
+									if (!contains(existingSubjects, subject, 'id')) existingSubjects.push(subject);
+								}
+								const tutor = { ...selected, subjects: existingSubjects };
 								this.setState({ selected: tutor });
 								break;
 							}

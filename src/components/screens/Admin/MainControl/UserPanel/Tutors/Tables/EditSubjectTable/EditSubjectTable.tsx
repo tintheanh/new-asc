@@ -69,8 +69,6 @@ class EditSubjectTable extends React.Component<EditSubjectTableProps, EditSubjec
 		const { subjects, toggleSelectMultiple, toggleSelectShift } = this.state;
 		const index = subjects.findIndex((sj) => sj.id === subject.id);
 
-		console.log(index);
-
 		if (key === 'addedSubjects') this.setState({ removedSubjects: [] });
 		else this.setState({ addedSubjects: [] });
 
