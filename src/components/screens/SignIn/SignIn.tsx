@@ -1,10 +1,16 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Header, TextField, Modal } from 'components/common';
+import { Header, InputField, Modal } from 'components/common';
 import logo from './mission-logo.png';
 import styles from './styles.module.css';
 import { SignInProps, SignInStates } from './props';
-import { loginAndFetchTutor, logoutAndClearTutor, tutorClockIn, tutorClockOut } from 'redux/store/tutor/actions';
+import {
+	loginAndFetchTutor,
+	logoutAndClearTutor,
+	tutorClockIn,
+	tutorClockOut,
+	clearError
+} from 'redux/store/tutor/actions';
 import DatePickerForWorkTrack from './DatePickerForWorkTrack/DatePickerForWorkTrack';
 
 const ipcRenderer = (window as any).ipcRenderer;
@@ -64,7 +70,7 @@ class SignIn extends React.Component<SignInProps, SignInStates> {
 				if (this.props.data.is_admin) {
 					this.props.history.push('/admin');
 				} else {
-					this.openMainModalHandler();
+					this.handleModalChange('mainModalShow').open();
 				}
 			})
 			.catch((err: Error) => {
@@ -72,35 +78,24 @@ class SignIn extends React.Component<SignInProps, SignInStates> {
 			});
 	};
 
-	closeMainModalHandler = (): void => {
-		this.setState({ mainModalShow: false }, () => {
-			this.props.logoutAndClearTutor();
-		});
-	};
-
-	openMainModalHandler = (): void => {
-		this.setState({ mainModalShow: true });
-	};
-
-	closeDatePickerModalHandler = (): void => {
-		this.setState({ datePickerModalShow: false });
-	};
-
-	openDatePickerModalHandler = (): void => {
-		this.setState({ datePickerModalShow: true });
+	handleModalChange = (key: string) => {
+		return {
+			open: () => this.setState({ [key]: true }),
+			close: () => {
+				if (key === 'mainModalShow') {
+					this.setState({ [key]: false }, () => this.props.logoutAndClearTutor());
+				} else this.setState({ [key]: false });
+			}
+		};
 	};
 
 	handleTextChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
 		this.setState({ tutorID: e.target.value });
 	};
 
-	showWorkScheduleReport = (): void => {
-		ipcRenderer.send('toggle-schedule-report', [ this.props.data ]);
-	};
-
-	showSubjectReport = (): void => {
-		ipcRenderer.send('toggle-subject-report', [ this.props.data ]);
-	};
+	openReportScreen(event: string): void {
+		ipcRenderer.send(event, [ this.props.data ]);
+	}
 
 	renderModalContent = (): JSX.Element | null => {
 		if (this.props.data) {
@@ -108,7 +103,7 @@ class SignIn extends React.Component<SignInProps, SignInStates> {
 				<div>
 					{/* If tutor has not signed in, return clock in btn, otherwise return clock out btn */}
 					{this.props.data.current_log === 0 ? (
-						<button onClick={() => this.props.tutorClockIn(this.props.data.uid)}>clock in</button>
+						<button onClick={() => this.props.tutorClockIn(this.props.data)}>clock in</button>
 					) : (
 						<button
 							onClick={() => this.props.tutorClockOut(this.props.data.uid, this.props.data.current_log)}
@@ -116,9 +111,9 @@ class SignIn extends React.Component<SignInProps, SignInStates> {
 							clock out
 						</button>
 					)}
-					<button onClick={this.openDatePickerModalHandler}>Track hours</button>
-					<button onClick={this.showWorkScheduleReport}>Work schedule</button>
-					<button onClick={this.showSubjectReport}>Subjects</button>
+					<button onClick={this.handleModalChange('datePickerModalShow').open}>Track hours</button>
+					<button onClick={this.openReportScreen.bind(this, 'toggle-schedule-report')}>Work schedule</button>
+					<button onClick={this.openReportScreen.bind(this, 'toggle-subject-report')}>Subjects</button>
 				</div>
 			);
 		}
@@ -127,6 +122,15 @@ class SignIn extends React.Component<SignInProps, SignInStates> {
 
 	render() {
 		// console.log(this.props.data);
+		// console.log(this.props.error);
+		if (this.props.error) {
+			const result = window.confirm(this.props.error);
+			if (result) {
+				this.props.clearError();
+			} else {
+				this.props.clearError();
+			}
+		}
 		const { time, tutorID, mainModalShow, datePickerModalShow } = this.state;
 		return (
 			<div>
@@ -143,7 +147,7 @@ class SignIn extends React.Component<SignInProps, SignInStates> {
 						</p>
 					</div>
 					<form className={styles.formContainer} onSubmit={this.handleSubmit}>
-						<TextField type="text" autoFocus value={tutorID} onTextChange={this.handleTextChange} />
+						<InputField type="text" autoFocus value={tutorID} onTextChange={this.handleTextChange} />
 						<button type="submit" value="submit">
 							Submit
 						</button>
@@ -151,11 +155,10 @@ class SignIn extends React.Component<SignInProps, SignInStates> {
 					<div>
 						<p>{time}</p>
 					</div>
-					<p>{window.location.hash}</p>
-					<Modal show={mainModalShow} close={this.closeMainModalHandler}>
-						{this.renderModalContent()}
+					<Modal width="60%" show={mainModalShow} close={this.handleModalChange('mainModalShow').close}>
+						{mainModalShow ? this.renderModalContent() : null}
 					</Modal>
-					<Modal show={datePickerModalShow} close={this.closeDatePickerModalHandler}>
+					<Modal show={datePickerModalShow} close={this.handleModalChange('datePickerModalShow').close}>
 						<DatePickerForWorkTrack />
 					</Modal>
 				</div>
@@ -165,10 +168,14 @@ class SignIn extends React.Component<SignInProps, SignInStates> {
 }
 
 const mapStateToProps = (state: any) => ({
-	data: state.tutor.data,
+	data: state.tutor.data.tutor,
 	error: state.tutor.error
 });
 
-export default connect(mapStateToProps, { loginAndFetchTutor, logoutAndClearTutor, tutorClockIn, tutorClockOut })(
-	SignIn
-);
+export default connect(mapStateToProps, {
+	loginAndFetchTutor,
+	logoutAndClearTutor,
+	tutorClockIn,
+	tutorClockOut,
+	clearError
+})(SignIn);

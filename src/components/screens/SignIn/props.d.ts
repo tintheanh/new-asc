@@ -4,9 +4,10 @@ import { Tutor } from 'redux/store/tutor/types';
 export interface SignInProps {
 	// Application-level states
 	loginAndFetchTutor: (tutorID: string) => Promise;
-	tutorClockIn: (uid: string) => void;
+	tutorClockIn: (tutor: Tutor) => void;
 	tutorClockOut: (uid: string, inTime: number) => void;
 	logoutAndClearTutor: () => void;
+	clearError: () => void;
 	data: Tutor;
 	error?: string;
 
@@ -19,5 +20,6 @@ export interface SignInStates {
 	time: string;
 	mainModalShow: boolean;
 	datePickerModalShow: boolean;
+	[stateKey: string]: boolean | string;
 	tutorID: string;
 }

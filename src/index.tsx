@@ -8,8 +8,11 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { APIKEY, AUTHDOMAIN, DATABASEURL, PROJECTID, STORAGEBUCKET, MESSAGINGSENDERID, APPID } from './config';
-
+import { createBrowserHistory } from 'history';
+import 'react-table/react-table.css';
 import 'react-datepicker/dist/react-datepicker.css';
+
+const history = createBrowserHistory();
 
 const firebaseConfig = {
 	apiKey: APIKEY,

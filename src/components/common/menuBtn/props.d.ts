@@ -1,3 +1,6 @@
 export interface MenuBtnProps {
-  label: string;
+	label: string;
+  navigate: () => void;
+  
+  route: string;
 }

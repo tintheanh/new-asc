@@ -11,18 +11,12 @@ class DatePickerForWorkTrack extends React.Component<DatePickerProps, DatePicker
 		super(props);
 		this.state = { from: new Date(), to: new Date() };
 	}
-
-	handleFromChange = (date: Date): void => {
-		this.setState({ from: date });
-	};
-
-	handleToChange = (date: Date): void => {
-		this.setState({ to: date });
-	};
+	
+	handleTimeChange = (key: string) => (date: Date) => this.setState({ [key]: date });
 
 	showReport = (): void => {
 		// From time needs to be at 00:00
-		this.state.from.setHours(0, 0, 0);
+		this.state.from.setHours(0, 0, 0, 0);
 
 		const sending = {
 			range: {
@@ -33,7 +27,7 @@ class DatePickerForWorkTrack extends React.Component<DatePickerProps, DatePicker
 		};
 
 		ipcRenderer.send('toggle-work-report', sending);
-	}
+	};
 
 	render() {
 		const { from, to } = this.state;
@@ -42,14 +36,14 @@ class DatePickerForWorkTrack extends React.Component<DatePickerProps, DatePicker
 				<p>From</p>
 				<DatePicker
 					selected={this.state.from}
-					onChange={this.handleFromChange}
+					onChange={this.handleTimeChange('from')}
 					todayButton={'Select Today'}
 					maxDate={new Date()}
 				/>
 				<p>To</p>
 				<DatePicker
 					selected={this.state.to}
-					onChange={this.handleToChange}
+					onChange={this.handleTimeChange('to')}
 					todayButton={'Select Today'}
 					maxDate={new Date()}
 				/>
@@ -64,7 +58,7 @@ class DatePickerForWorkTrack extends React.Component<DatePickerProps, DatePicker
 }
 
 const mapStateToProps = (state: any) => ({
-	data: state.tutor.data,
+	data: state.tutor.data.tutor,
 	error: state.tutor.error
 });
 

@@ -3,27 +3,35 @@ import styles from './styles.module.css';
 import { ModalProps } from './props';
 
 export const Modal: React.SFC<ModalProps> = (props) => {
+	const { show, close, children, width } = props;
 	return (
-		<div>
+		<div
+			className={styles.overlay}
+			style={{ display: show ? 'flex' : 'none', justifyContent: 'center', alignItems: 'center' }}
+		>
 			<div
 				className={styles.modalWrapper}
 				style={{
-					transform: props.show ? 'translateY(0vh)' : 'translateY(-100vh)',
-					opacity: props.show ? 1 : 0
+					display: show ? 'block' : 'none',
+					width
 				}}
 			>
 				<div className={styles.modalHeader}>
-					<span className={styles.closeModalBtn} onClick={props.close}>
+					<span className={styles.closeModalBtn} onClick={close}>
 						×
 					</span>
 				</div>
-				<div className={styles.modalBody}>{props.children}</div>
+				<div className={styles.modalBody}>{show ? children : null}</div>
 				<div className={styles.modalFooter}>
-					<button className={styles.btnCancel} onClick={props.close}>
+					<button className={styles.btnCancel} onClick={close}>
 						CLOSE
 					</button>
 				</div>
 			</div>
 		</div>
 	);
+};
+
+Modal.defaultProps = {
+	width: 'auto'
 };

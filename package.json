@@ -13,6 +13,7 @@
 		"react-redux": "^7.1.0",
 		"react-router-dom": "^5.0.1",
 		"react-scripts": "3.0.1",
+		"react-table": "^6.10.0",
 		"react-to-print": "^2.1.3",
 		"redux": "^4.0.1",
 		"redux-persist": "^5.10.0",
@@ -26,6 +27,7 @@
 		"eject": "react-scripts eject",
 		"electron-dev": "concurrently \"BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
 		"electron-pack": "electron-builder -c.extraMetadata.main=build/electron.js",
+		"electron-pack:windows": "electron-builder -c.extraMetadata.main=build/electron.js --windows",
 		"preelectron-pack": "npm run build"
 	},
 	"eslintConfig": {
@@ -52,6 +54,7 @@
 		"@types/react-pdf": "^4.0.0",
 		"@types/react-redux": "^7.1.1",
 		"@types/react-router-dom": "^4.3.4",
+		"@types/react-table": "^6.8.4",
 		"concurrently": "^4.1.1",
 		"electron": "^4.2.5",
 		"electron-builder": "^20.44.4",

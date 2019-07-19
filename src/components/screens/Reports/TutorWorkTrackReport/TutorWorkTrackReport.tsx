@@ -73,7 +73,7 @@ export class TutorWorkTrackReport extends React.Component<any, TutorWorkTrackRep
 					<h1>Report</h1>
 					{data.tutors.map((e: Tutor, i: number) => (
 						<div key={i}>
-							<h3>{e.name}</h3>
+							<h3>{e.first_name} {e.last_name}</h3>
 							{this.renderWorkTrack(data.range, e)}
 						</div>
 					))}

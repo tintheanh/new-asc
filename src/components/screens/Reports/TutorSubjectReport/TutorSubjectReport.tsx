@@ -36,7 +36,7 @@ export class TutorSubjectReport extends React.Component<any, TutorSubjectReportS
 					<h1>Report</h1>
 					{data.map((e: Tutor, i: number) => (
 						<div key={i}>
-							<h2>{e.name}</h2>
+							<h3>{e.first_name} {e.last_name}</h3>
 							{this.renderSubject(e.subjects)}
 						</div>
 					))}

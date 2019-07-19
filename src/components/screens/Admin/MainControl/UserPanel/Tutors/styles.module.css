@@ -1,0 +1,21 @@
+.tableContainer {
+	display: grid;
+  grid-template-columns: auto auto;
+  padding: 24px;
+}
+
+.tutorTable {
+	width: 300px;
+	height: 40vh;
+}
+
+.subjectTable {
+	width: 600px;
+	height: 40vh;
+}
+
+.backBtn {
+	position: absolute;
+	top: 0;
+	left: 0;
+}

@@ -51,3 +51,16 @@ export const timeDiff = (time1: number, time2: number): string => {
 
 	return `${hoursDifference} hours ${minutesDifference} minutes`;
 };
+
+export const contains = (arr: any[] | null, obj: any, key: string): boolean => {
+	if (arr) {
+		if (arr.filter((e) => obj[key] === e[key]).length) return true;
+		return false;
+	}
+	return false;
+};
+
+export const arraySort = (arr: any[] | null, property: string): any[] | [] => {
+	if (arr) return arr.sort((a, b) => (a[property] > b[property] ? 1 : b[property] > a[property] ? -1 : 0));
+	return [];
+};

@@ -27,7 +27,6 @@ class Admin extends React.Component<AdminProps, any> {
 				</div>
 				<div>
 					<button onClick={this.goBackSignInScreen}>Return to Sign-In Screen</button>
-					<p>{window.location.hash}</p>
 				</div>
 			</div>
 		);
