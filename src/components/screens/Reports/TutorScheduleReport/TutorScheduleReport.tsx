@@ -23,19 +23,23 @@ export class TutorScheduleReport extends React.Component<any, TutorScheduleRepor
 
 	renderSchedule = (data: Tutor): JSX.Element[] => {
 		const workDays = [ 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday' ];
-		return data.work_schedule.map((e: { index: { from: string; to: string } } | { index: null }, i: number) => {
-			if (e) {
-				const segments: ({ from: string; to: string } | null)[] = Object.values(e);
-				return <TinySchedule key={i} day={workDays[i]} segments={segments} />;
-			}
-			return <TinySchedule key={i} day={workDays[i]} />;
-		});
+		// return data.work_schedule.map((e: { index: { from: string; to: string } } | { index: null }, i: number) => {
+		// 	if (e) {
+		// 		const segments: ({ from: string; to: string } | null)[] = Object.values(e);
+		// 		return <TinySchedule key={i} day={workDays[i]} segments={segments} />;
+		// 	}
+		// 	return <TinySchedule key={i} day={workDays[i]} />;
+		// });
+
+		return data.work_schedule.map((sch: any, i:number) => {
+			return <TinySchedule key={i} day={workDays[i]} data={sch} />;
+		})
 	};
 
 	render() {
 		const { data } = this.state;
+		console.log(data);
 		if (data) {
-			// console.log(data);
 			return (
 				<div>
 					<h1>Report</h1>

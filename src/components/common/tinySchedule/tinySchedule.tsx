@@ -6,18 +6,12 @@ export const TinySchedule: React.SFC<tinyScheduleProps> = (props) => {
 		<div>
 			<h3>{props.day}</h3>
 			<ul>
-				{props.segments ? (
-					props.segments.map((e, i) => (
-						<li key={i}>
-							{e!.from} - {e!.to}
-						</li>
-					))
-				) : null}
+				{props.data.map((e, i) => (
+					<li key={i}>
+						{e!.from.time} - {e!.to.time}
+					</li>
+				))}
 			</ul>
 		</div>
 	);
-};
-
-TinySchedule.defaultProps = {
-	segments: []
 };

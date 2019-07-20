@@ -1,0 +1,9 @@
+.scheduleTables {
+	display: grid;
+	grid-template-columns: auto auto auto auto;
+}
+
+.scheduleTable {
+	height: 240px;
+	width: 200px;
+}

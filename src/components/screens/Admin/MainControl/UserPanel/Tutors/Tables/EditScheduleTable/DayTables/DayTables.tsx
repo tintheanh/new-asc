@@ -1,65 +1,55 @@
 import * as React from 'react';
 import ReactTable from 'react-table';
 import { contains } from 'utils/functions';
+
+import { DayTablesProps, DayTablesStates } from './props';
+import { Schedule } from 'config';
+
 import styles from './styles.module.css';
 
-class DayTable extends React.Component<any, any> {
-	private handleKeyDown: any;
-	private handleKeyUp: any;
-	constructor(props: any) {
+class DayTables extends React.Component<DayTablesProps, DayTablesStates> {
+	constructor(props: DayTablesProps) {
 		super(props);
 		this.state = {
 			selectedSchedules: [],
 			scheduleIndexes: [],
-			toggleSelectShift: false,
-			toggleSelectCtrl: false
+			currentDay: 0
 		};
-
-		// Bind in constructor for cancelling subscriptions when unmount
-		// If bind in removeEventListener, this shit will create new references everytime => won't cancelling
-		this.handleKeyDown = this.handleOnKey('down').bind(this);
-		this.handleKeyUp = this.handleOnKey('up').bind(this);
 	}
 
-	shouldComponentUpdate(nextProps: any, nextState: any) {
-		if (this.props.data !== nextProps.data) return true;
-		if (this.state.selectedSchedules !== nextState.selectedSchedules) return true;
-		if (this.props.isPickingTime === nextProps.isPickingTime) return false;
-		if (this.state.selectedSchedules.length === 0 && nextState.selectedSchedules.length === 0) return false;
-		return true;
+	componentDidMount() {
+		document.addEventListener('keydown', (this.handleKeyDown as unknown) as EventListener);
 	}
 
-	componentDidUpdate(prevProps: any) {
+	componentWillUnmount() {
+		document.removeEventListener('keydown', (this.handleKeyDown as unknown) as EventListener);
+	}
+
+	handleKeyDown = (e: React.KeyboardEvent) => {
+		if (e.keyCode === 8 || e.keyCode === 46) {
+			this.props.onDeleteSchedules(this.state.currentDay, this.state.selectedSchedules);
+			this.setState({ selectedSchedules: [], scheduleIndexes: [] });
+		}
+	};
+
+	componentDidUpdate(prevProps: DayTablesProps) {
 		const { selectedSchedules } = this.state;
 		if (selectedSchedules.length && this.props.isPickingTime !== prevProps.isPickingTime) {
 			this.setState({ selectedSchedules: [], scheduleIndexes: [] });
 		}
 	}
 
-	componentDidMount() {
-		document.addEventListener('keydown', this.handleKeyDown);
-		document.addEventListener('keyup', this.handleKeyUp);
+	shouldComponentUpdate(nextProps: DayTablesProps, nextState: DayTablesStates) {
+		if (this.state.selectedSchedules !== nextState.selectedSchedules) return true;
+		if (this.props.isPickingTime === nextProps.isPickingTime) return false;
+		return true;
 	}
 
-	componentWillUnmount() {
-		document.removeEventListener('keydown', this.handleKeyDown);
-		document.removeEventListener('keyup', this.handleKeyUp);
-	}
-
-	handleOnKey = (behavior: 'up' | 'down') => (e: React.KeyboardEvent) => {
-		if (e.keyCode === 91 || e.keyCode === 93)
-			this.setState({ toggleSelectCtrl: behavior === 'down' ? true : false, toggleSelectShift: false });
-		if (e.keyCode === 16)
-			this.setState({ toggleSelectShift: behavior === 'down' ? true : false, toggleSelectCtrl: false });
-		if (e.keyCode === 8 && behavior === 'down' && this.state.selectedSchedules.length) {
-			this.props.onDeleteSchedules(this.props.day.index, this.state.selectedSchedules);
-		}
-	};
-
-	selectSchedules(schedule: any) {
-		const { toggleSelectCtrl, toggleSelectShift } = this.state;
-		const { data } = this.props;
-		const index = data.findIndex((sch: any) => sch.from.order === schedule.from.order);
+	selectSchedules(schedule: Schedule, day: number) {
+		const { toggleSelectCtrl, toggleSelectShift, schedules } = this.props;
+		const data = schedules[day];
+		this.setState({ currentDay: day });
+		const index = data.findIndex((sch) => sch.from.order === schedule.from.order);
 
 		if (toggleSelectCtrl) {
 			// Crtl Select
@@ -69,7 +59,7 @@ class DayTable extends React.Component<any, any> {
 			if (selectedSchedules.length === 0 || !contains(selectedSchedules, data[index], 'from', 'order')) {
 				selectedSchedules.push(data[index]);
 				indexes.push(index);
-				this.setState({ selectedSchedules, indexes });
+				this.setState({ selectedSchedules, scheduleIndexes: indexes });
 			} else {
 				// If selectedSchedules contains oncoming schedule, deselect it.
 				const newSelectedSubjects = selectedSchedules.filter((sj) => sj.from.order !== data[index].from.order);
@@ -96,7 +86,7 @@ class DayTable extends React.Component<any, any> {
 					}
 				}
 
-				this.setState({ selectedSchedules, indexes });
+				this.setState({ selectedSchedules, scheduleIndexes: indexes });
 			} else {
 				selectedSchedules.length = 0;
 				let newIndexes;
@@ -124,63 +114,77 @@ class DayTable extends React.Component<any, any> {
 				this.state.selectedSchedules.length === 0 ||
 				this.state.selectedSchedules[0].from.order !== data[index].from.order
 			) {
-				this.setState({ selectedSchedules: [ data[index] ], scheduleIndexes: [ index ] });
+				this.setState({ selectedSchedules: [ data[index] ], scheduleIndexes: [ index ] }, () =>
+					console.log(this.state.selectedSchedules)
+				);
 			} else {
 				// If selected schedule is the same as oncoming schedule, deselect everything, it's ok b/c single select contains only one schedule.
-				this.setState({ selectedSchedules: [], scheduleIndexes: [] });
+				this.setState({ selectedSchedules: [], scheduleIndexes: [] }, () =>
+					console.log(this.state.selectedSchedules)
+				);
 			}
 		}
 	}
-
 	render() {
 		const columns = [
 			{
 				id: 'fromTime',
 				Header: 'From',
-				accessor: (d: any) => d.from.time
+				accessor: (d: Schedule) => d.from.time
 			},
 			{
 				id: 'toTime',
 				Header: 'To',
-				accessor: (d: any) => d.to.time
+				accessor: (d: Schedule) => d.to.time
 			}
 		];
-		const { data, day, onAddHours } = this.props;
-		const { selectedSchedules } = this.state;
+		const { schedules, onAddHours } = this.props;
+		const { selectedSchedules, currentDay } = this.state;
 		return (
-			<div>
-				<h4>{day.dayOfWeek}</h4>
-				<div onClick={onAddHours}>
-					<ReactTable
-						className={styles.scheduleTable}
-						data={data}
-						columns={columns}
-						showPagination={false}
-						sortable={false}
-						NoDataComponent={() => null}
-						getTrProps={(_: any, rowInfo: any) => {
-							if (rowInfo && rowInfo.row) {
-								const schedule = rowInfo.original;
-								return {
-									onClick: this.selectSchedules.bind(this, schedule),
-									style: {
-										background: contains(selectedSchedules, schedule, 'from', 'order')
-											? '#00afec'
-											: 'none',
-										color: contains(selectedSchedules, schedule, 'from', 'order')
-											? 'white'
-											: 'black'
-									}
-								};
-							} else {
-								return {};
-							}
-						}}
-					/>
-				</div>
+			<div className={styles.scheduleTables}>
+				{schedules.map((dataSch, i) => {
+					const days = [ 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday' ];
+					return (
+						<div key={i}>
+							<h4>{days[i]}</h4>
+							<div onClick={onAddHours.bind(this, i)}>
+								<ReactTable
+									className={styles.scheduleTable}
+									data={dataSch}
+									columns={columns}
+									showPagination={false}
+									sortable={false}
+									NoDataComponent={() => null}
+									getTrProps={(_: any, rowInfo: any) => {
+										if (rowInfo && rowInfo.row) {
+											const schedule = rowInfo.original as Schedule;
+											return {
+												onClick: this.selectSchedules.bind(this, schedule, i),
+												style: {
+													background:
+														currentDay === i &&
+														contains(selectedSchedules, schedule, 'from', 'order')
+															? '#00afec'
+															: 'none',
+													color:
+														currentDay === i &&
+														contains(selectedSchedules, schedule, 'from', 'order')
+															? 'white'
+															: 'black'
+												}
+											};
+										} else {
+											return {};
+										}
+									}}
+								/>
+							</div>
+						</div>
+					);
+				})}
 			</div>
 		);
 	}
 }
 
-export default DayTable;
+export default DayTables;

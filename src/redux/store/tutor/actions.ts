@@ -27,6 +27,7 @@ const fetchTutor = (uid: string): Promise<Tutor> => {
 					}
 				});
 
+				// Convert to array of arrays
 				const work_schedule = objFs!.work_schedule.map(
 					(schedule: { from: { time: string; order: number }; to: { time: string; order: number } }) => {
 						if (schedule !== null) return Object.values(schedule);
@@ -34,7 +35,7 @@ const fetchTutor = (uid: string): Promise<Tutor> => {
 					}
 				);
 
-				const tutor = {
+				const tutor: Tutor = {
 					uid: doc.id,
 					staff_id: objFs!.staff_id,
 					active: objFs!.active,

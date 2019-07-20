@@ -1,7 +1,9 @@
 export interface tinyScheduleProps {
 	day: string;
-	segments?: ({
-		from: string;
-		to: string;
-	} | null)[];
+	data: ({
+		from: {
+			time: string;
+		};
+		to: { time: string };
+	})[];
 }

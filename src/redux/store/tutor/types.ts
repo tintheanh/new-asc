@@ -18,6 +18,17 @@ export enum TutorActionTypes {
 	CLEAR_ERROR = '@@tutor/CLEAR_ERROR'
 }
 
+export interface Schedule {
+	from: {
+		time: string;
+		order: number;
+	};
+	to: {
+		time: string;
+		order: number;
+	};
+}
+
 export interface Tutor {
 	uid: string;
 	staff_id: string;
@@ -32,7 +43,7 @@ export interface Tutor {
 		id: string;
 	}[];
 	off_time: [];
-	work_schedule: [];
+	work_schedule: [Schedule[]];
 	appointments: string[];
 	current_log: number;
 	work_track: {

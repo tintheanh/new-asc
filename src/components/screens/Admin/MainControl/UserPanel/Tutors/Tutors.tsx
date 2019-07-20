@@ -5,8 +5,7 @@ import { connect } from 'react-redux';
 
 // Props/State types & additional type(s)
 import { TutorsProps, TutorsStates } from './props';
-import { Tutor } from 'redux/store/tutor/types';
-import { Subject } from 'redux/store/subject/types';
+import { Tutor, Subject } from 'config';
 
 // Common & additional component(s)
 import { Header, Checkbox, Modal, Button } from 'components/common';
