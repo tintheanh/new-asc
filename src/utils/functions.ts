@@ -52,12 +52,20 @@ export const timeDiff = (time1: number, time2: number): string => {
 	return `${hoursDifference} hours ${minutesDifference} minutes`;
 };
 
-export const contains = (arr: any[] | null, obj: any, key: string): boolean => {
-	if (arr) {
-		if (arr.filter((e) => obj[key] === e[key]).length) return true;
+export const contains = (arr: any[] | null, obj: any, key: string, nestedKey?: string): boolean => {
+	if (!nestedKey) {
+		if (arr) {
+			if (arr.filter((e) => obj[key] === e[key]).length) return true;
+			return false;
+		}
+		return false;
+	} else {
+		if (arr) {
+			if (arr.filter((e) => obj[key][nestedKey] === e[key][nestedKey]).length) return true;
+			return false;
+		}
 		return false;
 	}
-	return false;
 };
 
 export const arraySort = (arr: any[] | null, property: string): any[] | [] => {

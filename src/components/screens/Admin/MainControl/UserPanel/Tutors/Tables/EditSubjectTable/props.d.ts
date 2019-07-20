@@ -9,7 +9,7 @@ export interface EditSubjectTableProps {
 }
 
 export interface EditSubjectTableStates {
-	toggleSelectMultiple: boolean;
+	toggleSelectCtrl: boolean;
 	toggleSelectShift: boolean;
 	subjects: Subject[];
 	removedSubjects: Subject[];

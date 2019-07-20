@@ -15,7 +15,7 @@ const fetchTutor = (uid: string): Promise<Tutor> => {
 				const subjects: { label: string; full: string; id: string }[] = [];
 				const subjectIds = objFs!.subjects;
 				const subjectSnapshot = await fsdb.collection('subjects').get();
-				
+
 				subjectSnapshot.forEach((doc) => {
 					if (subjectIds.includes(doc.id)) {
 						const subject = {
@@ -27,6 +27,13 @@ const fetchTutor = (uid: string): Promise<Tutor> => {
 					}
 				});
 
+				const work_schedule = objFs!.work_schedule.map(
+					(schedule: { from: { time: string; order: number }; to: { time: string; order: number } }) => {
+						if (schedule !== null) return Object.values(schedule);
+						return [];
+					}
+				);
+
 				const tutor = {
 					uid: doc.id,
 					staff_id: objFs!.staff_id,
@@ -37,7 +44,7 @@ const fetchTutor = (uid: string): Promise<Tutor> => {
 					email: objFs!.email,
 					subjects,
 					off_time: objFs!.off_time,
-					work_schedule: objFs!.work_schedule,
+					work_schedule,
 					appointments: objFb.appointments,
 					current_log: objFb.current_log,
 					work_track: objFb.work_track

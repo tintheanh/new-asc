@@ -20,7 +20,7 @@ class EditSubjectTable extends React.Component<EditSubjectTableProps, EditSubjec
 	constructor(props: EditSubjectTableProps) {
 		super(props);
 		this.state = {
-			toggleSelectMultiple: false,
+			toggleSelectCtrl: false,
 			toggleSelectShift: false,
 			subjects: [],
 			removedSubjects: [],
@@ -60,19 +60,19 @@ class EditSubjectTable extends React.Component<EditSubjectTableProps, EditSubjec
 
 	handleOnKey = (behavior: 'up' | 'down') => (e: React.KeyboardEvent) => {
 		if (e.keyCode === 91 || e.keyCode === 93)
-			this.setState({ toggleSelectMultiple: behavior === 'down' ? true : false, toggleSelectShift: false });
+			this.setState({ toggleSelectCtrl: behavior === 'down' ? true : false, toggleSelectShift: false });
 		if (e.keyCode === 16)
-			this.setState({ toggleSelectShift: behavior === 'down' ? true : false, toggleSelectMultiple: false });
+			this.setState({ toggleSelectShift: behavior === 'down' ? true : false, toggleSelectCtrl: false });
 	};
 
 	selectSubjects(key: string, indexKey: string, subject: Subject) {
-		const { subjects, toggleSelectMultiple, toggleSelectShift } = this.state;
+		const { subjects, toggleSelectCtrl, toggleSelectShift } = this.state;
 		const index = subjects.findIndex((sj) => sj.id === subject.id);
 
 		if (key === 'addedSubjects') this.setState({ removedSubjects: [] });
 		else this.setState({ addedSubjects: [] });
 
-		if (toggleSelectMultiple) {
+		if (toggleSelectCtrl) {
 			// Crtl Select
 			const selectedSubjects = [ ...this.state[key] ];
 			const indexes = [ ...this.state[indexKey] ];
@@ -256,7 +256,6 @@ class EditSubjectTable extends React.Component<EditSubjectTableProps, EditSubjec
 							}
 						}}
 					/>
-					<div onKeyDown={this.handleKeyDown} onKeyUp={this.handleKeyUp} tabIndex={0} />
 				</div>
 			);
 		}

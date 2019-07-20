@@ -1,0 +1,20 @@
+.tableContainer {
+	height: 550px;
+	display: grid;
+	grid-column-gap: 30px;
+	grid-template-columns: 120px auto;
+}
+
+.hourPickingTable {
+	height: 550px;
+}
+
+.scheduleTables {
+	display: grid;
+	grid-template-columns: auto auto auto auto;
+}
+
+.scheduleTable {
+	height: 240px;
+	width: 200px;
+}

@@ -1,6 +1,6 @@
 import TutorTable from './TutorTable/TutorTable';
 import TutorSubjectTable from './TutorSubjectTable/TutorSubjectTable';
 import EditSubjectTable from './EditSubjectTable/EditSubjectTable';
-import ScheduleTable from './ScheduleTable/ScheduleTable';
+import EditScheduleTable from './EditScheduleTable/EditScheduleTable';
 
-export { TutorTable, TutorSubjectTable, EditSubjectTable, ScheduleTable };
+export { TutorTable, TutorSubjectTable, EditSubjectTable, EditScheduleTable };

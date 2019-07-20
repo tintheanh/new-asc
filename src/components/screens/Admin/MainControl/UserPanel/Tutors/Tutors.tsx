@@ -10,7 +10,7 @@ import { Subject } from 'redux/store/subject/types';
 
 // Common & additional component(s)
 import { Header, Checkbox, Modal, Button } from 'components/common';
-import { TutorTable, TutorSubjectTable, EditSubjectTable, ScheduleTable } from './Tables';
+import { TutorTable, TutorSubjectTable, EditSubjectTable, EditScheduleTable } from './Tables';
 import TutorForm from './TutorForm/TutorForm';
 
 // Utils
@@ -105,9 +105,27 @@ class Tutors extends React.Component<TutorsProps, TutorsStates> {
 	handleSubmit = (event: React.FormEvent) => {
 		event.preventDefault();
 		if (this.state.edit) {
-			const update = { ...this.state.selected } as Tutor;
+			const selected = { ...this.state.selected } as Tutor;
+			const work_schedule = [ ...selected.work_schedule ];
+
+			// Convert work_schedule back to array of objects 
+			const updateWorkSchedule = work_schedule.map((sch: any[]) => {
+				if (sch.length) {
+					const each = sch.map((hr: any, i: number) => ({
+						[i]: {
+							from: { time: hr.from.time, order: hr.from.order },
+							to: { time: hr.to.time, order: hr.to.order }
+						}
+					}));
+					const newObj = Object.assign({}, ...each);
+					return newObj;
+				}
+				return null;
+			});
+
+			const update = { ...selected, work_schedule: updateWorkSchedule };
 			this.props
-				.updateTutor(update)
+				.updateTutor(update as Tutor)
 				.then(() => this.setState({ edit: false }, () => this.props.fetchAllTutors()))
 				.catch((err) => alert(err.message));
 		}
@@ -178,11 +196,11 @@ class Tutors extends React.Component<TutorsProps, TutorsStates> {
 						/>
 					</Modal>
 					<Modal
-						width="70%"
+						width="95%"
 						show={modalSchedule}
 						close={this.handleStateChange().handleModalChange('modalSchedule').close}
 					>
-						<ScheduleTable />
+						<EditScheduleTable tutor={selected ? selected : null} />
 					</Modal>
 				</div>
 			);
