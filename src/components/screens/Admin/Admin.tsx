@@ -8,10 +8,6 @@ import MainControl from './MainControl/MainControl';
 import styles from './styles.module.css';
 
 class Admin extends React.Component<AdminProps, any> {
-	componentDidMount() {
-		console.log('admin mounted');
-	}
-
 	goBackSignInScreen = (): void => {
 		this.props.logoutAndClearTutor();
 		this.props.history.push('/');

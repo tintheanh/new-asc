@@ -1,36 +1,81 @@
+// Dependencies
 import * as React from 'react';
 import ReactTable from 'react-table';
-import { TutorSubjectTableProps } from './props';
+import { connect } from 'react-redux';
 
-const TutorSubjectTable: React.SFC<TutorSubjectTableProps> = (props) => {
-	const columns = [
-		{
-			Header: 'Subject ID',
-			accessor: 'label'
-		},
-		{
-			Header: 'Subject Name',
-			accessor: 'full'
-		}
-	];
-	const { selected } = props;
-	const expandFull = { width: '100%', height: '100%' };
-	return (
-		<div style={expandFull}>
-			<ReactTable
-				style={expandFull}
-				data={selected ? selected.subjects : []}
-				columns={columns}
-				showPagination={false}
-				defaultSorted={[
-					{
-						id: 'label',
-						desc: false
+// Props/State types & additional type(s)
+import { TutorSubjectTableProps, TutorSubjectTableStates } from './props';
+
+// Common & additional component(s)
+import { Button, Modal } from 'components/common';
+import { EditSubjectTable } from '../';
+
+// Action(s)
+import { resetTutor } from 'redux/store/tutor/actions';
+
+class TutorSubjectTable extends React.Component<TutorSubjectTableProps, TutorSubjectTableStates> {
+	state = { modalSubject: false };
+
+	handleModalChange = () => {
+		return {
+			open: () => this.setState({ modalSubject: true }),
+			close: () =>
+				this.setState({ modalSubject: false }, () => {
+					if (this.props.selected) {
+						const { uid } = this.props.selected;
+						const { data } = this.props;
+						this.props.resetTutor(uid, data);
 					}
-				]}
-			/>
-		</div>
-	);
-};
+				}),
+			closeAfterSave: () => this.setState({ modalSubject: false })
+		};
+	};
 
-export default TutorSubjectTable;
+	render() {
+		const columns = [
+			{
+				Header: 'Subject ID',
+				accessor: 'label'
+			},
+			{
+				Header: 'Subject Name',
+				accessor: 'full'
+			}
+		];
+		const { selected, toggleAdd } = this.props;
+		const { modalSubject } = this.state;
+		const expandFull = { width: '100%', height: '100%' };
+		return (
+			<div style={expandFull}>
+				<ReactTable
+					style={expandFull}
+					data={selected ? selected.subjects : []}
+					columns={columns}
+					showPagination={false}
+					defaultSorted={[
+						{
+							id: 'label',
+							desc: false
+						}
+					]}
+				/>
+				<Button
+					disabled={selected === null || toggleAdd}
+					label="Edit subjects"
+					onClick={this.handleModalChange().open}
+				/>
+				<Modal width="70%" show={modalSubject} close={this.handleModalChange().close}>
+					<EditSubjectTable close={this.handleModalChange().closeAfterSave} />
+				</Modal>
+			</div>
+		);
+	}
+}
+
+const mapStateToProps = (state: any) => ({
+	data: state.tutor.data.tutors,
+	selected: state.tutor.data.selectedTutor,
+	toggleAdd: state.tutor.data.toggleAdd
+});
+
+export default connect(mapStateToProps, { resetTutor })(TutorSubjectTable);

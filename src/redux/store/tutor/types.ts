@@ -15,8 +15,31 @@ export enum TutorActionTypes {
 	UPDATE_SUCCESS = '@@tutor/UPDATE_SUCCESS',
 	UPDATE_FAILURE = '@@tutor/UPDATE_FAILURE',
 
-	CLEAR_ERROR = '@@tutor/CLEAR_ERROR'
+	ADD_SUCCESS = '@@tutor/ADD_SUCCESS',
+	ADD_FAILURE = '@@tutor/ADD_FAILURE',
+
+	SELECT_AND_UPDATE_TUTOR = '@@tutor/SELECT_AND_UPDATE_TUTOR',
+
+	TOGGLE_ADD = '@@tutor/TOGGLE_ADD',
+
+	CLEAR = '@@tutor/CLEAR'
 }
+
+export const empty: Tutor = {
+	uid: '',
+	staff_id: '',
+	active: false,
+	is_admin: false,
+	first_name: '',
+	last_name: '',
+	email: '',
+	subjects: [],
+	off_time: [],
+	work_schedule: [ [], [], [], [], [], [], [] ],
+	appointments: [],
+	current_log: 0,
+	work_track: {}
+};
 
 export interface Schedule {
 	from: {
@@ -43,7 +66,7 @@ export interface Tutor {
 		id: string;
 	}[];
 	off_time: [];
-	work_schedule: [Schedule[]];
+	work_schedule: Schedule[][];
 	appointments: string[];
 	current_log: number;
 	work_track: {
@@ -59,20 +82,14 @@ export interface Tutor {
 export interface TutorState {
 	data: {
 		tutor: Tutor | null;
-		tutors: Tutor[] | null;
-	};
-	error: string;
-}
-
-interface Payload {
-	data: {
-		tutor: Tutor | null;
-		tutors: Tutor[] | null;
+		tutors: Tutor[];
+		selectedTutor: Tutor | null;
+		toggleAdd: boolean;
 	};
 	error: string;
 }
 
 export interface ActionPayload {
 	type: string;
-	payload: Payload;
+	payload: TutorState;
 }

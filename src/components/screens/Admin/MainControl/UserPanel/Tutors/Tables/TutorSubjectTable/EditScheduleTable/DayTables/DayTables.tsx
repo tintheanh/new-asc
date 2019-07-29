@@ -40,12 +40,13 @@ class DayTables extends React.Component<DayTablesProps, DayTablesStates> {
 	}
 
 	shouldComponentUpdate(nextProps: DayTablesProps, nextState: DayTablesStates) {
+		if (this.props.schedules !== nextProps.schedules) return true;
 		if (this.state.selectedSchedules !== nextState.selectedSchedules) return true;
 		if (this.props.isPickingTime === nextProps.isPickingTime) return false;
 		return true;
 	}
 
-	selectSchedules(schedule: Schedule, day: number) {
+	selectSchedules = (schedule: Schedule, day: number) => () =>{
 		const { toggleSelectCtrl, toggleSelectShift, schedules } = this.props;
 		const data = schedules[day];
 		this.setState({ currentDay: day });
@@ -125,7 +126,8 @@ class DayTables extends React.Component<DayTablesProps, DayTablesStates> {
 			}
 		}
 	}
-	render() {
+
+	_renderTables = () => {
 		const columns = [
 			{
 				id: 'fromTime',
@@ -140,50 +142,50 @@ class DayTables extends React.Component<DayTablesProps, DayTablesStates> {
 		];
 		const { schedules, onAddHours } = this.props;
 		const { selectedSchedules, currentDay } = this.state;
-		return (
-			<div className={styles.scheduleTables}>
-				{schedules.map((dataSch, i) => {
-					const days = [ 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday' ];
-					return (
-						<div key={i}>
-							<h4>{days[i]}</h4>
-							<div onClick={onAddHours.bind(this, i)}>
-								<ReactTable
-									className={styles.scheduleTable}
-									data={dataSch}
-									columns={columns}
-									showPagination={false}
-									sortable={false}
-									NoDataComponent={() => null}
-									getTrProps={(_: any, rowInfo: any) => {
-										if (rowInfo && rowInfo.row) {
-											const schedule = rowInfo.original as Schedule;
-											return {
-												onClick: this.selectSchedules.bind(this, schedule, i),
-												style: {
-													background:
-														currentDay === i &&
-														contains(selectedSchedules, schedule, 'from', 'order')
-															? '#00afec'
-															: 'none',
-													color:
-														currentDay === i &&
-														contains(selectedSchedules, schedule, 'from', 'order')
-															? 'white'
-															: 'black'
-												}
-											};
-										} else {
-											return {};
+		return schedules.map((dataSch, i) => {
+			const days = [ 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday' ];
+			return (
+				<div key={i}>
+					<h4>{days[i]}</h4>
+					<div onClick={onAddHours(i)}>
+						<ReactTable
+							className={styles.scheduleTable}
+							data={dataSch}
+							columns={columns}
+							showPagination={false}
+							sortable={false}
+							NoDataComponent={() => null}
+							getTrProps={(_: any, rowInfo: any) => {
+								if (rowInfo && rowInfo.row) {
+									const schedule = rowInfo.original as Schedule;
+									return {
+										onClick: this.selectSchedules(schedule, i),
+										style: {
+											background:
+												currentDay === i &&
+												contains(selectedSchedules, schedule, 'from', 'order')
+													? '#00afec'
+													: 'none',
+											color:
+												currentDay === i &&
+												contains(selectedSchedules, schedule, 'from', 'order')
+													? 'white'
+													: 'black'
 										}
-									}}
-								/>
-							</div>
-						</div>
-					);
-				})}
-			</div>
-		);
+									};
+								} else {
+									return {};
+								}
+							}}
+						/>
+					</div>
+				</div>
+			);
+		});
+	};
+
+	render() {
+		return <div className={styles.scheduleTables}>{this._renderTables()}</div>;
 	}
 }
 

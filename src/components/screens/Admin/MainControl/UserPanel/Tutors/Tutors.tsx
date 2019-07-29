@@ -4,212 +4,56 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 // Props/State types & additional type(s)
-import { TutorsProps, TutorsStates } from './props';
-import { Tutor, Subject } from 'config';
+import { TutorsProps } from './props';
 
 // Common & additional component(s)
-import { Header, Checkbox, Modal, Button } from 'components/common';
-import { TutorTable, TutorSubjectTable, EditSubjectTable, EditScheduleTable } from './Tables';
+import { Header } from 'components/common';
+import { TutorTable, TutorSubjectTable } from './Tables';
 import TutorForm from './TutorForm/TutorForm';
-
-// Utils
-import { contains } from 'utils/functions';
+import EditSchedule from './Tables/EditSchedule/EditSchedule';
 
 // Action(s)
-import { fetchAllTutors, updateTutor } from 'redux/store/tutor/actions';
+import { fetchAllTutors, toggleAddTutor, clear } from 'redux/store/tutor/actions';
 
 // Styles
 import styles from './styles.module.css';
 
-class Tutors extends React.Component<TutorsProps, TutorsStates> {
-	constructor(props: TutorsProps) {
-		super(props);
-		this.state = {
-			tutorIndex: 0,
-			selected: null,
-			hideInactive: false,
-			edit: false,
-			modalSubject: false,
-			modalSchedule: false
-		};
-	}
+const Tutors: React.SFC<TutorsProps> = (props) => {
+	React.useEffect(() => {
+		// didMount
+		props.fetchAllTutors();
+		// willUnmount
+		return () => props.clear();
+	}, []);
 
-	componentDidMount() {
-		this.props.fetchAllTutors();
-	}
-
-	handleStateChange = () => {
-		return {
-			hideInactive: (event: React.ChangeEvent<HTMLInputElement>) =>
-				this.setState({ hideInactive: event.target.checked, selected: null }),
-			toggleEdit: () => {
-				if (this.state.selected) this.setState({ edit: true });
-			},
-			toggleCancel: () => {
-				const index = this.state.tutorIndex;
-				this.setState({ edit: false, selected: this.props.data[index] });
-			},
-			selectTutor: (rowInfo: any) => {
-				this.setState({
-					tutorIndex: rowInfo.index,
-					selected: rowInfo.original as Tutor,
-					edit: false
-				});
-			},
-			tutorChange: () => {
-				const updateBasicInfo = (key: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-					const tutor = {
-						...this.state.selected,
-						[key]: e.target.type === 'checkbox' ? e.target.checked : e.target.value
-					} as Tutor;
-					this.setState({ selected: tutor });
-				};
-
-				const updateSubject = (subjects: Subject[], type: 'add' | 'remove') => {
-					const { selected } = this.state;
-					if (selected) {
-						switch (type) {
-							case 'add': {
-								const existingSubjects = [ ...selected.subjects ];
-								for (const subject of subjects) {
-									if (!contains(existingSubjects, subject, 'id')) existingSubjects.push(subject);
-								}
-								const tutor = { ...selected, subjects: existingSubjects };
-								this.setState({ selected: tutor });
-								break;
-							}
-							case 'remove': {
-								const newSubjects = selected.subjects.filter((sj) => !contains(subjects, sj, 'id'));
-								const tutor = { ...selected, subjects: newSubjects };
-								this.setState({ selected: tutor });
-								break;
-							}
-							default:
-								break;
-						}
-					}
-				};
-
-				return { updateBasicInfo, updateSubject };
-			},
-			handleModalChange: (key: string) => {
-				return {
-					open: () => this.setState({ [key]: true }),
-					close: () => this.setState({ [key]: false })
-				};
-			}
-		};
-	};
-
-	handleSubmit = (event: React.FormEvent) => {
-		event.preventDefault();
-		if (this.state.edit) {
-			const selected = { ...this.state.selected } as Tutor;
-			const work_schedule = [ ...selected.work_schedule ];
-
-			// Convert work_schedule back to array of objects 
-			const updateWorkSchedule = work_schedule.map((sch: any[]) => {
-				if (sch.length) {
-					const each = sch.map((hr: any, i: number) => ({
-						[i]: {
-							from: { time: hr.from.time, order: hr.from.order },
-							to: { time: hr.to.time, order: hr.to.order }
-						}
-					}));
-					const newObj = Object.assign({}, ...each);
-					return newObj;
-				}
-				return null;
-			});
-
-			const update = { ...selected, work_schedule: updateWorkSchedule };
-			this.props
-				.updateTutor(update as Tutor)
-				.then(() => this.setState({ edit: false }, () => this.props.fetchAllTutors()))
-				.catch((err) => alert(err.message));
-		}
-	};
-
-	processTutorArray = () => {
-		if (this.state.hideInactive) {
-			return this.props.data.filter((tutor) => tutor.active);
-		}
-		return this.props.data;
-	};
-
-	render() {
-		// console.log(this.props.data);
-		if (this.props.data) {
-			const { selected, edit, modalSubject, modalSchedule } = this.state;
-			return (
-				<div>
-					<Header title="Tutors" />
-					<Link className={styles.backBtn} to="/admin">
-						Back
-					</Link>
-					<div className={styles.tableContainer}>
-						<div className={styles.tutorTable}>
-							<TutorTable
-								tutors={this.processTutorArray()}
-								selected={selected}
-								selectTutor={this.handleStateChange().selectTutor}
-							/>
-							<Checkbox
-								checked={this.state.hideInactive}
-								onChange={this.handleStateChange().hideInactive}
-								labelText="Hide inactive tutors"
-							/>
-						</div>
-						<div className={styles.subjectTable}>
-							<TutorSubjectTable selected={selected} />
-							<Button
-								disabled={!edit}
-								label="Edit subjects"
-								onClick={this.handleStateChange().handleModalChange('modalSubject').open}
-							/>
-						</div>
+	if (props.data.length) {
+		return (
+			<div>
+				<Header title="Tutors" />
+				<Link className={styles.backBtn} to="/admin">
+					Back
+				</Link>
+				<div className={styles.tableContainer}>
+					<div className={styles.tutorTable}>
+						<TutorTable />
 					</div>
-					<div>
-						<TutorForm
-							disable={!edit}
-							selected={selected}
-							toggleEdit={this.handleStateChange().toggleEdit}
-							toggleCancel={this.handleStateChange().toggleCancel}
-							onTextChange={this.handleStateChange().tutorChange()}
-							handleSubmit={this.handleSubmit}
-						/>
-						<Button
-							disabled={!edit}
-							label="Edit schedule"
-							onClick={this.handleStateChange().handleModalChange('modalSchedule').open}
-						/>
+					<div className={styles.subjectTable}>
+						<TutorSubjectTable />
 					</div>
-					<Modal
-						width="70%"
-						show={modalSubject}
-						close={this.handleStateChange().handleModalChange('modalSubject').close}
-					>
-						<EditSubjectTable
-							tutorSubjects={selected ? selected.subjects : null}
-							onUpdate={this.handleStateChange().tutorChange().updateSubject}
-						/>
-					</Modal>
-					<Modal
-						width="95%"
-						show={modalSchedule}
-						close={this.handleStateChange().handleModalChange('modalSchedule').close}
-					>
-						<EditScheduleTable tutor={selected ? selected : null} />
-					</Modal>
 				</div>
-			);
-		}
-		return <h1>Loading</h1>;
+				<div>
+					<TutorForm />
+					<EditSchedule />
+				</div>
+			</div>
+		);
 	}
-}
+	return <h1>Loading</h1>;
+};
 
 const mapStateToProps = (state: any) => ({
-	data: state.tutor.data.tutors
+	data: state.tutor.data.tutors,
+	selected: state.tutor.data.selectedTutor
 });
 
-export default connect(mapStateToProps, { fetchAllTutors, updateTutor })(Tutors);
+export default connect(mapStateToProps, { fetchAllTutors, toggleAddTutor, clear })(Tutors);

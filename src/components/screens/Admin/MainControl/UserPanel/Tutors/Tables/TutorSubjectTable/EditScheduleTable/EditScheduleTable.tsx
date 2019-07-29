@@ -1,14 +1,24 @@
+// Dependencies
 import * as React from 'react';
 import ReactTable from 'react-table';
+import { connect } from 'react-redux';
 
-import { contains, arraySort } from 'utils/functions';
-
-import DayTables from './DayTables/DayTables';
-
+// Props/State types & additional type(s)
 import { EditScheduleTableProps, EditScheduleTableStates } from './props';
 import { Time, Schedule } from 'config';
 
+// Common & additional component(s)
+import DayTables from './DayTables/DayTables';
 import { data } from 'config/contants';
+import { Button } from 'components/common';
+
+// Util(s)
+import { contains, arraySort } from 'utils/functions';
+
+// Action(s)
+import { selectAndUpdateTutor, updateTutor } from 'redux/store/tutor/actions';
+
+// Styles
 import styles from './styles.module.css';
 
 class EditScheduleTable extends React.Component<EditScheduleTableProps, EditScheduleTableStates> {
@@ -17,7 +27,6 @@ class EditScheduleTable extends React.Component<EditScheduleTableProps, EditSche
 	constructor(props: EditScheduleTableProps) {
 		super(props);
 		this.state = {
-			tutor: this.props.tutor,
 			selectedTime: [],
 			selectedHours: null,
 			timeIndexes: [],
@@ -30,11 +39,6 @@ class EditScheduleTable extends React.Component<EditScheduleTableProps, EditSche
 		this.handleKeyDown = this.handleOnKey('down').bind(this);
 		this.handleKeyUp = this.handleOnKey('up').bind(this);
 	}
-
-	// shouldComponentUpdate(nextState: any) {
-	// 	if (this.state.selectedTime === nextState.selectedTime) return false;
-	// 	return true;
-	// }
 
 	componentDidMount() {
 		document.addEventListener('keydown', this.handleKeyDown);
@@ -53,7 +57,7 @@ class EditScheduleTable extends React.Component<EditScheduleTableProps, EditSche
 			this.setState({ toggleSelectShift: behavior === 'down' ? true : false, toggleSelectCtrl: false });
 	};
 
-	selectTimes(hour: Time) {
+	selectTimes = (hour: Time) => () => {
 		const index = data.findIndex((hr) => hr.order === hour.order);
 		const { toggleSelectShift, selectedTime } = this.state;
 
@@ -116,7 +120,7 @@ class EditScheduleTable extends React.Component<EditScheduleTableProps, EditSche
 				);
 			}
 		} else {
-			if (selectedTime.length === 0 || selectedTime[0].time !== data[index].time) {
+			if (selectedTime.length === 0 || selectedTime[0].time !== data[index].time || selectedTime.length > 2) {
 				this.setState(
 					{
 						selectedTime:
@@ -131,10 +135,10 @@ class EditScheduleTable extends React.Component<EditScheduleTableProps, EditSche
 				this.setState({ selectedTime: [], timeIndexes: [], selectedHours: null });
 			}
 		}
-	}
+	};
 
-	onAddHours(dayOfWeek: number) {
-		const work_schedule = [ ...this.state.tutor!.work_schedule ];
+	onAddHours = (dayOfWeek: number) => () => {
+		const work_schedule = [ ...this.props.selected!.work_schedule ];
 		const { selectedHours } = this.state;
 
 		const isOverlapped = (time1: Schedule, time2: Schedule) => {
@@ -194,48 +198,44 @@ class EditScheduleTable extends React.Component<EditScheduleTableProps, EditSche
 
 			work_schedule[dayOfWeek] = filtered as Schedule[];
 
-			const tutor = { ...this.state.tutor!, work_schedule: work_schedule as [Schedule[]] };
-			this.setState({ tutor, selectedHours: null, selectedTime: [] });
+			const tutor = { ...this.props.selected!, work_schedule: work_schedule as [Schedule[]] };
+
+			this.props.selectAndUpdateTutor(tutor);
+
+			this.setState({ selectedHours: null, selectedTime: [] });
 		}
-	}
-
-	onDeleteSchedules = (day: number, schedules: Schedule[]) => {
-		const work_schedule = [ ...this.state.tutor!.work_schedule ];
-		const newWorkSchedule = work_schedule[day].filter((sch) => !contains(schedules, sch, 'from', 'order'));
-		work_schedule[day] = newWorkSchedule;
-		const tutor = { ...this.state.tutor!, work_schedule: work_schedule as [Schedule[]] };
-
-		this.setState({ tutor });
 	};
 
-	render() {
-		// console.log('main rendered');
+	onDeleteSchedules = (day: number, schedules: Schedule[]) => {
+		const work_schedule = [ ...this.props.selected!.work_schedule ];
+		const newWorkSchedule = work_schedule[day].filter((sch) => !contains(schedules, sch, 'from', 'order'));
+		work_schedule[day] = newWorkSchedule;
+		const tutor = { ...this.props.selected!, work_schedule: work_schedule as [Schedule[]] };
+		this.props.selectAndUpdateTutor(tutor);
+	};
+
+	handleUpdate = () => {
+		if (this.props.selected) {
+			const { selected, data, close } = this.props;
+			this.props.updateTutor(selected, data).then(() => close()).catch((err) => alert(err.message));
+		}
+	};
+
+	_renderTables = () => {
 		const columns = {
 			hourPickingColumns: [
 				{
 					Header: 'Hours',
 					accessor: 'time'
 				}
-			],
-			scheduleColumns: [
-				{
-					id: 'fromTime',
-					Header: 'From',
-					accessor: (d: any) => d.from.time
-				},
-				{
-					id: 'toTime',
-					Header: 'To',
-					accessor: (d: any) => d.to.time
-				}
 			]
 		};
-
-		if (this.state.tutor) {
-			const { selectedTime, tutor } = this.state;
+		if (this.props.selected) {
+			const { selectedTime, toggleSelectCtrl, toggleSelectShift } = this.state;
+			const { selected } = this.props;
 			return (
 				<div>
-					<h1>{tutor.first_name}</h1>
+					<h1>{selected.first_name}</h1>
 					<div className={styles.tableContainer}>
 						<ReactTable
 							className={styles.hourPickingTable}
@@ -244,12 +244,11 @@ class EditScheduleTable extends React.Component<EditScheduleTableProps, EditSche
 							columns={columns.hourPickingColumns}
 							showPagination={false}
 							sortable={false}
-							NoDataComponent={() => null}
 							getTrProps={(_: any, rowInfo: any) => {
 								if (rowInfo && rowInfo.row) {
 									const hour = rowInfo.original as Time;
 									return {
-										onClick: this.selectTimes.bind(this, hour),
+										onClick: this.selectTimes(hour),
 										style: {
 											background: contains(selectedTime, hour, 'order') ? '#00afec' : 'none',
 											color: contains(selectedTime, hour, 'order') ? 'white' : 'black'
@@ -261,19 +260,29 @@ class EditScheduleTable extends React.Component<EditScheduleTableProps, EditSche
 							}}
 						/>
 						<DayTables
-							schedules={tutor.work_schedule}
-							onAddHours={this.onAddHours.bind(this)}
-							toggleSelectCtrl={this.state.toggleSelectCtrl}
-							toggleSelectShift={this.state.toggleSelectShift}
-							isPickingTime={this.state.selectedTime.length !== 0}
-							onDeleteSchedules={this.onDeleteSchedules.bind(this)}
+							schedules={selected.work_schedule}
+							onAddHours={this.onAddHours}
+							toggleSelectCtrl={toggleSelectCtrl}
+							toggleSelectShift={toggleSelectShift}
+							isPickingTime={selectedTime.length !== 0}
+							onDeleteSchedules={this.onDeleteSchedules}
 						/>
+						<Button label="Save" onClick={this.handleUpdate} />
 					</div>
 				</div>
 			);
 		}
 		return null;
+	};
+
+	render() {
+		return this._renderTables();
 	}
 }
 
-export default EditScheduleTable;
+const mapStateToProps = (state: any) => ({
+	selected: state.tutor.data.selectedTutor,
+	data: state.tutor.data.tutors
+});
+
+export default connect(mapStateToProps, { selectAndUpdateTutor, updateTutor })(EditScheduleTable);

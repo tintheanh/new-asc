@@ -1,11 +1,14 @@
 import { Tutor, Schedule, Time } from 'config';
 
 export interface EditScheduleTableProps {
-	tutor: Tutor | null;
+	data: Tutor[];
+	selected: Tutor | null;
+	selectAndUpdateTutor: any;
+	updateTutor: (tutor: Tutor, tutors: Tutor[]) => Promise<void>;
+	close: () => void;
 }
 
 export interface EditScheduleTableStates {
-	tutor: Tutor | null;
 	selectedTime: Time[];
 	selectedHours: Schedule | null;
 	timeIndexes: number[];

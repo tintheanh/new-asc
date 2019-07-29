@@ -1,13 +1,16 @@
 import { Tutor } from 'redux/store/tutor/types';
 
 export interface TutorFormProps {
-	disable: boolean;
 	selected: Tutor | null;
-	toggleEdit: () => void;
-	onTextChange: {
-		updateBasicInfo: (key: string) => (e: React.ChangeEvent<HTMLInputElement>) => void;
-	};
+	toggleAdd: boolean;
+	data: Tutor[];
+	selectAndUpdateTutor: (tutor: Tutor) => void;
+	resetTutor: (uid: string, tutors: Tutor[]) => void;
+	updateTutor: (tutor: Tutor, tutors: Tutor[]) => Promise<void>;
+	toggleAddTutor: (on: boolean) => void;
+	addTutor: (tutor: Tutor, tutors: Tutor[]) => Promise<void>;
+}
 
-	toggleCancel: () => void;
-	handleSubmit: (event: React.FormEvent) => void;
+export interface TutorFormStates {
+	edit: boolean;
 }

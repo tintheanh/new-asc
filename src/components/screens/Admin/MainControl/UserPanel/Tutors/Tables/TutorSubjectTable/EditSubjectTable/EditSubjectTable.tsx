@@ -1,17 +1,23 @@
+// Dependencies
 import * as React from 'react';
 import ReactTable from 'react-table';
 import { connect } from 'react-redux';
 
+// Props/State types & additional type(s)
 import { EditSubjectTableProps, EditSubjectTableStates } from './props';
+import { Subject } from 'config';
 
+// Common & additional component(s)
 import { Button } from 'components/common';
 
-import { Subject } from 'redux/store/subject/types';
-
+// Util(s)
 import { contains } from 'utils/functions';
 
+// Action(s)
 import { fetchAllSubjects } from 'redux/store/subject/actions';
+import { selectAndUpdateTutor, updateTutor } from 'redux/store/tutor/actions';
 
+// Styles
 import styles from './styles.module.css';
 
 class EditSubjectTable extends React.Component<EditSubjectTableProps, EditSubjectTableStates> {
@@ -22,7 +28,6 @@ class EditSubjectTable extends React.Component<EditSubjectTableProps, EditSubjec
 		this.state = {
 			toggleSelectCtrl: false,
 			toggleSelectShift: false,
-			subjects: [],
 			removedSubjects: [],
 			addedSubjects: [],
 			removedSubjectIndexes: [],
@@ -34,17 +39,6 @@ class EditSubjectTable extends React.Component<EditSubjectTableProps, EditSubjec
 		this.handleKeyDown = this.handleOnKey('down').bind(this);
 		this.handleKeyUp = this.handleOnKey('up').bind(this);
 	}
-
-	static getDerivedStateFromProps(props: any, state: any) {
-		if (state.subjects !== props.subjects) {
-			return { subjects: props.subjects };
-		}
-		return null;
-	}
-
-	preprocessSubjects = () => {
-		return this.state.subjects.filter((sj) => !contains(this.props.tutorSubjects, sj, 'id'));
-	};
 
 	componentDidMount() {
 		document.addEventListener('keydown', this.handleKeyDown);
@@ -65,9 +59,10 @@ class EditSubjectTable extends React.Component<EditSubjectTableProps, EditSubjec
 			this.setState({ toggleSelectShift: behavior === 'down' ? true : false, toggleSelectCtrl: false });
 	};
 
-	selectSubjects(key: string, indexKey: string, subject: Subject) {
-		const { subjects, toggleSelectCtrl, toggleSelectShift } = this.state;
-		const index = subjects.findIndex((sj) => sj.id === subject.id);
+	selectSubjects = (key: string, indexKey: string, subject: Subject) => () => {
+		const { toggleSelectCtrl, toggleSelectShift } = this.state;
+		const { subjects } = this.props;
+		const index = subjects.findIndex((sj: any) => sj.id === subject.id);
 
 		if (key === 'addedSubjects') this.setState({ removedSubjects: [] });
 		else this.setState({ addedSubjects: [] });
@@ -138,31 +133,68 @@ class EditSubjectTable extends React.Component<EditSubjectTableProps, EditSubjec
 				this.setState({ [key]: [], [indexKey]: [] });
 			}
 		}
-	}
+	};
 
-	onSending = (type: 'add' | 'remove') => {
+	onSending = (type: 'add' | 'remove') => () => {
 		if (type === 'add') {
-			this.props.onUpdate(this.state.addedSubjects, type);
+			this.setSubjects(this.state.addedSubjects, type);
 			this.setState({ addedSubjects: [], addedSubjectIndexes: [] });
 		} else {
-			this.props.onUpdate(this.state.removedSubjects, type);
+			this.setSubjects(this.state.removedSubjects, type);
 			this.setState({ removedSubjects: [], removedSubjectIndexes: [] });
 		}
 	};
 
-	onSendingDoubleClick = (type: 'add' | 'remove', subject: Subject) => {
-		this.props.onUpdate([ subject ], type);
+	onSendingDoubleClick = (type: 'add' | 'remove', subject: Subject) => () => {
+		this.setSubjects([ subject ], type);
 		if (type === 'add') {
 			this.setState({ addedSubjects: [], addedSubjectIndexes: [] });
 		} else {
 			this.setState({ removedSubjects: [], removedSubjectIndexes: [] });
+		}
+	};
+
+	setSubjects = (subjects: Subject[], type: 'add' | 'remove') => {
+		const { selected } = this.props;
+		if (selected) {
+			switch (type) {
+				case 'add': {
+					const existingSubjects = [ ...selected.subjects ];
+					for (const subject of subjects) {
+						if (!contains(existingSubjects, subject, 'id')) existingSubjects.push(subject);
+					}
+					const tutor = { ...selected, subjects: existingSubjects };
+					// const index = this.props.data.findIndex(tt => tt.uid === tutor.uid);
+
+					this.props.selectAndUpdateTutor(tutor);
+					break;
+				}
+				case 'remove': {
+					const newSubjects = selected.subjects.filter((sj: Subject) => !contains(subjects, sj, 'id'));
+					const tutor = { ...selected, subjects: newSubjects };
+					this.props.selectAndUpdateTutor(tutor);
+					break;
+				}
+				default:
+					break;
+			}
+		}
+	};
+
+	_preprocessSubjects = () => {
+		return this.props.subjects.filter((sj) => !contains(this.props.selected.subjects, sj, 'id'));
+	};
+
+	handleUpdate = () => {
+		if (this.props.selected) {
+			const { selected, data, close } = this.props;
+			this.props.updateTutor(selected, data).then(() => close()).catch((err) => alert(err.message));
 		}
 	};
 
 	render() {
-		// console.log(this.state.selectedSubjects);
-		// console.log(this.props.tutorSubjects);
-		if (this.state.subjects.length && this.props.tutorSubjects) {
+		// console.log(this.props.data);
+		if (this.props.subjects.length && this.props.selected) {
 			const { removedSubjects, addedSubjects } = this.state;
 
 			const columns = [
@@ -180,7 +212,7 @@ class EditSubjectTable extends React.Component<EditSubjectTableProps, EditSubjec
 				<div className={styles.container}>
 					<ReactTable
 						className={styles.table}
-						data={this.props.tutorSubjects}
+						data={this.props.selected.subjects}
 						columns={columns}
 						showPagination={false}
 						sortable={false}
@@ -195,13 +227,8 @@ class EditSubjectTable extends React.Component<EditSubjectTableProps, EditSubjec
 							if (rowInfo && rowInfo.row) {
 								const subject = rowInfo.original as Subject;
 								return {
-									onClick: this.selectSubjects.bind(
-										this,
-										'removedSubjects',
-										'removedSubjectIndexes',
-										subject
-									),
-									onDoubleClick: this.onSendingDoubleClick.bind(this, 'remove', subject),
+									onClick: this.selectSubjects('removedSubjects', 'removedSubjectIndexes', subject),
+									onDoubleClick: this.onSendingDoubleClick('remove', subject),
 									style: {
 										background: contains(removedSubjects, subject, 'id') ? '#00afec' : 'none',
 										color: contains(removedSubjects, subject, 'id') ? 'white' : 'black'
@@ -212,19 +239,11 @@ class EditSubjectTable extends React.Component<EditSubjectTableProps, EditSubjec
 							}
 						}}
 					/>
-					<Button
-						disabled={addedSubjects.length === 0}
-						label="Up"
-						onClick={this.onSending.bind(this, 'add')}
-					/>
-					<Button
-						disabled={removedSubjects.length === 0}
-						label="Down"
-						onClick={this.onSending.bind(this, 'remove')}
-					/>
+					<Button disabled={addedSubjects.length === 0} label="Up" onClick={this.onSending('add')} />
+					<Button disabled={removedSubjects.length === 0} label="Down" onClick={this.onSending('remove')} />
 					<ReactTable
 						className={styles.table}
-						data={this.preprocessSubjects()}
+						data={this._preprocessSubjects()}
 						columns={columns}
 						showPagination={false}
 						sortable={false}
@@ -239,13 +258,8 @@ class EditSubjectTable extends React.Component<EditSubjectTableProps, EditSubjec
 							if (rowInfo && rowInfo.row) {
 								const subject = rowInfo.original as Subject;
 								return {
-									onClick: this.selectSubjects.bind(
-										this,
-										'addedSubjects',
-										'addedSubjectIndexes',
-										subject
-									),
-									onDoubleClick: this.onSendingDoubleClick.bind(this, 'add', subject),
+									onClick: this.selectSubjects('addedSubjects', 'addedSubjectIndexes', subject),
+									onDoubleClick: this.onSendingDoubleClick('add', subject),
 									style: {
 										background: contains(addedSubjects, subject, 'id') ? '#00afec' : 'none',
 										color: contains(addedSubjects, subject, 'id') ? 'white' : 'black'
@@ -256,6 +270,7 @@ class EditSubjectTable extends React.Component<EditSubjectTableProps, EditSubjec
 							}
 						}}
 					/>
+					<Button label="Save" onClick={this.handleUpdate} />
 				</div>
 			);
 		}
@@ -264,7 +279,9 @@ class EditSubjectTable extends React.Component<EditSubjectTableProps, EditSubjec
 }
 
 const mapStateToProps = (state: any) => ({
-	subjects: state.subject.subjects
+	data: state.tutor.data.tutors,
+	subjects: state.subject.subjects,
+	selected: state.tutor.data.selectedTutor
 });
 
-export default connect(mapStateToProps, { fetchAllSubjects })(EditSubjectTable);
+export default connect(mapStateToProps, { selectAndUpdateTutor, fetchAllSubjects, updateTutor })(EditSubjectTable);

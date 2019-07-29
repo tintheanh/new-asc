@@ -1,60 +1,102 @@
+// Dependencies
 import * as React from 'react';
+import { connect } from 'react-redux';
 import ReactTable from 'react-table';
-import { TutorTableProps } from './props';
 
-const TutorTable: React.SFC<TutorTableProps> = (props) => {
-	const columns = [
-		{
-			Header: 'First Name',
-			accessor: 'first_name'
-		},
-		{
-			Header: 'Last Name',
-			accessor: 'last_name'
-		},
-		{
-			id: 'active',
-			Header: 'Active',
-			accessor: (d: { active: boolean }) => (d.active ? 'Yes' : 'No')
+// Props/State types & additional type(s)
+import { TutorTableProps, TutorTableStates } from './props';
+import { Tutor } from 'config';
+
+// Common & additional component(s)
+import { Checkbox } from 'components/common';
+
+// Action(s)
+import { selectAndUpdateTutor } from 'redux/store/tutor/actions';
+
+class TutorTable extends React.Component<TutorTableProps, TutorTableStates> {
+	state = { hideInactive: false };
+
+	setInactive = (event: React.ChangeEvent<HTMLInputElement>) => {
+		this.setState({ hideInactive: event.target.checked });
+	};
+
+	performSelectTutor = (tutor: Tutor) => () => this.props.selectAndUpdateTutor(tutor);
+
+	_processTutorArray = () => {
+		if (this.state.hideInactive) {
+			return this.props.data.filter((tutor) => tutor.active);
 		}
-	];
-	const { tutors, selectTutor, selected } = props;
-	return (
-		<ReactTable
-			style={{ width: '100%', height: '100%' }}
-			data={tutors}
-			columns={columns}
-			showPagination={false}
-			defaultSorted={[
-				{
-					id: 'fist_name',
-					desc: true
-				},
-				{
-					id: 'last_name',
-					desc: true
-				}
-			]}
-			getTrProps={(_: any, rowInfo: any) => {
-				if (rowInfo && rowInfo.row) {
-					if (selected) {
-						return {
-							onClick: () => selectTutor(rowInfo),
-							style: {
-								background: rowInfo.original.uid === selected.uid ? '#00afec' : 'none',
-								color: rowInfo.original.uid === selected.uid ? 'white' : 'black'
-							}
-						};
-					}
-					return {
-						onClick: () => selectTutor(rowInfo)
-					};
-				} else {
-					return {};
-				}
-			}}
-		/>
-	);
-};
+		return this.props.data;
+	};
 
-export default TutorTable;
+	render() {
+		const columns = [
+			{
+				Header: 'First Name',
+				accessor: 'first_name'
+			},
+			{
+				Header: 'Last Name',
+				accessor: 'last_name'
+			},
+			{
+				id: 'active',
+				Header: 'Active',
+				accessor: (d: { active: boolean }) => (d.active ? 'Yes' : 'No')
+			}
+		];
+		const { selected } = this.props;
+		const expandFull = { width: '100%', height: '100%' };
+		return (
+			<div style={expandFull}>
+				<ReactTable
+					style={expandFull}
+					data={this._processTutorArray()}
+					columns={columns}
+					showPagination={false}
+					defaultSorted={[
+						{
+							id: 'fist_name',
+							desc: true
+						},
+						{
+							id: 'last_name',
+							desc: true
+						}
+					]}
+					getTrProps={(_: any, rowInfo: any) => {
+						if (rowInfo && rowInfo.row) {
+							const tutor = rowInfo.original as Tutor;
+							if (selected) {
+								return {
+									onClick: this.performSelectTutor(tutor),
+									style: {
+										background: rowInfo.original.uid === selected.uid ? '#00afec' : 'none',
+										color: rowInfo.original.uid === selected.uid ? 'white' : 'black'
+									}
+								};
+							}
+							return {
+								onClick: this.performSelectTutor(tutor)
+							};
+						} else {
+							return {};
+						}
+					}}
+				/>
+				<Checkbox
+					checked={this.state.hideInactive}
+					onChange={this.setInactive}
+					labelText="Hide inactive tutors"
+				/>
+			</div>
+		);
+	}
+}
+
+const mapStateToProps = (state: any) => ({
+	selected: state.tutor.data.selectedTutor,
+	data: state.tutor.data.tutors
+});
+
+export default connect(mapStateToProps, { selectAndUpdateTutor })(TutorTable);

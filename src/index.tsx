@@ -12,8 +12,6 @@ import { createBrowserHistory } from 'history';
 import 'react-table/react-table.css';
 import 'react-datepicker/dist/react-datepicker.css';
 
-const history = createBrowserHistory();
-
 const firebaseConfig = {
 	apiKey: APIKEY,
 	authDomain: AUTHDOMAIN,

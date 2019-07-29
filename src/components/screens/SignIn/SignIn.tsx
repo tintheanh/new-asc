@@ -4,13 +4,7 @@ import { Header, InputField, Modal } from 'components/common';
 import logo from './mission-logo.png';
 import styles from './styles.module.css';
 import { SignInProps, SignInStates } from './props';
-import {
-	loginAndFetchTutor,
-	logoutAndClearTutor,
-	tutorClockIn,
-	tutorClockOut,
-	clearError
-} from 'redux/store/tutor/actions';
+import { loginAndFetchTutor, logoutAndClearTutor, tutorClockIn, tutorClockOut, clear } from 'redux/store/tutor/actions';
 import DatePickerForWorkTrack from './DatePickerForWorkTrack/DatePickerForWorkTrack';
 
 const ipcRenderer = (window as any).ipcRenderer;
@@ -126,9 +120,9 @@ class SignIn extends React.Component<SignInProps, SignInStates> {
 		if (this.props.error) {
 			const result = window.confirm(this.props.error);
 			if (result) {
-				this.props.clearError();
+				this.props.clear();
 			} else {
-				this.props.clearError();
+				this.props.clear();
 			}
 		}
 		const { time, tutorID, mainModalShow, datePickerModalShow } = this.state;
@@ -177,5 +171,5 @@ export default connect(mapStateToProps, {
 	logoutAndClearTutor,
 	tutorClockIn,
 	tutorClockOut,
-	clearError
+	clear
 })(SignIn);

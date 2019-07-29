@@ -1,6 +1,6 @@
 import { fbdb, fsdb, auth } from 'index';
-import { TutorActionTypes, Tutor, ActionPayload } from './types';
-import { getEpochOfDate, getEpochOfTime } from 'utils/functions';
+import { TutorActionTypes, Tutor, ActionPayload, empty } from './types';
+import { getEpochOfDate, getEpochOfTime, preprocessWorkScheduleBeforeUpdate } from 'utils/functions';
 
 const fetchTutor = (uid: string): Promise<Tutor> => {
 	return new Promise(async (resolve, reject) => {
@@ -77,7 +77,9 @@ export const fetchAllTutors = () => async (dispatch: (arg: ActionPayload) => voi
 			payload: {
 				data: {
 					tutor: null,
-					tutors
+					tutors,
+					selectedTutor: null,
+					toggleAdd: false
 				},
 				error: ''
 			}
@@ -88,7 +90,9 @@ export const fetchAllTutors = () => async (dispatch: (arg: ActionPayload) => voi
 			payload: {
 				data: {
 					tutor: null,
-					tutors: null
+					tutors: [],
+					selectedTutor: null,
+					toggleAdd: false
 				},
 				error: err.message
 			}
@@ -108,7 +112,9 @@ export const loginAndFetchTutor = (uid: string) => (dispatch: (arg: ActionPayloa
 						payload: {
 							data: {
 								tutor,
-								tutors: null
+								tutors: [],
+								selectedTutor: null,
+								toggleAdd: false
 							},
 							error: ''
 						}
@@ -120,7 +126,9 @@ export const loginAndFetchTutor = (uid: string) => (dispatch: (arg: ActionPayloa
 						payload: {
 							data: {
 								tutor: null,
-								tutors: null
+								tutors: [],
+								selectedTutor: null,
+								toggleAdd: false
 							},
 							error: err.message
 						}
@@ -134,7 +142,9 @@ export const loginAndFetchTutor = (uid: string) => (dispatch: (arg: ActionPayloa
 					payload: {
 						data: {
 							tutor: null,
-							tutors: null
+							tutors: [],
+							selectedTutor: null,
+							toggleAdd: false
 						},
 						error: err.message
 					}
@@ -160,7 +170,9 @@ export const tutorClockIn = (tutor: Tutor) => (dispatch: (arg: ActionPayload) =>
 				payload: {
 					data: {
 						tutor: updatedTutor,
-						tutors: null
+						tutors: [],
+						selectedTutor: null,
+						toggleAdd: false
 					},
 					error: ''
 				}
@@ -172,7 +184,9 @@ export const tutorClockIn = (tutor: Tutor) => (dispatch: (arg: ActionPayload) =>
 				payload: {
 					data: {
 						tutor: null,
-						tutors: null
+						tutors: [],
+						selectedTutor: null,
+						toggleAdd: false
 					},
 					error: err.message
 				}
@@ -208,7 +222,9 @@ export const tutorClockOut = (uid: string, inTime: number) => (dispatch: (arg: A
 							payload: {
 								data: {
 									tutor,
-									tutors: null
+									tutors: [],
+									selectedTutor: null,
+									toggleAdd: false
 								},
 								error: ''
 							}
@@ -220,7 +236,9 @@ export const tutorClockOut = (uid: string, inTime: number) => (dispatch: (arg: A
 							payload: {
 								data: {
 									tutor: null,
-									tutors: null
+									tutors: [],
+									selectedTutor: null,
+									toggleAdd: false
 								},
 								error: err.message
 							}
@@ -233,7 +251,9 @@ export const tutorClockOut = (uid: string, inTime: number) => (dispatch: (arg: A
 					payload: {
 						data: {
 							tutor: null,
-							tutors: null
+							tutors: [],
+							selectedTutor: null,
+							toggleAdd: false
 						},
 						error: err.message
 					}
@@ -255,7 +275,9 @@ export const tutorClockOut = (uid: string, inTime: number) => (dispatch: (arg: A
 					payload: {
 						data: {
 							tutor,
-							tutors: null
+							tutors: [],
+							selectedTutor: null,
+							toggleAdd: false
 						},
 						error: 'Invalid. Your time interval is greater than 8 hours. Will not be counted in the system.'
 					}
@@ -267,7 +289,9 @@ export const tutorClockOut = (uid: string, inTime: number) => (dispatch: (arg: A
 					payload: {
 						data: {
 							tutor: null,
-							tutors: null
+							tutors: [],
+							selectedTutor: null,
+							toggleAdd: false
 						},
 						error: err.message
 					}
@@ -285,7 +309,9 @@ export const logoutAndClearTutor = () => (dispatch: (arg: ActionPayload) => void
 				payload: {
 					data: {
 						tutor: null,
-						tutors: null
+						tutors: [],
+						selectedTutor: null,
+						toggleAdd: false
 					},
 					error: ''
 				}
@@ -297,7 +323,9 @@ export const logoutAndClearTutor = () => (dispatch: (arg: ActionPayload) => void
 				payload: {
 					data: {
 						tutor: null,
-						tutors: null
+						tutors: [],
+						selectedTutor: null,
+						toggleAdd: false
 					},
 					error: err.message
 				}
@@ -305,31 +333,125 @@ export const logoutAndClearTutor = () => (dispatch: (arg: ActionPayload) => void
 		});
 };
 
-export const updateTutor = (tutor: Tutor) => (dispatch: (arg: ActionPayload) => void): Promise<void> => {
-	const subjects: string[] = tutor.subjects.map((e) => e.id);
-	const update = {
-		active: tutor.active,
-		email: tutor.email,
-		first_name: tutor.first_name,
-		is_admin: tutor.is_admin,
-		last_name: tutor.last_name,
-		off_time: tutor.off_time,
-		staff_id: tutor.staff_id,
-		subjects,
-		work_schedule: tutor.work_schedule
+export const addTutor = (tutor: Tutor, tutors: Tutor[]) => (dispatch: (arg: ActionPayload) => void): Promise<void> => {
+	const updateWorkSchedule = preprocessWorkScheduleBeforeUpdate(tutor.work_schedule);
+	const subjects = tutor.subjects.map((e) => e.id);
+	const latest = { ...tutor, subjects, work_schedule: updateWorkSchedule };
+
+	const { current_log, work_track, appointments, uid, ...forFs } = latest;
+	const forFb = {
+		current_log,
+		work_track,
+		appointments
 	};
+
+	return new Promise(async (resolve, reject) => {
+		try {
+			const userData = await auth.createUserWithEmailAndPassword(`${tutor.staff_id}@asc.com`, 'asc1234');
+			if (userData && userData.user) {
+				const uid = userData.user.uid;
+				const clone = { ...tutor };
+				clone.uid = uid;
+				tutors.push(clone);
+				fsdb
+					.collection('tutors')
+					.doc(uid)
+					.set(forFs)
+					.then(() => {
+						fbdb
+							.ref(`tutors/${uid}`)
+							.set(forFb)
+							.then(() => {
+								dispatch({
+									type: TutorActionTypes.ADD_SUCCESS,
+									payload: {
+										data: {
+											tutor: null,
+											tutors,
+											selectedTutor: null,
+											toggleAdd: false
+										},
+										error: ''
+									}
+								});
+								resolve();
+							})
+							.catch((err) => {
+								dispatch({
+									type: TutorActionTypes.ADD_FAILURE,
+									payload: {
+										data: {
+											tutor: null,
+											tutors: [],
+											selectedTutor: null,
+											toggleAdd: false
+										},
+										error: err.message
+									}
+								});
+								reject(err);
+							});
+					})
+					.catch((err) => {
+						dispatch({
+							type: TutorActionTypes.ADD_FAILURE,
+							payload: {
+								data: {
+									tutor: null,
+									tutors: [],
+									selectedTutor: null,
+									toggleAdd: false
+								},
+								error: err.message
+							}
+						});
+						reject(err);
+					});
+			}
+		} catch (err) {
+			dispatch({
+				type: TutorActionTypes.ADD_FAILURE,
+				payload: {
+					data: {
+						tutor: null,
+						tutors: [],
+						selectedTutor: null,
+						toggleAdd: false
+					},
+					error: err.message
+				}
+			});
+			reject(err);
+		}
+	});
+};
+
+export const updateTutor = (tutor: Tutor, tutors: Tutor[]) => (
+	dispatch: (arg: ActionPayload) => void
+): Promise<void> => {
+	const updateWorkSchedule = preprocessWorkScheduleBeforeUpdate(tutor.work_schedule);
+	const subjects = tutor.subjects.map((e) => e.id);
+	const latest = { ...tutor, subjects, work_schedule: updateWorkSchedule };
+
+	const { current_log, work_track, appointments, uid, ...update } = latest;
+
 	return new Promise((resolve, reject) => {
 		fsdb
 			.collection('tutors')
 			.doc(tutor.uid)
 			.update(update)
 			.then(() => {
+				const index = tutors.findIndex((tt) => tt.uid === latest.uid);
+				const all = [ ...tutors ];
+				all[index] = { ...latest, subjects: tutor.subjects, work_schedule: tutor.work_schedule };
 				dispatch({
 					type: TutorActionTypes.UPDATE_SUCCESS,
 					payload: {
 						data: {
 							tutor: null,
-							tutors: null
+							tutors: all,
+							selectedTutor: null,
+							toggleAdd: false
 						},
 						error: ''
 					}
@@ -342,7 +464,9 @@ export const updateTutor = (tutor: Tutor) => (dispatch: (arg: ActionPayload) => 
 					payload: {
 						data: {
 							tutor: null,
-							tutors: null
+							tutors: [],
+							selectedTutor: null,
+							toggleAdd: false
 						},
 						error: err.message
 					}
@@ -352,13 +476,61 @@ export const updateTutor = (tutor: Tutor) => (dispatch: (arg: ActionPayload) => 
 	});
 };
 
-export const clearError = () => (dispatch: (arg: ActionPayload) => void) => {
+export const clear = () => (dispatch: (arg: ActionPayload) => void) => {
 	dispatch({
-		type: TutorActionTypes.CLEAR_ERROR,
+		type: TutorActionTypes.CLEAR,
 		payload: {
 			data: {
 				tutor: null,
-				tutors: null
+				tutors: [],
+				selectedTutor: null,
+				toggleAdd: false
+			},
+			error: ''
+		}
+	});
+};
+
+export const selectAndUpdateTutor = (tutor: Tutor) => (dispatch: (arg: ActionPayload) => void) => {
+	dispatch({
+		type: TutorActionTypes.SELECT_AND_UPDATE_TUTOR,
+		payload: {
+			data: {
+				tutor: null,
+				tutors: [],
+				selectedTutor: tutor,
+				toggleAdd: false
+			},
+			error: ''
+		}
+	});
+};
+
+export const toggleAddTutor = (on: boolean) => (dispatch: (arg: ActionPayload) => void) => {
+	dispatch({
+		type: TutorActionTypes.TOGGLE_ADD,
+		payload: {
+			data: {
+				tutor: null,
+				tutors: [],
+				selectedTutor: empty,
+				toggleAdd: on
+			},
+			error: ''
+		}
+	});
+};
+
+export const resetTutor = (uid: string, data: Tutor[]) => (dispatch: (arg: ActionPayload) => void) => {
+	const oldTutor = data.filter((tutor) => tutor.uid === uid)[0];
+	dispatch({
+		type: TutorActionTypes.SELECT_AND_UPDATE_TUTOR,
+		payload: {
+			data: {
+				tutor: null,
+				tutors: [],
+				selectedTutor: oldTutor,
+				toggleAdd: false
 			},
 			error: ''
 		}

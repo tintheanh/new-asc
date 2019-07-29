@@ -1,12 +1,12 @@
 import { Schedule } from 'config';
 
 export interface DayTablesProps {
-	schedules: [Schedule[]];
+	schedules: Schedule[][];
 	isPickingTime: boolean;
 	toggleSelectCtrl: boolean;
 	toggleSelectShift: boolean;
 
-	onAddHours: (dayOfWeek: number) => void;
+	onAddHours: (dayOfWeek: number) => () => void;
 	onDeleteSchedules: (day: number, schedules: Schedule[]) => void;
 }
 

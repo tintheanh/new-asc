@@ -3,7 +3,9 @@ import { TutorActionTypes, TutorState, ActionPayload } from './types';
 const initialState = {
 	data: {
 		tutor: null,
-		tutors: null
+		tutors: [],
+		selectedTutor: null,
+		toggleAdd: false
 	},
 	error: ''
 };
@@ -15,7 +17,9 @@ const TutorReducer = (state: TutorState = initialState, action: ActionPayload): 
 				...state,
 				data: {
 					tutor: action.payload.data.tutor,
-					tutors: null
+					tutors: [],
+					selectedTutor: null,
+					toggleAdd: false
 				}
 			};
 		case TutorActionTypes.FETCH_ERROR:
@@ -32,7 +36,9 @@ const TutorReducer = (state: TutorState = initialState, action: ActionPayload): 
 				...state,
 				data: {
 					tutor: action.payload.data.tutor,
-					tutors: null
+					tutors: [],
+					selectedTutor: null,
+					toggleAdd: false
 				}
 			};
 		case TutorActionTypes.CLOCKIN_FAILURE:
@@ -47,7 +53,9 @@ const TutorReducer = (state: TutorState = initialState, action: ActionPayload): 
 				error: action.payload.error,
 				data: {
 					tutor: action.payload.data.tutor,
-					tutors: null
+					tutors: [],
+					selectedTutor: null,
+					toggleAdd: false
 				}
 			};
 		case TutorActionTypes.CLOCKOUT_FAILURE:
@@ -70,14 +78,60 @@ const TutorReducer = (state: TutorState = initialState, action: ActionPayload): 
 			};
 		case TutorActionTypes.UPDATE_SUCCESS:
 			return {
-				...state
+				...state,
+				data: {
+					...state.data,
+					tutors: action.payload.data.tutors
+				}
 			};
 		case TutorActionTypes.UPDATE_FAILURE:
 			return {
 				...state,
 				error: action.payload.error
 			};
-		case TutorActionTypes.CLEAR_ERROR:
+		case TutorActionTypes.CLEAR:
+			return {
+				...state,
+				data: {
+					...state.data,
+					selectedTutor: action.payload.data.selectedTutor
+				},
+				error: action.payload.error
+			};
+		case TutorActionTypes.SELECT_AND_UPDATE_TUTOR:
+			return {
+				...state,
+				data: {
+					...state.data,
+					selectedTutor: action.payload.data.selectedTutor
+				}
+			};
+		case TutorActionTypes.TOGGLE_ADD: {
+			if (action.payload.data.toggleAdd) {
+				return {
+					...state,
+					data: {
+						...state.data,
+						selectedTutor: action.payload.data.selectedTutor,
+						toggleAdd: action.payload.data.toggleAdd
+					}
+				};
+			}
+			return {
+				...state,
+				data: {
+					...state.data,
+					selectedTutor: null,
+					toggleAdd: action.payload.data.toggleAdd
+				}
+			};
+		}
+		case TutorActionTypes.ADD_SUCCESS:
+			return {
+				...state,
+				data: { ...state.data, tutors: action.payload.data.tutors }
+			};
+		case TutorActionTypes.ADD_FAILURE:
 			return {
 				...state,
 				error: action.payload.error

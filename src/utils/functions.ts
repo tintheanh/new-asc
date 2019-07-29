@@ -1,3 +1,5 @@
+import { Schedule } from 'config';
+
 export const getEpochOfTime = (d: Date): number => {
 	return Math.floor(d.getTime() / 1000);
 };
@@ -71,4 +73,20 @@ export const contains = (arr: any[] | null, obj: any, key: string, nestedKey?: s
 export const arraySort = (arr: any[] | null, property: string): any[] | [] => {
 	if (arr) return arr.sort((a, b) => (a[property] > b[property] ? 1 : b[property] > a[property] ? -1 : 0));
 	return [];
+};
+
+export const preprocessWorkScheduleBeforeUpdate = (work_schedule: Schedule[][]) => {
+	return work_schedule.map((sch) => {
+		if (sch.length) {
+			const each = sch.map((hr, i) => ({
+				[i]: {
+					from: { time: hr.from.time, order: hr.from.order },
+					to: { time: hr.to.time, order: hr.to.order }
+				}
+			}));
+			const newObj = Object.assign({}, ...each);
+			return newObj;
+		}
+		return null;
+	});
 };

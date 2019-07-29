@@ -7,7 +7,7 @@ export interface SignInProps {
 	tutorClockIn: (tutor: Tutor) => void;
 	tutorClockOut: (uid: string, inTime: number) => void;
 	logoutAndClearTutor: () => void;
-	clearError: () => void;
+	clear: () => void;
 	data: Tutor;
 	error?: string;
 
