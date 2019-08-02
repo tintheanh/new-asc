@@ -1,0 +1,10 @@
+.backBtn {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.studentTable {
+	width: 500px;
+	height: 60vh;
+}

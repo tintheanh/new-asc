@@ -1,11 +1,21 @@
+// Dependencies
 import * as React from 'react';
 import { connect } from 'react-redux';
+
+// Props/State types & additional type(s)
+import { SignInProps, SignInStates } from './props';
+
+// Common & additional component(s)
 import { Header, InputField, Modal } from 'components/common';
 import logo from './mission-logo.png';
-import styles from './styles.module.css';
-import { SignInProps, SignInStates } from './props';
-import { loginAndFetchTutor, logoutAndClearTutor, tutorClockIn, tutorClockOut, clear } from 'redux/store/tutor/actions';
 import DatePickerForWorkTrack from './DatePickerForWorkTrack/DatePickerForWorkTrack';
+import StudentRegister from './StudentRegister/StudentRegister';
+
+// Action(s)
+import { loginAndFetchTutor, logoutAndClearTutor, tutorClockIn, tutorClockOut, clear } from 'redux/store/tutor/action';
+
+// Styles
+import styles from './styles.module.css';
 
 const ipcRenderer = (window as any).ipcRenderer;
 
@@ -30,7 +40,8 @@ class SignIn extends React.Component<SignInProps, SignInStates> {
 			time: new Date().toLocaleDateString('us-US', dateOptions), // For realtime clock
 			mainModalShow: false, // Modal after successfully sign in
 			datePickerModalShow: false, // Date range picking modal
-			tutorID: '' // Sign-in ID
+			studentRegisterModalShow: false,
+			signInId: '' // Sign-in ID
 		};
 		this.intervalID = 0;
 	}
@@ -59,7 +70,7 @@ class SignIn extends React.Component<SignInProps, SignInStates> {
 	handleSubmit = (event: React.FormEvent): void => {
 		event.preventDefault();
 		this.props
-			.loginAndFetchTutor(this.state.tutorID)
+			.loginAndFetchTutor(this.state.signInId)
 			.then(() => {
 				if (this.props.data.is_admin) {
 					this.props.history.push('/admin');
@@ -67,9 +78,7 @@ class SignIn extends React.Component<SignInProps, SignInStates> {
 					this.handleModalChange('mainModalShow').open();
 				}
 			})
-			.catch((err: Error) => {
-				alert(err);
-			});
+			.catch((_: Error) => this.handleModalChange('studentRegisterModalShow').open());
 	};
 
 	handleModalChange = (key: string) => {
@@ -84,7 +93,7 @@ class SignIn extends React.Component<SignInProps, SignInStates> {
 	};
 
 	handleTextChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-		this.setState({ tutorID: e.target.value });
+		this.setState({ signInId: e.target.value });
 	};
 
 	openReportScreen(event: string): void {
@@ -117,15 +126,15 @@ class SignIn extends React.Component<SignInProps, SignInStates> {
 	render() {
 		// console.log(this.props.data);
 		// console.log(this.props.error);
-		if (this.props.error) {
-			const result = window.confirm(this.props.error);
-			if (result) {
-				this.props.clear();
-			} else {
-				this.props.clear();
-			}
-		}
-		const { time, tutorID, mainModalShow, datePickerModalShow } = this.state;
+		// if (this.props.error) {
+		// 	const result = window.confirm(this.props.error);
+		// 	if (result) {
+		// 		this.props.clear();
+		// 	} else {
+		// 		this.props.clear();
+		// 	}
+		// }
+		const { time, signInId, mainModalShow, datePickerModalShow, studentRegisterModalShow } = this.state;
 		return (
 			<div>
 				<Header title="Welcome" />
@@ -141,7 +150,7 @@ class SignIn extends React.Component<SignInProps, SignInStates> {
 						</p>
 					</div>
 					<form className={styles.formContainer} onSubmit={this.handleSubmit}>
-						<InputField type="text" autoFocus value={tutorID} onTextChange={this.handleTextChange} />
+						<InputField type="number" autoFocus value={signInId} onTextChange={this.handleTextChange} />
 						<button type="submit" value="submit">
 							Submit
 						</button>
@@ -150,10 +159,19 @@ class SignIn extends React.Component<SignInProps, SignInStates> {
 						<p>{time}</p>
 					</div>
 					<Modal width="60%" show={mainModalShow} close={this.handleModalChange('mainModalShow').close}>
-						{mainModalShow ? this.renderModalContent() : null}
+						{this.renderModalContent()}
 					</Modal>
 					<Modal show={datePickerModalShow} close={this.handleModalChange('datePickerModalShow').close}>
 						<DatePickerForWorkTrack />
+					</Modal>
+					<Modal
+						show={studentRegisterModalShow}
+						close={this.handleModalChange('studentRegisterModalShow').close}
+					>
+						<StudentRegister
+							signInId={signInId}
+							close={this.handleModalChange('studentRegisterModalShow').close}
+						/>
 					</Modal>
 				</div>
 			</div>

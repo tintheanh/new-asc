@@ -8,10 +8,10 @@ import { TutorSubjectTableProps, TutorSubjectTableStates } from './props';
 
 // Common & additional component(s)
 import { Button, Modal } from 'components/common';
-import { EditSubjectTable } from '../';
+import { EditTutorSubjectTable } from '../';
 
 // Action(s)
-import { resetTutor } from 'redux/store/tutor/actions';
+import { resetTutor } from 'redux/store/tutor/action';
 
 class TutorSubjectTable extends React.Component<TutorSubjectTableProps, TutorSubjectTableStates> {
 	state = { modalSubject: false };
@@ -52,6 +52,7 @@ class TutorSubjectTable extends React.Component<TutorSubjectTableProps, TutorSub
 					data={selected ? selected.subjects : []}
 					columns={columns}
 					showPagination={false}
+					NoDataComponent={() => null}
 					defaultSorted={[
 						{
 							id: 'label',
@@ -65,7 +66,7 @@ class TutorSubjectTable extends React.Component<TutorSubjectTableProps, TutorSub
 					onClick={this.handleModalChange().open}
 				/>
 				<Modal width="70%" show={modalSubject} close={this.handleModalChange().close}>
-					<EditSubjectTable close={this.handleModalChange().closeAfterSave} />
+					<EditTutorSubjectTable close={this.handleModalChange().closeAfterSave} />
 				</Modal>
 			</div>
 		);

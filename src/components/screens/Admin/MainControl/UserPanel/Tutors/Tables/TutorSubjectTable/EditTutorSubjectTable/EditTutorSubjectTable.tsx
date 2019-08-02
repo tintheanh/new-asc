@@ -4,7 +4,7 @@ import ReactTable from 'react-table';
 import { connect } from 'react-redux';
 
 // Props/State types & additional type(s)
-import { EditSubjectTableProps, EditSubjectTableStates } from './props';
+import { EditTutorSubjectTableProps, EditTutorSubjectTableStates } from './props';
 import { Subject } from 'config';
 
 // Common & additional component(s)
@@ -14,16 +14,16 @@ import { Button } from 'components/common';
 import { contains } from 'utils/functions';
 
 // Action(s)
-import { fetchAllSubjects } from 'redux/store/subject/actions';
-import { selectAndUpdateTutor, updateTutor } from 'redux/store/tutor/actions';
+import { fetchAllSubjects } from 'redux/store/subject/action';
+import { selectAndUpdateTutor, updateTutor } from 'redux/store/tutor/action';
 
 // Styles
 import styles from './styles.module.css';
 
-class EditSubjectTable extends React.Component<EditSubjectTableProps, EditSubjectTableStates> {
+class EditTutorSubjectTable extends React.Component<EditTutorSubjectTableProps, EditTutorSubjectTableStates> {
 	private handleKeyDown: any;
 	private handleKeyUp: any;
-	constructor(props: EditSubjectTableProps) {
+	constructor(props: EditTutorSubjectTableProps) {
 		super(props);
 		this.state = {
 			toggleSelectCtrl: false,
@@ -280,8 +280,8 @@ class EditSubjectTable extends React.Component<EditSubjectTableProps, EditSubjec
 
 const mapStateToProps = (state: any) => ({
 	data: state.tutor.data.tutors,
-	subjects: state.subject.subjects,
+	subjects: state.subject.data.subjects,
 	selected: state.tutor.data.selectedTutor
 });
 
-export default connect(mapStateToProps, { selectAndUpdateTutor, fetchAllSubjects, updateTutor })(EditSubjectTable);
+export default connect(mapStateToProps, { selectAndUpdateTutor, fetchAllSubjects, updateTutor })(EditTutorSubjectTable);

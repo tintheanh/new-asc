@@ -3,7 +3,7 @@ import { Tutor } from 'redux/store/tutor/types';
 
 export interface SignInProps {
 	// Application-level states
-	loginAndFetchTutor: (tutorID: string) => Promise;
+	loginAndFetchTutor: (signInId: string) => Promise;
 	tutorClockIn: (tutor: Tutor) => void;
 	tutorClockOut: (uid: string, inTime: number) => void;
 	logoutAndClearTutor: () => void;
@@ -20,6 +20,7 @@ export interface SignInStates {
 	time: string;
 	mainModalShow: boolean;
 	datePickerModalShow: boolean;
+	studentRegisterModalShow: boolean;
 	[stateKey: string]: boolean | string;
-	tutorID: string;
+	signInId: string;
 }

@@ -1,0 +1,16 @@
+.backBtn {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.subjectTable {
+	width: 500px;
+	height: 60vh;
+}
+
+.contentContainer {
+	display: grid;
+  grid-template-columns: auto auto;
+  padding: 24px;
+}

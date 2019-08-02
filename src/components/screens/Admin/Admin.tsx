@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Header } from 'components/common';
 import { connect } from 'react-redux';
-import { logoutAndClearTutor } from 'redux/store/tutor/actions';
+import { logoutAndClearTutor } from 'redux/store/tutor/action';
 import { AdminProps } from './props';
 import LeftMenu from './LeftMenu/LeftMenu';
 import MainControl from './MainControl/MainControl';

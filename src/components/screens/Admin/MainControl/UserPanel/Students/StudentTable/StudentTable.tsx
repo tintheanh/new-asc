@@ -4,40 +4,41 @@ import { connect } from 'react-redux';
 import ReactTable from 'react-table';
 
 // Props/State types & additional type(s)
-import { TutorTableProps, TutorTableStates } from './props';
-import { Tutor } from 'config';
+import { StudentTableProps, StudentTableStates } from './props';
+import { Student } from 'config';
 
 // Common & additional component(s)
 import { Checkbox } from 'components/common';
 
 // Action(s)
-import { selectAndUpdateTutor } from 'redux/store/tutor/action';
+import { selectAndUpdateStudent } from 'redux/store/student/action';
 
-class TutorTable extends React.Component<TutorTableProps, TutorTableStates> {
+class StudentTable extends React.Component<StudentTableProps, StudentTableStates> {
 	state = { hideInactive: false };
 
 	setInactive = (event: React.ChangeEvent<HTMLInputElement>) => {
 		this.setState({ hideInactive: event.target.checked });
 	};
 
-	performSelectTutor = (tutor: Tutor) => () => this.props.selectAndUpdateTutor(tutor);
+	performSelectStudent = (student: Student) => () => this.props.selectAndUpdateStudent(student);
 
-	_processTutorArray = () => {
+	_processStudentArray = () => {
 		if (this.state.hideInactive) {
-			return this.props.data.filter((tutor) => tutor.active);
+			return this.props.data.filter((student) => student.active);
 		}
 		return this.props.data;
 	};
-
 	render() {
 		const columns = [
 			{
-				Header: 'First Name',
-				accessor: 'first_name'
+				id: 'name',
+				Header: 'Student name',
+				accessor: (d: { first_name: string; last_name: string; active: boolean }) =>
+					`${d.first_name}, ${d.last_name}`
 			},
 			{
-				Header: 'Last Name',
-				accessor: 'last_name'
+				Header: 'Student ID',
+				accessor: 'studentId'
 			},
 			{
 				id: 'active',
@@ -46,30 +47,19 @@ class TutorTable extends React.Component<TutorTableProps, TutorTableStates> {
 			}
 		];
 		const { selected } = this.props;
-		const expandFull = { width: '100%', height: '100%' };
 		return (
-			<div style={expandFull}>
+			<div style={{ width: '100%', height: '100%' }}>
 				<ReactTable
-					style={expandFull}
-					data={this._processTutorArray()}
+					style={{ width: '100%', height: '100%' }}
+					data={this._processStudentArray()}
 					columns={columns}
 					showPagination={false}
-					defaultSorted={[
-						{
-							id: 'fist_name',
-							desc: true
-						},
-						{
-							id: 'last_name',
-							desc: true
-						}
-					]}
 					getTrProps={(_: any, rowInfo: any) => {
 						if (rowInfo && rowInfo.row) {
-							const tutor = rowInfo.original as Tutor;
+							const student = rowInfo.original as Student;
 							if (selected) {
 								return {
-									onClick: this.performSelectTutor(tutor),
+									onClick: this.performSelectStudent(student),
 									style: {
 										background: rowInfo.original.uid === selected.uid ? '#00afec' : 'none',
 										color: rowInfo.original.uid === selected.uid ? 'white' : 'black'
@@ -77,7 +67,7 @@ class TutorTable extends React.Component<TutorTableProps, TutorTableStates> {
 								};
 							}
 							return {
-								onClick: this.performSelectTutor(tutor)
+								onClick: this.performSelectStudent(student)
 							};
 						} else {
 							return {};
@@ -87,7 +77,7 @@ class TutorTable extends React.Component<TutorTableProps, TutorTableStates> {
 				<Checkbox
 					checked={this.state.hideInactive}
 					onChange={this.setInactive}
-					labelText="Hide inactive tutors"
+					labelText="Hide inactive students"
 				/>
 			</div>
 		);
@@ -95,8 +85,8 @@ class TutorTable extends React.Component<TutorTableProps, TutorTableStates> {
 }
 
 const mapStateToProps = (state: any) => ({
-	selected: state.tutor.data.selectedTutor,
-	data: state.tutor.data.tutors
+	data: state.student.data.students,
+	selected: state.student.data.selectedStudent
 });
 
-export default connect(mapStateToProps, { selectAndUpdateTutor })(TutorTable);
+export default connect(mapStateToProps, { selectAndUpdateStudent })(StudentTable);

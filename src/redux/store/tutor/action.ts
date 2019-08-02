@@ -1,4 +1,4 @@
-import { fbdb, fsdb, auth } from 'index';
+import { fbdb, fsdb, auth, functions } from 'index';
 import { TutorActionTypes, Tutor, ActionPayload, empty } from './types';
 import { getEpochOfDate, getEpochOfTime, preprocessWorkScheduleBeforeUpdate } from 'utils/functions';
 
@@ -35,7 +35,7 @@ const fetchTutor = (uid: string): Promise<Tutor> => {
 					}
 				);
 
-				const tutor: Tutor = {
+				const tutor = {
 					uid: doc.id,
 					staff_id: objFs!.staff_id,
 					active: objFs!.active,
@@ -46,7 +46,7 @@ const fetchTutor = (uid: string): Promise<Tutor> => {
 					subjects,
 					off_time: objFs!.off_time,
 					work_schedule,
-					appointments: objFb.appointments,
+					appointments: objFs!.appointments,
 					current_log: objFb.current_log,
 					work_track: objFb.work_track
 				};
@@ -338,18 +338,16 @@ export const addTutor = (tutor: Tutor, tutors: Tutor[]) => (dispatch: (arg: Acti
 	const subjects = tutor.subjects.map((e) => e.id);
 	const latest = { ...tutor, subjects, work_schedule: updateWorkSchedule };
 
-	const { current_log, work_track, appointments, uid, ...forFs } = latest;
+	const { current_log, work_track, uid, ...forFs } = latest;
 	const forFb = {
-		current_log,
-		work_track,
-		appointments
+		current_log
 	};
 
 	return new Promise(async (resolve, reject) => {
 		try {
 			const userData = await auth.createUserWithEmailAndPassword(`${tutor.staff_id}@asc.com`, 'asc1234');
 			if (userData && userData.user) {
-				const uid = userData.user.uid;
+				const { uid } = userData.user;
 				const clone = { ...tutor };
 				clone.uid = uid;
 				tutors.push(clone);
@@ -535,4 +533,77 @@ export const resetTutor = (uid: string, data: Tutor[]) => (dispatch: (arg: Actio
 			error: ''
 		}
 	});
+};
+
+export const deleteTutor = (uid: string, data: Tutor[]) => (dispatch: (arg: ActionPayload) => void) => {
+	const deleteFunc = functions.httpsCallable('deleteUser');
+	deleteFunc({ uid })
+		.then(() => {
+			fbdb
+				.ref(`tutors/${uid}`)
+				.remove()
+				.then(() => {
+					fsdb
+						.collection('tutors')
+						.doc(uid)
+						.delete()
+						.then(() => {
+							const newTutors = data.filter((tutor) => tutor.uid !== uid);
+							dispatch({
+								type: TutorActionTypes.DELETE_SUCCESS,
+								payload: {
+									data: {
+										tutor: null,
+										tutors: newTutors,
+										selectedTutor: null,
+										toggleAdd: false
+									},
+									error: ''
+								}
+							});
+						})
+						.catch((err) =>
+							dispatch({
+								type: TutorActionTypes.DELETE_FAILURE,
+								payload: {
+									data: {
+										tutor: null,
+										tutors: [],
+										selectedTutor: null,
+										toggleAdd: false
+									},
+									error: err.message
+								}
+							})
+						);
+				})
+				.catch((err) =>
+					dispatch({
+						type: TutorActionTypes.DELETE_FAILURE,
+						payload: {
+							data: {
+								tutor: null,
+								tutors: [],
+								selectedTutor: null,
+								toggleAdd: false
+							},
+							error: err.message
+						}
+					})
+				);
+		})
+		.catch((err) =>
+			dispatch({
+				type: TutorActionTypes.DELETE_FAILURE,
+				payload: {
+					data: {
+						tutor: null,
+						tutors: [],
+						selectedTutor: null,
+						toggleAdd: false
+					},
+					error: err.message
+				}
+			})
+		);
 };

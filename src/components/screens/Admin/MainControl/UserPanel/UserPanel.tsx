@@ -7,6 +7,7 @@ export const UserPanel = () => {
 			<h1>User Panel</h1>
 			<Link to="/admin/tutors">Tutors</Link>
 			<Link to="/admin/students">Student</Link>
+			<Link to="/admin/subjects">Subjects</Link>
 		</div>
 	);
 };

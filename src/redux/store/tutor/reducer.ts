@@ -136,6 +136,16 @@ const TutorReducer = (state: TutorState = initialState, action: ActionPayload): 
 				...state,
 				error: action.payload.error
 			};
+		case TutorActionTypes.DELETE_SUCCESS:
+			return {
+				...state,
+				data: { ...state.data, selectedTutor: action.payload.data.tutor, tutors: action.payload.data.tutors }
+			};
+		case TutorActionTypes.DELETE_FAILURE:
+			return {
+				...state,
+				error: action.payload.error
+			};
 		default:
 			return { ...state };
 	}

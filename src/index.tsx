@@ -4,11 +4,11 @@ import * as firebase from 'firebase/app';
 import 'firebase/database';
 import 'firebase/firestore';
 import 'firebase/auth';
+import 'firebase/functions';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { APIKEY, AUTHDOMAIN, DATABASEURL, PROJECTID, STORAGEBUCKET, MESSAGINGSENDERID, APPID } from './config';
-import { createBrowserHistory } from 'history';
 import 'react-table/react-table.css';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -27,6 +27,7 @@ firebase.initializeApp(firebaseConfig);
 export const auth = firebase.auth();
 export const fbdb = firebase.database();
 export const fsdb = firebase.firestore();
+export const functions = firebase.functions();
 
 ReactDOM.render(<App />, document.getElementById('root'));
 

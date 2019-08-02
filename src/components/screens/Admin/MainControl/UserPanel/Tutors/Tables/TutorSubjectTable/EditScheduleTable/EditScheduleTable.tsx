@@ -16,7 +16,7 @@ import { Button } from 'components/common';
 import { contains, arraySort } from 'utils/functions';
 
 // Action(s)
-import { selectAndUpdateTutor, updateTutor } from 'redux/store/tutor/actions';
+import { selectAndUpdateTutor, updateTutor } from 'redux/store/tutor/action';
 
 // Styles
 import styles from './styles.module.css';

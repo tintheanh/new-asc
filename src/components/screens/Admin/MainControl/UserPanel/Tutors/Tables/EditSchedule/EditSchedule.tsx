@@ -10,7 +10,7 @@ import { Button, Modal } from 'components/common';
 import { EditScheduleTable } from '../';
 
 // Action(s)
-import { resetTutor } from 'redux/store/tutor/actions';
+import { resetTutor } from 'redux/store/tutor/action';
 
 class EditSchedule extends React.Component<EditScheduleProps, EditScheduleStates> {
 	state = { modalSchedule: false };

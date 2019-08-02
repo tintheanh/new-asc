@@ -1,6 +1,6 @@
 import { Tutor, Subject } from 'redux/store/subject/types';
 
-export interface EditSubjectTableProps {
+export interface EditTutorSubjectTableProps {
 	subjects: Subject[];
 	selected: Tutor;
 	data: Tutor[];
@@ -10,7 +10,7 @@ export interface EditSubjectTableProps {
 	updateTutor: (tutor: Tutor, tutors: Tutor[]) => Promise<void>;
 }
 
-export interface EditSubjectTableStates {
+export interface EditTutorSubjectTableStates {
 	toggleSelectCtrl: boolean;
 	toggleSelectShift: boolean;
 	removedSubjects: Subject[];

@@ -18,6 +18,9 @@ export enum TutorActionTypes {
 	ADD_SUCCESS = '@@tutor/ADD_SUCCESS',
 	ADD_FAILURE = '@@tutor/ADD_FAILURE',
 
+	DELETE_SUCCESS = '@@tutor/DELETE_SUCCESS',
+	DELETE_FAILURE = '@@tutor/DELETE_FAILURE',
+
 	SELECT_AND_UPDATE_TUTOR = '@@tutor/SELECT_AND_UPDATE_TUTOR',
 
 	TOGGLE_ADD = '@@tutor/TOGGLE_ADD',
