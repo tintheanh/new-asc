@@ -27,8 +27,7 @@ export const empty = {
 	first_name: '',
 	last_name: '',
 	email: '',
-	active: false,
-	appointments: []
+	active: false
 };
 
 export interface Student {
@@ -38,7 +37,6 @@ export interface Student {
 	last_name: string;
 	email: string;
 	active: boolean;
-	appointments: string[];
 }
 
 export interface StudentState {

@@ -14,8 +14,7 @@ const fetchStudent = (uid: string): Promise<Student> => {
 					active: objFs!.active,
 					first_name: objFs!.first_name,
 					last_name: objFs!.last_name,
-					email: objFs!.email,
-					appointments: objFs!.appointments
+					email: objFs!.email
 				};
 				resolve(student);
 			} else {

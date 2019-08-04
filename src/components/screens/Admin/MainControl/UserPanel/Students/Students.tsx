@@ -19,11 +19,12 @@ import { fetchAllStudents, clear } from 'redux/store/student/action';
 import styles from './styles.module.css';
 
 const Students: React.SFC<StudentsProps> = (props) => {
+	const { fetchAllStudents, clear } = props;
 	React.useEffect(() => {
 		// didMount
-		props.fetchAllStudents();
+		fetchAllStudents();
 		// willUnmount
-		return () => props.clear();
+		return () => clear();
 	}, []);
 
 	return (

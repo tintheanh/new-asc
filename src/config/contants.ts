@@ -6,6 +6,9 @@ export const PROJECTID = 'asc-management-app';
 export const MESSAGINGSENDERID = '454260445359';
 export const APPID = '1:454260445359:web:7116a9722bf14be0';
 
+export const algolia_appId = '4U5TJN64Q6';
+export const algolia_searchId = 'c9f0604a0d9708abfc9b46b2378061c5';
+
 export const data = [
 	{ time: '07:00 AM', order: 0 },
 	{ time: '07:30 AM', order: 1 },
@@ -33,3 +36,5 @@ export const data = [
 	{ time: '06:30 PM', order: 23 },
 	{ time: '07:00 PM', order: 24 }
 ];
+
+export const workDays = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ];

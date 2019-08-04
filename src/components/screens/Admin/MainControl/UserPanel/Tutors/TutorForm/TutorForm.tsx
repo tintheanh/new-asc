@@ -23,7 +23,8 @@ class TutorForm extends React.Component<TutorFormProps, TutorFormStates> {
 		}
 	}
 
-	toggleEdit = (type: 'edit' | 'cancel') => () => {
+	toggleEdit = (type: 'edit' | 'cancel') => (event: React.FormEvent) => {
+		event.preventDefault();
 		if (type === 'edit') {
 			this.setState({ edit: true });
 		} else {

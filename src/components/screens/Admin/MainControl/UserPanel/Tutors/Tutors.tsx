@@ -20,12 +20,13 @@ import { fetchAllTutors, clear } from 'redux/store/tutor/action';
 import styles from './styles.module.css';
 
 const Tutors: React.SFC<TutorsProps> = (props) => {
+	const { fetchAllTutors, clear } = props;
 	React.useEffect(() => {
 		// didMount
-		props.fetchAllTutors();
+		fetchAllTutors();
 
 		// willUnmount
-		return () => props.clear();
+		return () => clear();
 	}, []);
 
 	return (

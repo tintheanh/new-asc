@@ -39,7 +39,6 @@ export const empty: Tutor = {
 	subjects: [],
 	off_time: [],
 	work_schedule: [ [], [], [], [], [], [], [] ],
-	appointments: [],
 	current_log: 0,
 	work_track: {}
 };
@@ -70,7 +69,6 @@ export interface Tutor {
 	}[];
 	off_time: [];
 	work_schedule: Schedule[][];
-	appointments: string[];
 	current_log: number;
 	work_track: {
 		[date: string]: {

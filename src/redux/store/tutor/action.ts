@@ -27,7 +27,7 @@ const fetchTutor = (uid: string): Promise<Tutor> => {
 					}
 				});
 
-				// Convert to array of arrays
+				// Convert array of obj to array of arrays
 				const work_schedule = objFs!.work_schedule.map(
 					(schedule: { from: { time: string; order: number }; to: { time: string; order: number } }) => {
 						if (schedule !== null) return Object.values(schedule);
@@ -46,7 +46,6 @@ const fetchTutor = (uid: string): Promise<Tutor> => {
 					subjects,
 					off_time: objFs!.off_time,
 					work_schedule,
-					appointments: objFs!.appointments,
 					current_log: objFb.current_log,
 					work_track: objFb.work_track
 				};
@@ -431,7 +430,7 @@ export const updateTutor = (tutor: Tutor, tutors: Tutor[]) => (
 	const subjects = tutor.subjects.map((e) => e.id);
 	const latest = { ...tutor, subjects, work_schedule: updateWorkSchedule };
 
-	const { current_log, work_track, appointments, uid, ...update } = latest;
+	const { current_log, work_track, uid, ...update } = latest;
 
 	return new Promise((resolve, reject) => {
 		fsdb

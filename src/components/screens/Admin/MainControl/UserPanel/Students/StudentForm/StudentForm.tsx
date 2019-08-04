@@ -29,7 +29,8 @@ class StudentForm extends React.Component<StudentFormProps, StudentFormStates> {
 		}
 	}
 
-	toggleEdit = (type: 'edit' | 'cancel') => () => {
+	toggleEdit = (type: 'edit' | 'cancel') => (event: React.FormEvent) => {
+		event.preventDefault();
 		if (type === 'edit') {
 			this.setState({ edit: true });
 		} else {

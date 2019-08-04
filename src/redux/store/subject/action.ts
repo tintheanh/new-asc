@@ -178,77 +178,90 @@ export const deleteSubject = (id: string, data: Subject[]) => (dispatch: (arg: A
 		.collection('subjects')
 		.doc(id)
 		.delete()
-		.then(async () => {
+		.then(() => {
 			const newSubjects = data.filter((subject) => subject.id !== id);
 
-			// Remove removed subject from tutor's subjects
-			try {
-				const snapshot = await fsdb.collection('tutors').get();
-				snapshot.docs.forEach((doc) => {
-					if (doc.exists) {
-						const tutorId = doc.id;
-						const tutorSubjects = [ ...doc.data().subjects ];
-						if (tutorSubjects.includes(id)) {
-							const update = {
-								subjects: tutorSubjects.filter((sj: string) => sj !== id)
-							};
-							fsdb
-								.collection('tutors')
-								.doc(tutorId)
-								.update(update)
-								.then(() =>
-									dispatch({
-										type: SubjectActionTypes.DELETE_SUCCESS,
-										payload: {
-											data: {
-												selectedSubject: null,
-												subjects: newSubjects,
-												toggleAdd: false
-											},
-											error: ''
-										}
-									})
-								)
-								.catch((err) =>
-									dispatch({
-										type: SubjectActionTypes.DELETE_FAILURE,
-										payload: {
-											data: {
-												selectedSubject: null,
-												subjects: [],
-												toggleAdd: false
-											},
-											error: err.message
-										}
-									})
-								);
-						}
-					}
-				});
-				dispatch({
-					type: SubjectActionTypes.DELETE_SUCCESS,
-					payload: {
-						data: {
-							selectedSubject: null,
-							subjects: newSubjects,
-							toggleAdd: false
-						},
-						error: ''
-					}
-				});
-			} catch (err) {
-				dispatch({
-					type: SubjectActionTypes.DELETE_FAILURE,
-					payload: {
-						data: {
-							selectedSubject: null,
-							subjects: [],
-							toggleAdd: false
-						},
-						error: err.message
-					}
-				});
-			}
+			// 	// Remove removed subject from tutor's subjects
+			// 	try {
+			// 		const snapshot = await fsdb.collection('tutors').get();
+			// 		snapshot.docs.forEach((doc) => {
+			// 			if (doc.exists) {
+			// 				const tutorId = doc.id;
+			// 				const tutorSubjects = [ ...doc.data().subjects ];
+			// 				if (tutorSubjects.includes(id)) {
+			// 					const update = {
+			// 						subjects: tutorSubjects.filter((sj: string) => sj !== id)
+			// 					};
+			// 					fsdb
+			// 						.collection('tutors')
+			// 						.doc(tutorId)
+			// 						.update(update)
+			// 						.then(() =>
+			// 							dispatch({
+			// 								type: SubjectActionTypes.DELETE_SUCCESS,
+			// 								payload: {
+			// 									data: {
+			// 										selectedSubject: null,
+			// 										subjects: newSubjects,
+			// 										toggleAdd: false
+			// 									},
+			// 									error: ''
+			// 								}
+			// 							})
+			// 						)
+			// 						.catch((err) =>
+			// 							dispatch({
+			// 								type: SubjectActionTypes.DELETE_FAILURE,
+			// 								payload: {
+			// 									data: {
+			// 										selectedSubject: null,
+			// 										subjects: [],
+			// 										toggleAdd: false
+			// 									},
+			// 									error: err.message
+			// 								}
+			// 							})
+			// 						);
+			// 				}
+			// 			}
+			// 		});
+			// 		dispatch({
+			// 			type: SubjectActionTypes.DELETE_SUCCESS,
+			// 			payload: {
+			// 				data: {
+			// 					selectedSubject: null,
+			// 					subjects: newSubjects,
+			// 					toggleAdd: false
+			// 				},
+			// 				error: ''
+			// 			}
+			// 		});
+			// 	} catch (err) {
+			// 		dispatch({
+			// 			type: SubjectActionTypes.DELETE_FAILURE,
+			// 			payload: {
+			// 				data: {
+			// 					selectedSubject: null,
+			// 					subjects: [],
+			// 					toggleAdd: false
+			// 				},
+			// 				error: err.message
+			// 			}
+			// 		});
+			// 	}
+			//
+
+			dispatch({
+				type: SubjectActionTypes.DELETE_SUCCESS,
+				payload: {
+					data: {
+						selectedSubject: null,
+						subjects: newSubjects,
+						toggleAdd: false
+					},
+					error: ''
+				}
+			});
 		})
 		.catch((err) => {
 			dispatch({

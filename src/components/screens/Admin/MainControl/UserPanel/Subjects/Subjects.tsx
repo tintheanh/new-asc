@@ -19,9 +19,10 @@ import { fetchAllSubjects } from 'redux/store/subject/action';
 import styles from './styles.module.css';
 
 const Subjects: React.SFC<any> = (props) => {
+	const { fetchAllSubjects } = props;
 	React.useEffect(() => {
 		// didMount
-		props.fetchAllSubjects();
+		fetchAllSubjects();
 		// willUnmount
 	}, []);
 

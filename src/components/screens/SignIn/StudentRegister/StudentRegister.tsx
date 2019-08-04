@@ -31,8 +31,7 @@ class StudentRegister extends React.Component<StudentRegisterProps, studentRegis
 			first_name,
 			last_name,
 			email,
-			active: true,
-			appointments: []
+			active: true
 		};
 		studentRegister(student).then(() => close()).catch((err) => alert(err.message));
 	};

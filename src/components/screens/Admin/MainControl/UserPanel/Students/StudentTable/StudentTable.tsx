@@ -34,7 +34,7 @@ class StudentTable extends React.Component<StudentTableProps, StudentTableStates
 				id: 'name',
 				Header: 'Student name',
 				accessor: (d: { first_name: string; last_name: string; active: boolean }) =>
-					`${d.first_name}, ${d.last_name}`
+					`${d.first_name} ${d.last_name}`
 			},
 			{
 				Header: 'Student ID',

@@ -1,0 +1,19 @@
+.backBtn {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.container {
+	display: grid;
+	grid-template-columns: auto auto;
+
+}
+
+.apptTable {
+	width: 75vw;
+}
+
+.filter {
+	width: 25vw;
+}

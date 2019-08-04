@@ -6,6 +6,7 @@ import { DayTablesProps, DayTablesStates } from './props';
 import { Schedule } from 'config';
 
 import styles from './styles.module.css';
+import { workDays } from 'config';
 
 class DayTables extends React.Component<DayTablesProps, DayTablesStates> {
 	constructor(props: DayTablesProps) {
@@ -143,10 +144,9 @@ class DayTables extends React.Component<DayTablesProps, DayTablesStates> {
 		const { schedules, onAddHours } = this.props;
 		const { selectedSchedules, currentDay } = this.state;
 		return schedules.map((dataSch, i) => {
-			const days = [ 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday' ];
 			return (
 				<div key={i}>
-					<h4>{days[i]}</h4>
+					<h4>{workDays[i]}</h4>
 					<div onClick={onAddHours(i)}>
 						<ReactTable
 							className={styles.scheduleTable}
