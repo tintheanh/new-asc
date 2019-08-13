@@ -5,6 +5,7 @@ const initialState = {
 		student: null,
 		students: [],
 		selectedStudent: null,
+		searchToken: '',
 		toggleAdd: false
 	},
 	error: ''
@@ -17,6 +18,19 @@ const StudentReducer = (state: StudentState = initialState, action: ActionPayloa
 				...state
 			};
 		case StudentActionTypes.REGISTER_FAILTURE:
+			return {
+				...state,
+				error: action.payload.error
+			};
+		case StudentActionTypes.STUDENT_LOGIN_SUCCESS:
+			return {
+				...state,
+				data: {
+					...state.data,
+					student: action.payload.data.student
+				}
+			};
+		case StudentActionTypes.STUDENT_LOGIN_FAILURE:
 			return {
 				...state,
 				error: action.payload.error
@@ -107,6 +121,14 @@ const StudentReducer = (state: StudentState = initialState, action: ActionPayloa
 			return {
 				...state,
 				error: action.payload.error
+			};
+		case StudentActionTypes.SEARCH_STUDENT:
+			return {
+				...state,
+				data: {
+					...state.data,
+					searchToken: action.payload.data.searchToken
+				}
 			};
 		default:
 			return { ...state };

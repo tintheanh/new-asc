@@ -217,7 +217,8 @@ class EditScheduleTable extends React.Component<EditScheduleTableProps, EditSche
 	handleUpdate = () => {
 		if (this.props.selected) {
 			const { selected, data, close } = this.props;
-			this.props.updateTutor(selected, data).then(() => close()).catch((err) => alert(err.message));
+			console.log(selected);
+			this.props.updateTutor(selected, data, true).then(() => close()).catch((err) => alert(err.message));
 		}
 	};
 

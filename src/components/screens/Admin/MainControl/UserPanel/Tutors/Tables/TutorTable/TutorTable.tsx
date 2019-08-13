@@ -30,6 +30,7 @@ class TutorTable extends React.Component<TutorTableProps, TutorTableStates> {
 	};
 
 	render() {
+		console.log(this.props.data);
 		const columns = [
 			{
 				Header: 'First Name',
@@ -54,16 +55,16 @@ class TutorTable extends React.Component<TutorTableProps, TutorTableStates> {
 					data={this._processTutorArray()}
 					columns={columns}
 					showPagination={false}
-					defaultSorted={[
-						{
-							id: 'fist_name',
-							desc: true
-						},
-						{
-							id: 'last_name',
-							desc: true
-						}
-					]}
+					// defaultSorted={[
+					// 	{
+					// 		id: 'fist_name',
+					// 		desc: true
+					// 	},
+					// 	{
+					// 		id: 'last_name',
+					// 		desc: true
+					// 	}
+					// ]}
 					getTrProps={(_: any, rowInfo: any) => {
 						if (rowInfo && rowInfo.row) {
 							const tutor = rowInfo.original as Tutor;

@@ -2,6 +2,9 @@ export enum StudentActionTypes {
 	FETCH_ALL_SUCCESS = '@@student/FETCH_ALL_SUCCESS',
 	FETCH_ALL_FAILURE = '@@student/FETCH_ALL_FAILTURE',
 
+	STUDENT_LOGIN_SUCCESS = '@@student/STUDENT_LOGIN_SUCCESS',
+	STUDENT_LOGIN_FAILURE = '@@student/STUDENT_LOGIN_FAILURE',
+
 	REGISTER_SUCCESS = '@@student/REGISTER_SUCCESS',
 	REGISTER_FAILTURE = '@@student/REGISTER_FAILTURE',
 
@@ -18,7 +21,9 @@ export enum StudentActionTypes {
 	CLEAR = '@@student/CLEAR',
 
 	DELETE_SUCCESS = '@@student/DELETE_SUCCESS',
-	DELETE_FAILURE = '@@student/DELETE_FAILURE'
+	DELETE_FAILURE = '@@student/DELETE_FAILURE',
+
+	SEARCH_STUDENT = '@@student/SEARCH_STUDENT'
 }
 
 export const empty = {
@@ -44,6 +49,7 @@ export interface StudentState {
 		student: Student | null;
 		students: Student[];
 		selectedStudent: Student | null;
+		searchToken: string;
 		toggleAdd: boolean;
 	};
 	error: string;

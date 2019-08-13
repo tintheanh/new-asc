@@ -217,12 +217,12 @@ class EditTutorSubjectTable extends React.Component<EditTutorSubjectTableProps, 
 						showPagination={false}
 						sortable={false}
 						NoDataComponent={() => null}
-						defaultSorted={[
-							{
-								id: 'label',
-								desc: false
-							}
-						]}
+						// defaultSorted={[
+						// 	{
+						// 		id: 'label',
+						// 		desc: false
+						// 	}
+						// ]}
 						getTrProps={(_: any, rowInfo: any) => {
 							if (rowInfo && rowInfo.row) {
 								const subject = rowInfo.original as Subject;
@@ -248,12 +248,12 @@ class EditTutorSubjectTable extends React.Component<EditTutorSubjectTableProps, 
 						showPagination={false}
 						sortable={false}
 						NoDataComponent={() => null}
-						defaultSorted={[
-							{
-								id: 'label',
-								desc: false
-							}
-						]}
+						// defaultSorted={[
+						// 	{
+						// 		id: 'label',
+						// 		desc: false
+						// 	}
+						// ]}
 						getTrProps={(_: any, rowInfo: any) => {
 							if (rowInfo && rowInfo.row) {
 								const subject = rowInfo.original as Subject;

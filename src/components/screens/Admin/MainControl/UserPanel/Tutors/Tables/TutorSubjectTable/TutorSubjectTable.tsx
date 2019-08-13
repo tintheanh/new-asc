@@ -53,12 +53,12 @@ class TutorSubjectTable extends React.Component<TutorSubjectTableProps, TutorSub
 					columns={columns}
 					showPagination={false}
 					NoDataComponent={() => null}
-					defaultSorted={[
-						{
-							id: 'label',
-							desc: false
-						}
-					]}
+					// defaultSorted={[
+					// 	{
+					// 		id: 'label',
+					// 		desc: false
+					// 	}
+					// ]}
 				/>
 				<Button
 					disabled={selected === null || toggleAdd}

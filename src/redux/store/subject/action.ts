@@ -1,10 +1,9 @@
 import { SubjectActionTypes, Subject, ActionPayload, empty } from './types';
 import { fsdb } from 'index';
-import { arraySort } from 'utils/functions';
 
 export const fetchAllSubjects = () => async (dispatch: (arg: ActionPayload) => void) => {
 	try {
-		const snapshot = await fsdb.collection('subjects').get();
+		const snapshot = await fsdb.collection('subjects').orderBy('label').get();
 		const subjects: Subject[] = snapshot.docs.map((doc) => {
 			if (doc.exists) {
 				const subject = doc.data();
@@ -17,13 +16,12 @@ export const fetchAllSubjects = () => async (dispatch: (arg: ActionPayload) => v
 			return {} as Subject;
 		});
 
-		const sorted = arraySort(subjects, 'label');
 		dispatch({
 			type: SubjectActionTypes.FETCH_ALL_SUBJECTS_SUCCESS,
 			payload: {
 				data: {
 					selectedSubject: null,
-					subjects: sorted,
+					subjects: subjects,
 					toggleAdd: false
 				},
 				error: ''

@@ -5,8 +5,10 @@ import { getEpochOfDate, getEpochOfTime, preprocessWorkScheduleBeforeUpdate } fr
 const fetchTutor = (uid: string): Promise<Tutor> => {
 	return new Promise(async (resolve, reject) => {
 		try {
-			const snapshot = await fbdb.ref(`tutors/${uid}`).once('value');
-			const doc = await fsdb.collection('tutors').doc(uid).get();
+			const [ snapshot, doc ] = await Promise.all([
+				fbdb.ref(`tutors/${uid}`).once('value'),
+				fsdb.collection('tutors').doc(uid).get()
+			]);
 			if (snapshot.val() && doc.exists) {
 				const objFb = snapshot.val();
 				const objFs = doc.data();
@@ -14,7 +16,7 @@ const fetchTutor = (uid: string): Promise<Tutor> => {
 				// Subject ids => subjects array
 				const subjects: { label: string; full: string; id: string }[] = [];
 				const subjectIds = objFs!.subjects;
-				const subjectSnapshot = await fsdb.collection('subjects').get();
+				const subjectSnapshot = await fsdb.collection('subjects').orderBy('label').get();
 
 				subjectSnapshot.forEach((doc) => {
 					if (subjectIds.includes(doc.id)) {
@@ -28,12 +30,17 @@ const fetchTutor = (uid: string): Promise<Tutor> => {
 				});
 
 				// Convert array of obj to array of arrays
-				const work_schedule = objFs!.work_schedule.map(
-					(schedule: { from: { time: string; order: number }; to: { time: string; order: number } }) => {
-						if (schedule !== null) return Object.values(schedule);
-						return [];
-					}
-				);
+				// const work_schedule = objFs!.work_schedule.map(
+				// 	(schedule: { from: { time: string; order: number }; to: { time: string; order: number } }) => {
+				// 		if (schedule !== null) return Object.values(schedule);
+				// 		return [];
+				// 	}
+				// );
+
+				const work_schedule = objFb.work_schedule.map((work: any) => {
+					if (work !== 'none') return work;
+					return [];
+				});
 
 				const tutor = {
 					uid: doc.id,
@@ -47,7 +54,7 @@ const fetchTutor = (uid: string): Promise<Tutor> => {
 					off_time: objFs!.off_time,
 					work_schedule,
 					current_log: objFb.current_log,
-					work_track: objFb.work_track
+					work_track: objFb.work_track ? objFb.work_track : null
 				};
 				resolve(tutor);
 			} else {
@@ -61,7 +68,7 @@ const fetchTutor = (uid: string): Promise<Tutor> => {
 
 export const fetchAllTutors = () => async (dispatch: (arg: ActionPayload) => void) => {
 	try {
-		const snapshot = await fsdb.collection('tutors').get();
+		const snapshot = await fsdb.collection('tutors').orderBy('first_name').get();
 		const tutors: Tutor[] = await Promise.all(
 			snapshot.docs.map((doc) => {
 				if (doc.exists) {
@@ -423,53 +430,92 @@ export const addTutor = (tutor: Tutor, tutors: Tutor[]) => (dispatch: (arg: Acti
 	});
 };
 
-export const updateTutor = (tutor: Tutor, tutors: Tutor[]) => (
+export const updateTutor = (tutor: Tutor, tutors: Tutor[], scheduleOnly: boolean = false) => (
 	dispatch: (arg: ActionPayload) => void
 ): Promise<void> => {
-	const updateWorkSchedule = preprocessWorkScheduleBeforeUpdate(tutor.work_schedule);
-	const subjects = tutor.subjects.map((e) => e.id);
-	const latest = { ...tutor, subjects, work_schedule: updateWorkSchedule };
+	const { current_log, work_track, uid, work_schedule, ...updateForFs } = tutor;
 
-	const { current_log, work_track, uid, ...update } = latest;
+	const processWorkSchedule = work_schedule.map((schedule) => {
+		if (schedule.length) return schedule;
+		return 'none';
+	});
+
+	const index = tutors.findIndex((tt) => tt.uid === tutor.uid);
+	const all = [ ...tutors ];
+	all[index] = { ...tutor, subjects: tutor.subjects, work_schedule: tutor.work_schedule };
 
 	return new Promise((resolve, reject) => {
-		fsdb
-			.collection('tutors')
-			.doc(tutor.uid)
-			.update(update)
-			.then(() => {
-				const index = tutors.findIndex((tt) => tt.uid === latest.uid);
-				const all = [ ...tutors ];
-				all[index] = { ...latest, subjects: tutor.subjects, work_schedule: tutor.work_schedule };
-				dispatch({
-					type: TutorActionTypes.UPDATE_SUCCESS,
-					payload: {
-						data: {
-							tutor: null,
-							tutors: all,
-							selectedTutor: null,
-							toggleAdd: false
-						},
-						error: ''
-					}
+		if (scheduleOnly) {
+			fbdb
+				.ref(`tutors/${tutor.uid}/work_schedule`)
+				.set(processWorkSchedule)
+				.then(() => {
+					dispatch({
+						type: TutorActionTypes.UPDATE_SUCCESS,
+						payload: {
+							data: {
+								tutor: null,
+								tutors: all,
+								selectedTutor: null,
+								toggleAdd: false
+							},
+							error: ''
+						}
+					});
+					resolve();
+				})
+				.catch((err) => {
+					dispatch({
+						type: TutorActionTypes.UPDATE_FAILURE,
+						payload: {
+							data: {
+								tutor: null,
+								tutors: [],
+								selectedTutor: null,
+								toggleAdd: false
+							},
+							error: err.message
+						}
+					});
+					reject(err);
 				});
-				resolve();
-			})
-			.catch((err) => {
-				dispatch({
-					type: TutorActionTypes.UPDATE_FAILURE,
-					payload: {
-						data: {
-							tutor: null,
-							tutors: [],
-							selectedTutor: null,
-							toggleAdd: false
-						},
-						error: err.message
-					}
+		} else {
+			const subjects = tutor.subjects.map((e) => e.id);
+			fsdb
+				.collection('tutors')
+				.doc(tutor.uid)
+				.update({ ...updateForFs, subjects })
+				.then(() => {
+					dispatch({
+						type: TutorActionTypes.UPDATE_SUCCESS,
+						payload: {
+							data: {
+								tutor: null,
+								tutors: all,
+								selectedTutor: null,
+								toggleAdd: false
+							},
+							error: ''
+						}
+					});
+					resolve();
+				})
+				.catch((err) => {
+					dispatch({
+						type: TutorActionTypes.UPDATE_FAILURE,
+						payload: {
+							data: {
+								tutor: null,
+								tutors: [],
+								selectedTutor: null,
+								toggleAdd: false
+							},
+							error: err.message
+						}
+					});
+					reject(err);
 				});
-				reject(err);
-			});
+		}
 	});
 };
 

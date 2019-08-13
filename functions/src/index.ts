@@ -6,7 +6,7 @@ admin.initializeApp();
 
 const env = functions.config();
 const client = algoliasearch(env.algolia.appid, env.algolia.apikey);
-const index = client.initIndex('appointments');
+const index = client.initIndex('students');
 
 export const indexStudent = functions.firestore.document('students/{studentID}').onCreate((snap, _) => {
 	const data = snap.data();

@@ -26,9 +26,68 @@ const fetchStudent = (uid: string): Promise<Student> => {
 	});
 };
 
+export const studentLogin = (uid: string) => (dispatch: (arg: ActionPayload) => void) => {
+	return new Promise((resolve, reject) => {
+		auth
+			.signInWithEmailAndPassword(`${uid}@asc.com`, 'asc1234')
+			.then(async () => {
+				console.log('students');
+				try {
+					const student = await fetchStudent(auth.currentUser!.uid);
+					console.log(student);
+					dispatch({
+						type: StudentActionTypes.STUDENT_LOGIN_SUCCESS,
+						payload: {
+							data: {
+								student,
+								students: [],
+								selectedStudent: null,
+								searchToken: '',
+								toggleAdd: false
+							},
+							error: ''
+						}
+					});
+					resolve();
+				} catch (err) {
+					dispatch({
+						type: StudentActionTypes.STUDENT_LOGIN_FAILURE,
+						payload: {
+							data: {
+								student: null,
+								students: [],
+								selectedStudent: null,
+								searchToken: '',
+								toggleAdd: false
+							},
+							error: err.message
+						}
+					});
+					reject();
+				}
+			})
+			.catch((err) => {
+				dispatch({
+					type: StudentActionTypes.STUDENT_LOGIN_FAILURE,
+					payload: {
+						data: {
+							student: null,
+							students: [],
+							selectedStudent: null,
+							searchToken: '',
+							toggleAdd: false
+						},
+						error: err.message
+					}
+				});
+				reject();
+			});
+	});
+};
+
 export const fetchAllStudents = () => async (dispatch: (arg: ActionPayload) => void) => {
 	try {
-		const snapshot = await fsdb.collection('students').get();
+		const snapshot = await fsdb.collection('students').orderBy('first_name').get();
 		const students: Student[] = await Promise.all(
 			snapshot.docs.map((doc) => {
 				if (doc.exists) {
@@ -45,6 +104,7 @@ export const fetchAllStudents = () => async (dispatch: (arg: ActionPayload) => v
 					student: null,
 					students,
 					selectedStudent: null,
+					searchToken: '',
 					toggleAdd: false
 				},
 				error: ''
@@ -58,6 +118,7 @@ export const fetchAllStudents = () => async (dispatch: (arg: ActionPayload) => v
 					student: null,
 					students: [],
 					selectedStudent: null,
+					searchToken: '',
 					toggleAdd: false
 				},
 				error: err.message
@@ -85,6 +146,7 @@ export const studentRegister = (student: Student) => (dispatch: (arg: ActionPayl
 									student: null,
 									students: [],
 									selectedStudent: null,
+									searchToken: '',
 									toggleAdd: false
 								},
 								error: ''
@@ -100,6 +162,7 @@ export const studentRegister = (student: Student) => (dispatch: (arg: ActionPayl
 									student: null,
 									students: [],
 									selectedStudent: null,
+									searchToken: '',
 									toggleAdd: false
 								},
 								error: err.message
@@ -116,6 +179,7 @@ export const studentRegister = (student: Student) => (dispatch: (arg: ActionPayl
 						student: null,
 						students: [],
 						selectedStudent: null,
+						searchToken: '',
 						toggleAdd: false
 					},
 					error: err.message
@@ -134,6 +198,7 @@ export const selectAndUpdateStudent = (student: Student) => (dispatch: (arg: Act
 				student: null,
 				students: [],
 				selectedStudent: student,
+				searchToken: '',
 				toggleAdd: false
 			},
 			error: ''
@@ -150,6 +215,7 @@ export const resetStudent = (uid: string, data: Student[]) => (dispatch: (arg: A
 				student: null,
 				students: [],
 				selectedStudent: oldStudent,
+				searchToken: '',
 				toggleAdd: false
 			},
 			error: ''
@@ -178,6 +244,7 @@ export const updateStudent = (student: Student, students: Student[]) => (
 							student: null,
 							students: all,
 							selectedStudent: null,
+							searchToken: '',
 							toggleAdd: false
 						},
 						error: ''
@@ -193,6 +260,7 @@ export const updateStudent = (student: Student, students: Student[]) => (
 							student: null,
 							students: [],
 							selectedStudent: null,
+							searchToken: '',
 							toggleAdd: false
 						},
 						error: err.message
@@ -211,6 +279,7 @@ export const toggleAddStudent = (on: boolean) => (dispatch: (arg: ActionPayload)
 				student: null,
 				students: [],
 				selectedStudent: empty,
+				searchToken: '',
 				toggleAdd: on
 			},
 			error: ''
@@ -242,6 +311,7 @@ export const addStudent = (student: Student, students: Student[]) => (
 									student: null,
 									students,
 									selectedStudent: null,
+									searchToken: '',
 									toggleAdd: false
 								},
 								error: ''
@@ -257,6 +327,7 @@ export const addStudent = (student: Student, students: Student[]) => (
 									student: null,
 									students: [],
 									selectedStudent: null,
+									searchToken: '',
 									toggleAdd: false
 								},
 								error: err.message
@@ -273,6 +344,7 @@ export const addStudent = (student: Student, students: Student[]) => (
 						student: null,
 						students: [],
 						selectedStudent: null,
+						searchToken: '',
 						toggleAdd: false
 					},
 					error: err.message
@@ -291,6 +363,7 @@ export const clear = () => (dispatch: (arg: ActionPayload) => void) => {
 				student: null,
 				students: [],
 				selectedStudent: null,
+				searchToken: '',
 				toggleAdd: false
 			},
 			error: ''
@@ -315,6 +388,7 @@ export const deleteStudent = (uid: string, data: Student[]) => (dispatch: (arg: 
 								student: null,
 								students: newStudents,
 								selectedStudent: null,
+								searchToken: '',
 								toggleAdd: false
 							},
 							error: ''
@@ -329,6 +403,7 @@ export const deleteStudent = (uid: string, data: Student[]) => (dispatch: (arg: 
 								student: null,
 								students: [],
 								selectedStudent: null,
+								searchToken: '',
 								toggleAdd: false
 							},
 							error: err.message
@@ -344,10 +419,27 @@ export const deleteStudent = (uid: string, data: Student[]) => (dispatch: (arg: 
 						student: null,
 						students: [],
 						selectedStudent: null,
+						searchToken: '',
 						toggleAdd: false
 					},
 					error: err.message
 				}
 			})
 		);
+};
+
+export const searchStudent = (search: string) => (dispatch: (arg: ActionPayload) => void) => {
+	dispatch({
+		type: StudentActionTypes.SEARCH_STUDENT,
+		payload: {
+			data: {
+				student: null,
+				students: [],
+				selectedStudent: null,
+				searchToken: search,
+				toggleAdd: false
+			},
+			error: ''
+		}
+	});
 };

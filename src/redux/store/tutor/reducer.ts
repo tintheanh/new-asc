@@ -16,10 +16,8 @@ const TutorReducer = (state: TutorState = initialState, action: ActionPayload): 
 			return {
 				...state,
 				data: {
-					tutor: action.payload.data.tutor,
-					tutors: [],
-					selectedTutor: null,
-					toggleAdd: false
+					...state.data,
+					tutor: action.payload.data.tutor
 				}
 			};
 		case TutorActionTypes.FETCH_ERROR:
@@ -35,10 +33,8 @@ const TutorReducer = (state: TutorState = initialState, action: ActionPayload): 
 			return {
 				...state,
 				data: {
-					tutor: action.payload.data.tutor,
-					tutors: [],
-					selectedTutor: null,
-					toggleAdd: false
+					...state.data,
+					tutor: action.payload.data.tutor
 				}
 			};
 		case TutorActionTypes.CLOCKIN_FAILURE:
@@ -52,10 +48,8 @@ const TutorReducer = (state: TutorState = initialState, action: ActionPayload): 
 				...state,
 				error: action.payload.error,
 				data: {
-					tutor: action.payload.data.tutor,
-					tutors: [],
-					selectedTutor: null,
-					toggleAdd: false
+					...state.data,
+					tutor: action.payload.data.tutor
 				}
 			};
 		case TutorActionTypes.CLOCKOUT_FAILURE:

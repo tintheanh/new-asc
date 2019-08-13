@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import styles from './styles.module.css';
 import { MenuBtn } from 'components/common';
 import { LeftMenuProps } from './props';
-import { onChangeRoute } from 'redux/store/navigation/actions';
+import { onChangeRoute } from 'redux/store/navigation/action';
 
 class LeftMenu extends React.Component<LeftMenuProps, any> {
 	startNavigating = (route: string): void => {

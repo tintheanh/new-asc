@@ -4,7 +4,7 @@ export interface EditScheduleTableProps {
 	data: Tutor[];
 	selected: Tutor | null;
 	selectAndUpdateTutor: any;
-	updateTutor: (tutor: Tutor, tutors: Tutor[]) => Promise<void>;
+	updateTutor: (tutor: Tutor, tutors: Tutor[], scheduleOnly: boolean = false) => Promise<void>;
 	close: () => void;
 }
 

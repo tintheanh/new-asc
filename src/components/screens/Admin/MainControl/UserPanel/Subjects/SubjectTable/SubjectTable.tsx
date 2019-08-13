@@ -32,12 +32,12 @@ class SubjectTable extends React.Component<SubjectTableProps> {
 					columns={columns}
 					showPagination={false}
 					data={data}
-					defaultSorted={[
-						{
-							id: 'label',
-							desc: false
-						}
-					]}
+					// defaultSorted={[
+					// 	{
+					// 		id: 'label',
+					// 		desc: false
+					// 	}
+					// ]}
 					getTrProps={(_: any, rowInfo: any) => {
 						if (rowInfo && rowInfo.row) {
 							const subject = rowInfo.original as Subject;

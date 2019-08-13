@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import ReactTable from 'react-table';
-import { fetchAllAppointments } from 'redux/store/appointment/action';
+import { fetchAllAppointments, selectAppointment } from 'redux/store/appointment/action';
 
 class AppointmentTable extends React.Component<any, any> {
 	componentDidMount() {
 		this.props.fetchAllAppointments();
 	}
+
+	performSelectAppointment = (appt: any) => () => this.props.selectAppointment(appt);
 
 	render() {
 		console.log(this.props.data);
@@ -15,6 +17,7 @@ class AppointmentTable extends React.Component<any, any> {
 				id: 'student',
 				Header: 'Student',
 				accessor: (d: {
+					apptDate: number;
 					student: { first_name: string; last_name: string; studentId: string };
 					time: { from: string; to: string };
 					subject: { label: string; full: string };
@@ -28,8 +31,9 @@ class AppointmentTable extends React.Component<any, any> {
 					d.student.studentId
 			},
 			{
+				id: 'appt-date',
 				Header: 'Appt Date',
-				accessor: 'apptDate'
+				accessor: (d: { apptDate: number }) => new Date(d.apptDate * 1000).toLocaleDateString('en-US')
 			},
 			{
 				id: 'from',
@@ -51,8 +55,13 @@ class AppointmentTable extends React.Component<any, any> {
 				Header: 'Tutor',
 				accessor: (d: { tutor: { first_name: string; last_name: string } }) =>
 					`${d.tutor.first_name} ${d.tutor.last_name}`
+			},
+			{
+				Header: 'Status',
+				accessor: 'status'
 			}
 		];
+		const { selectedAppointment } = this.props;
 		return (
 			<div style={{ width: '100%', height: '100%' }}>
 				<ReactTable
@@ -60,14 +69,41 @@ class AppointmentTable extends React.Component<any, any> {
 					columns={columns}
 					data={this.props.data}
 					showPagination={false}
+					getTrProps={(_: any, rowInfo: any) => {
+						if (rowInfo && rowInfo.row) {
+							const appointment = rowInfo.original;
+							if (selectedAppointment) {
+								return {
+									onClick: this.performSelectAppointment(appointment),
+									style: {
+										background: rowInfo.original.id === selectedAppointment.id ? '#00afec' : 'none',
+										color: rowInfo.original.id === selectedAppointment.id ? 'white' : 'black'
+									}
+								};
+							}
+							return {
+								onClick: this.performSelectAppointment(appointment)
+							};
+						} else {
+							return {};
+						}
+					}}
 				/>
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = (state: any) => ({
-	data: state.appointment.data.appointments
-});
+const mapStateToProps = (state: any) => {
+	if (!state.appointment.data.toggleFilter)
+		return {
+			data: state.appointment.data.appointments,
+			selectedAppointment: state.appointment.data.selectedAppointment
+		};
+	return {
+		data: state.appointment.data.filteredAppointments,
+		selectedAppointment: state.appointment.data.selectedAppointment
+	};
+};
 
-export default connect(mapStateToProps, { fetchAllAppointments })(AppointmentTable);
+export default connect(mapStateToProps, { fetchAllAppointments, selectAppointment })(AppointmentTable);

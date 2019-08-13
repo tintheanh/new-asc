@@ -1,12 +1,22 @@
 export enum NavigationActionTypes {
-	NAVIGATE = '@@navigate/NAVIGATE'
+	NAVIGATE = '@@navigate/NAVIGATE',
+
+	SET_SIGNIN_ID = '@@navigate/SET_SIGNIN_ID',
+
+	TOGGLE_MAIN_TUTOR_MODAL = '@@navigate/TOGGLE_MAIN_TUTOR_MODAL',
+	TOGGLE_STUDENT_REGISTER_MODAL = '@@navigate/TOGGLE_STUDENT_REGISTER_MODAL',
+	TOGGLE_TUTOR_DATEPICKER_MODAL = '@@navigate/TOGGLE_TUTOR_DATEPICKER_MODAL'
 }
 
 export interface ActionPayload {
 	type: string;
-	payload: string;
+	payload: NavigationState;
 }
 
 export interface NavigationState {
 	route: string;
+	signInId: string;
+	mainTutorModal: boolean;
+	studentRegisterModal: boolean;
+	tutorDatePickerModal: boolean;
 }
