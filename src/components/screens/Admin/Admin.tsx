@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Header } from 'components/common';
+import { Header, Button } from 'components/common';
 import { connect } from 'react-redux';
 import { logoutAndClearTutor } from 'redux/store/tutor/action';
 import { AdminProps } from './props';
@@ -22,7 +22,11 @@ class Admin extends React.Component<AdminProps, any> {
 					<MainControl />
 				</div>
 				<div>
-					<button onClick={this.goBackSignInScreen}>Return to Sign-In Screen</button>
+					<Button
+						customClassName={styles.returnBtn}
+						label="Return to Sign-In Screen"
+						onClick={this.goBackSignInScreen}
+					/>
 				</div>
 			</div>
 		);

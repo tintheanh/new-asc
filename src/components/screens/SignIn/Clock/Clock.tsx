@@ -15,7 +15,7 @@ class Clock extends React.Component<any, any> {
 	constructor(props: any) {
 		super(props);
 		this.state = {
-			time: new Date().toLocaleDateString('us-US', dateOptions) // For realtime clock
+			time: new Date().toLocaleTimeString('us-US', timeOptions) // For realtime clock
 		};
 		this.intervalID = 0;
 	}

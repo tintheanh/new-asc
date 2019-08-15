@@ -11,6 +11,7 @@ import { EditScheduleTable } from '../';
 
 // Action(s)
 import { resetTutor } from 'redux/store/tutor/action';
+import styles from './styles.module.css';
 
 class EditSchedule extends React.Component<EditScheduleProps, EditScheduleStates> {
 	state = { modalSchedule: false };
@@ -33,8 +34,9 @@ class EditSchedule extends React.Component<EditScheduleProps, EditScheduleStates
 	render() {
 		const { selected, toggleAdd } = this.props;
 		return (
-			<div>
+			<div style={{ marginBottom: 10 }}>
 				<Button
+					customClassName={styles.btn}
 					disabled={selected === null || toggleAdd}
 					label="Edit schedule"
 					onClick={this.handleModalChange().open}

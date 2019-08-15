@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { Checkbox } from 'components/common';
 import { setDayFilter, removeDayFilter } from 'redux/store/appointment/action';
 import { workDays } from 'config/contants';
 
@@ -22,10 +23,7 @@ class DayFilter extends React.Component<any, any> {
 	renderCheckbox = () => {
 		return workDays.map((day: string, i) => (
 			<div key={i}>
-				<label>
-					<input type="checkbox" checked={this.props.days.has(i)} value={i} onChange={this.setDay} />
-					<span>{day}</span>
-				</label>
+				<Checkbox checked={this.props.days.has(i)} value={i} labelText={day} onChange={this.setDay} />
 			</div>
 		));
 	};
@@ -39,11 +37,8 @@ class DayFilter extends React.Component<any, any> {
 	render() {
 		return (
 			<div>
-				<p>Day</p>
-				<label>
-					<input type="checkbox" value="all-day" checked={this.checkHasAll()} onChange={this.setAll} />
-					<span>All day</span>
-				</label>
+				<p style={{ marginBottom: 5, marginTop: 5 }}>Day</p>
+				<Checkbox checked={this.checkHasAll()} labelText="All days" onChange={this.setAll} />
 				{this.renderCheckbox()}
 			</div>
 		);

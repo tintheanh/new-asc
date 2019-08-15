@@ -1,17 +1,18 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { DatePicker } from 'components/common';
+import { DatePicker, Button } from 'components/common';
 import { getEpochOfTime } from 'utils/functions';
 import { DatePickerProps, DatePickerStates } from './props';
+import styles from './styles.module.css';
 
 const ipcRenderer = (window as any).ipcRenderer;
 
-class DatePickerForWorkTrack extends React.Component<DatePickerProps, DatePickerStates> {
-	constructor(props: DatePickerProps) {
+class DatePickerForWorkTrack extends React.Component<any, any> {
+	constructor(props: any) {
 		super(props);
 		this.state = { from: new Date(), to: new Date() };
 	}
-	
+
 	handleTimeChange = (key: string) => (date: Date) => this.setState({ [key]: date });
 
 	showReport = (): void => {
@@ -31,35 +32,37 @@ class DatePickerForWorkTrack extends React.Component<DatePickerProps, DatePicker
 
 	render() {
 		const { from, to } = this.state;
+		console.log('test')
 		return (
-			<div>
-				<p>From</p>
-				<DatePicker
-					selected={this.state.from}
-					onChange={this.handleTimeChange('from')}
-					todayButton={'Select Today'}
-					maxDate={new Date()}
-				/>
-				<p>To</p>
-				<DatePicker
-					selected={this.state.to}
-					onChange={this.handleTimeChange('to')}
-					todayButton={'Select Today'}
-					maxDate={new Date()}
-				/>
-				{from > to ? (
-					<button disabled>Wrong time</button>
-				) : (
-					<button onClick={this.showReport}>Show report</button>
-				)}
+			<div className={styles.formWrap}>
+				<div className={styles.inputWrapper}>
+					<p className={styles.labelInput}>From:</p>
+					<DatePicker
+						className={`form-control ${styles.input}`}
+						selected={this.state.from}
+						onChange={this.handleTimeChange('from')}
+						todayButton={'Select Today'}
+						maxDate={to}
+					/>
+				</div>
+				<div>
+					<p className={styles.labelInput}>To:</p>
+					<DatePicker
+						className={`form-control ${styles.input}`}
+						selected={this.state.to}
+						onChange={this.handleTimeChange('to')}
+						todayButton={'Select Today'}
+						minDate={from}
+					/>
+				</div>
+				<Button customClassName={styles.btnShow} onClick={this.showReport} label="Show report" />
 			</div>
 		);
 	}
 }
 
 const mapStateToProps = (state: any) => ({
-	data: state.tutor.data.tutor,
-	error: state.tutor.error
+	data: state.tutor.data.tutor
 });
 
 export default connect(mapStateToProps, null)(DatePickerForWorkTrack);

@@ -1,5 +1,6 @@
 import { SubjectActionTypes, Subject, ActionPayload, empty } from './types';
 import { fsdb } from 'index';
+import { arraySort } from 'utils/functions';
 
 export const fetchAllSubjects = () => async (dispatch: (arg: ActionPayload) => void) => {
 	try {
@@ -126,12 +127,13 @@ export const addSubject = (subject: Subject, subjects: Subject[]) => (
 				const clone = { ...subject };
 				clone.id = docRef.id;
 				subjects.push(clone);
+				const sorted = arraySort(subjects, 'label');
 				dispatch({
 					type: SubjectActionTypes.ADD_SUCCESS,
 					payload: {
 						data: {
 							selectedSubject: null,
-							subjects,
+							subjects: sorted,
 							toggleAdd: false
 						},
 						error: ''

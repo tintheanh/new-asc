@@ -34,7 +34,7 @@ body {
 	border-radius: 4px;
 }
 
-.formInput {
+/* .formInput {
 	padding: 6px 12px;
 	font-size: 14px;
 	line-height: 1.42857143;
@@ -45,9 +45,10 @@ body {
 	border-radius: 4px;
 	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
 	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.75);
-}
+} */
 
-.active-btn {
+.btn,
+.disable-btn {
 	display: inline-block;
 	padding: 6px 12px;
 	margin-bottom: 0;
@@ -59,7 +60,6 @@ body {
 	vertical-align: middle;
 	-ms-touch-action: manipulation;
 	touch-action: manipulation;
-	cursor: pointer;
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
@@ -67,15 +67,56 @@ body {
 	background-image: none;
 	border: 1px solid transparent;
 	border-radius: 4px;
-
+}
+.active-btn {
+	cursor: pointer;
 	color: #fff;
 	background-color: #337ab7;
 	border-color: #2e6da4;
 }
+.disable-btn {
+	cursor: not-allowed;
+	color: rgba(0, 0, 0, 0.7);
+	background-color: rgba(0, 0, 0, 0.2);
+	border-color: rgba(0, 0, 0, 0.1);
+}
 
+.form-control {
+	width: 90%;
+	height: 24px;
+	padding: 6px 12px;
+	font-size: 14px;
+	line-height: 1.42857143;
+	color: #555;
+	background-color: #fff;
+	background-image: none;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+	-webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+	-o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+	transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+
+.alert {
+	padding: 15px;
+	margin-bottom: 20px;
+	border: 1px solid transparent;
+	border-radius: 4px;
+}
+
+.alert-danger {
+	color: #a94442;
+	background-color: #f2dede;
+	border-color: #ebccd1;
+}
+
+/* Loading icon */
 .spinner {
 	width: 13px;
 	text-align: center;
+	margin: auto;
 }
 
 .spinner > div {
@@ -121,4 +162,59 @@ body {
 		-webkit-transform: scale(1.0);
 		transform: scale(1.0);
 	}
+}
+
+.rt-resizable-header {
+	background-color: rgb(49, 129, 246);
+	color: #fff;
+}
+
+.rt-th {
+	padding: 10px 0 !important;
+}
+
+.ReactTable {
+	border-radius: 8px;
+}
+.rt-table {
+	border-radius: 4px;
+}
+
+.rt-tr-group {
+	background: #fff;
+	cursor: pointer;
+}
+
+input[type='checkbox'] {
+	-webkit-appearance: none;
+	width: 20px;
+	height: 20px;
+	background: white;
+	border-radius: 5px;
+	border: 1px solid #555;
+}
+input[type='checkbox']:checked {
+	background: #abd;
+}
+
+/* Student datepicker in view/cancel appointments */
+.styles_fromTo__25kjl .styles_dateInput__KDlVw:nth-child(2) .react-datepicker-popper {
+	transform: none !important;
+	position: absolute !important;
+	left: 925px !important;
+	top: 146px !important;
+}
+
+.styles_calendar__1knFw .react-datepicker__triangle {
+	position: relative;
+	left: 192px;
+}
+
+.report-table .rt-thead .rt-tr {
+	height: 39px !important;
+	background-color: rgb(49, 129, 246);
+}
+
+.report-table .rt-tbody .rt-tr-group {
+	height: 34px !important;
 }

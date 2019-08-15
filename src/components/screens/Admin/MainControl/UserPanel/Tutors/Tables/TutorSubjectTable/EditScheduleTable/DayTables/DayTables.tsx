@@ -47,7 +47,7 @@ class DayTables extends React.Component<DayTablesProps, DayTablesStates> {
 		return true;
 	}
 
-	selectSchedules = (schedule: Schedule, day: number) => () =>{
+	selectSchedules = (schedule: Schedule, day: number) => () => {
 		const { toggleSelectCtrl, toggleSelectShift, schedules } = this.props;
 		const data = schedules[day];
 		this.setState({ currentDay: day });
@@ -126,7 +126,7 @@ class DayTables extends React.Component<DayTablesProps, DayTablesStates> {
 				);
 			}
 		}
-	}
+	};
 
 	_renderTables = () => {
 		const columns = [
@@ -146,7 +146,7 @@ class DayTables extends React.Component<DayTablesProps, DayTablesStates> {
 		return schedules.map((dataSch, i) => {
 			return (
 				<div key={i}>
-					<h4>{workDays[i]}</h4>
+					<h4 style={{ marginRight: 30 }}>{workDays[i]}</h4>
 					<div onClick={onAddHours(i)}>
 						<ReactTable
 							className={styles.scheduleTable}

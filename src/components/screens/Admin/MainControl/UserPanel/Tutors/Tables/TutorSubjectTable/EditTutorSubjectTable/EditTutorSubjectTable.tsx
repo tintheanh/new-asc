@@ -239,8 +239,14 @@ class EditTutorSubjectTable extends React.Component<EditTutorSubjectTableProps, 
 							}
 						}}
 					/>
-					<Button disabled={addedSubjects.length === 0} label="Up" onClick={this.onSending('add')} />
-					<Button disabled={removedSubjects.length === 0} label="Down" onClick={this.onSending('remove')} />
+					<div className={styles.upDownBtnGroup}>
+						<Button disabled={addedSubjects.length === 0} label="&#8593;" onClick={this.onSending('add')} />
+						<Button
+							disabled={removedSubjects.length === 0}
+							label="&#8595;"
+							onClick={this.onSending('remove')}
+						/>
+					</div>
 					<ReactTable
 						className={styles.table}
 						data={this._preprocessSubjects()}
@@ -270,7 +276,7 @@ class EditTutorSubjectTable extends React.Component<EditTutorSubjectTableProps, 
 							}
 						}}
 					/>
-					<Button label="Save" onClick={this.handleUpdate} />
+					<Button customClassName={styles.saveBtn} label="Save" onClick={this.handleUpdate} />
 				</div>
 			);
 		}

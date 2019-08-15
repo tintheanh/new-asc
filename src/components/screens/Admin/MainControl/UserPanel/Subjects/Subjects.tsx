@@ -16,6 +16,7 @@ import DeleteSubject from './DeleteSubject/DeleteSubject';
 import { fetchAllSubjects } from 'redux/store/subject/action';
 
 // Styles
+import back from 'components/common/back.png';
 import styles from './styles.module.css';
 
 const Subjects: React.SFC<any> = (props) => {
@@ -30,7 +31,7 @@ const Subjects: React.SFC<any> = (props) => {
 		<div>
 			<Header title="Subjects" />
 			<Link className={styles.backBtn} to="/admin">
-				Back
+				<img src={back} alt="" width="35" />
 			</Link>
 			<div className={styles.contentContainer}>
 				<div className={styles.subjectTable}>

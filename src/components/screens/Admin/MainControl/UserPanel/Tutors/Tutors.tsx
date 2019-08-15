@@ -17,6 +17,7 @@ import DeleteTutor from './DeleteTutor/DeleteTutor';
 import { fetchAllTutors, clear } from 'redux/store/tutor/action';
 
 // Styles
+import back from 'components/common/back.png';
 import styles from './styles.module.css';
 
 const Tutors: React.SFC<TutorsProps> = (props) => {
@@ -33,7 +34,7 @@ const Tutors: React.SFC<TutorsProps> = (props) => {
 		<div>
 			<Header title="Tutors" />
 			<Link className={styles.backBtn} to="/admin">
-				Back
+				<img src={back} alt="" width="35" />
 			</Link>
 			<div className={styles.tableContainer}>
 				<div className={styles.tutorTable}>
@@ -43,10 +44,12 @@ const Tutors: React.SFC<TutorsProps> = (props) => {
 					<TutorSubjectTable />
 				</div>
 			</div>
-			<div>
+			<div className={styles.tutorModifyContainer}>
 				<TutorForm />
-				<EditSchedule />
-				<DeleteTutor />
+				<div>
+					<EditSchedule />
+					<DeleteTutor />
+				</div>
 			</div>
 		</div>
 	);

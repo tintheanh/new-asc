@@ -1,0 +1,28 @@
+.btnWrapper {
+	display: grid;
+	grid-template-columns: auto auto;
+	/* column-gap: -500px; */
+	row-gap: 10px;
+	margin: 0 135px;
+	justify-items: center;
+}
+
+.btn {
+	width: 200px;
+	padding: 10px 0;
+	font-weight: 700;
+}
+
+.btnSpinner {
+	width: 200px;
+}
+
+.timeClockPrompt {
+	position: absolute;
+	top: 12px;
+	left: 12px;
+	background-color: #ffffc7;
+	border-radius: 4px;
+	width: 300px;
+	padding: 32px 22px;
+}

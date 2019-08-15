@@ -74,11 +74,13 @@ class StudentTable extends React.Component<StudentTableProps, StudentTableStates
 						}
 					}}
 				/>
-				<Checkbox
-					checked={this.state.hideInactive}
-					onChange={this.setInactive}
-					labelText="Hide inactive students"
-				/>
+				<div style={{ marginTop: 12 }}>
+					<Checkbox
+						checked={this.state.hideInactive}
+						onChange={this.setInactive}
+						labelText="Hide inactive students"
+					/>
+				</div>
 			</div>
 		);
 	}

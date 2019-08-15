@@ -1,12 +1,17 @@
 .tableContainer {
-	height: 550px;
+	height: 480px;
 	display: grid;
 	grid-column-gap: 30px;
 	grid-template-columns: 120px auto;
+	/* position: relative;
+	bottom: 100px; */
+	margin-left: 30px;
 }
 
 .hourPickingTable {
-	height: 550px;
+	height: 462px;
+	/* position: relative;
+	top: 41px; */
 }
 
 .scheduleTables {
@@ -15,6 +20,13 @@
 }
 
 .scheduleTable {
-	height: 240px;
+	height: 200px;
 	width: 200px;
+}
+
+.saveBtn {
+	height: 33px;
+	position: absolute;
+	right: 108px;
+	bottom: 70px;
 }

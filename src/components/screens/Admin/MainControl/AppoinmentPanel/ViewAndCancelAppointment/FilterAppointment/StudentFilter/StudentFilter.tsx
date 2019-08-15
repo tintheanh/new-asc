@@ -16,14 +16,10 @@ class FilterAppointment extends React.Component<any, any> {
 		return false;
 	}
 	render() {
-		console.log(this.props.selectedStudent);
 		return (
-			<div>
-				<p>Student</p>
+			<div style={{ marginTop: 12 }}>
 				<InstantSearch indexName="students" searchClient={searchClient}>
 					<CustomSearchBox />
-					{/* {this.props.searchToken.length ? <CustomHits /> : null} */}
-					{/* <Select components={{ Option: CustomOption }} /> */}
 				</InstantSearch>
 			</div>
 		);

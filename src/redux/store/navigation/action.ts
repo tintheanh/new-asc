@@ -5,6 +5,21 @@ export const onChangeRoute = (route: string) => (dispatch: (arg: ActionPayload) 
 		type: NavigationActionTypes.NAVIGATE,
 		payload: {
 			route,
+			reportOption: '',
+			signInId: '',
+			mainTutorModal: false,
+			studentRegisterModal: false,
+			tutorDatePickerModal: false
+		}
+	});
+};
+
+export const onChangeReportOption = (option: string) => (dispatch: (arg: ActionPayload) => void) => {
+	dispatch({
+		type: NavigationActionTypes.REPORT_OPTION,
+		payload: {
+			route: '',
+			reportOption: option,
 			signInId: '',
 			mainTutorModal: false,
 			studentRegisterModal: false,
@@ -18,6 +33,7 @@ export const setSignInId = (id: string) => (dispatch: (arg: ActionPayload) => vo
 		type: NavigationActionTypes.SET_SIGNIN_ID,
 		payload: {
 			route: '',
+			reportOption: '',
 			signInId: id,
 			mainTutorModal: false,
 			studentRegisterModal: false,
@@ -26,12 +42,26 @@ export const setSignInId = (id: string) => (dispatch: (arg: ActionPayload) => vo
 	});
 };
 
+export const clearSignInId = () => (dispatch: (arg: ActionPayload) => void) => {
+	dispatch({
+		type: NavigationActionTypes.CLEAR_SIGNIN_ID,
+		payload: {
+			route: '',
+			reportOption: '',
+			signInId: '',
+			mainTutorModal: false,
+			studentRegisterModal: false,
+			tutorDatePickerModal: false
+		}
+	});
+};
+
 export const toggleMainTutorModal = (toggle: boolean) => (dispatch: (arg: ActionPayload) => void) => {
-	console.log(toggle);
 	dispatch({
 		type: NavigationActionTypes.TOGGLE_MAIN_TUTOR_MODAL,
 		payload: {
 			route: '',
+			reportOption: '',
 			signInId: '',
 			studentRegisterModal: false,
 			mainTutorModal: toggle,
@@ -45,6 +75,7 @@ export const toggleStudentRegisterModal = (toggle: boolean) => (dispatch: (arg: 
 		type: NavigationActionTypes.TOGGLE_STUDENT_REGISTER_MODAL,
 		payload: {
 			route: '',
+			reportOption: '',
 			signInId: '',
 			mainTutorModal: false,
 			studentRegisterModal: toggle,
@@ -58,6 +89,7 @@ export const toggleTutorDatePickerModal = (toggle: boolean) => (dispatch: (arg: 
 		type: NavigationActionTypes.TOGGLE_TUTOR_DATEPICKER_MODAL,
 		payload: {
 			route: '',
+			reportOption: '',
 			signInId: '',
 			mainTutorModal: false,
 			studentRegisterModal: false,

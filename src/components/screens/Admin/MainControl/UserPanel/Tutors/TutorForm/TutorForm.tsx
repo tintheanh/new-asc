@@ -5,6 +5,7 @@ import { TutorFormProps, TutorFormStates } from './props';
 import { InputField, Button, Checkbox } from 'components/common';
 
 import { selectAndUpdateTutor, updateTutor, resetTutor, toggleAddTutor, addTutor } from 'redux/store/tutor/action';
+import styles from './styles.module.css';
 
 class TutorForm extends React.Component<TutorFormProps, TutorFormStates> {
 	constructor(props: TutorFormProps) {
@@ -85,63 +86,73 @@ class TutorForm extends React.Component<TutorFormProps, TutorFormStates> {
 		const { selected, toggleAdd } = this.props;
 		// console.log(selected);
 		return (
-			<form>
-				<InputField
-					type="number"
-					disabled={this._activateInput()}
-					label="ID"
-					value={selected ? selected.staff_id : ''}
-					onTextChange={this.setInfo('staff_id')}
-				/>
-				<InputField
-					type="text"
-					disabled={this._activateInput()}
-					label="First name"
-					value={selected ? selected.first_name : ''}
-					onTextChange={this.setInfo('first_name')}
-				/>
-				<InputField
-					type="text"
-					disabled={this._activateInput()}
-					label="Last name"
-					value={selected ? selected.last_name : ''}
-					onTextChange={this.setInfo('last_name')}
-				/>
-				<InputField
-					type="email"
-					disabled={this._activateInput()}
-					label="Email"
-					value={selected ? selected.email : ''}
-					onTextChange={this.setInfo('email')}
-				/>
-				<Checkbox
-					disabled={this._activateInput()}
-					checked={selected ? selected.active : false}
-					labelText="Active"
-					onChange={this.setInfo('active')}
-				/>
-				{!edit ? (
-					<div>
+			<form className={`box-form ${styles.container}`}>
+				<div className={styles.idAndEmailInput}>
+					<InputField
+						type="number"
+						disabled={this._activateInput()}
+						label="ID"
+						value={selected ? selected.staff_id : ''}
+						onTextChange={this.setInfo('staff_id')}
+					/>
+					<InputField
+						type="email"
+						disabled={this._activateInput()}
+						label="Email"
+						value={selected ? selected.email : ''}
+						onTextChange={this.setInfo('email')}
+					/>
+				</div>
+				<div className={styles.firstLastNameInput}>
+					<InputField
+						type="text"
+						disabled={this._activateInput()}
+						label="First name"
+						value={selected ? selected.first_name : ''}
+						onTextChange={this.setInfo('first_name')}
+					/>
+					<InputField
+						type="text"
+						disabled={this._activateInput()}
+						label="Last name"
+						value={selected ? selected.last_name : ''}
+						onTextChange={this.setInfo('last_name')}
+					/>
+				</div>
+				<div style={{ marginTop: 12 }}>
+					<Checkbox
+						disabled={this._activateInput()}
+						checked={selected ? selected.active : false}
+						labelText="Active"
+						onChange={this.setInfo('active')}
+					/>
+				</div>
+
+				<div className={styles.btnGroup}>
+					{!edit ? (
 						<Button
+							customClassName={styles.editBtn}
 							disabled={selected === null || toggleAdd}
 							label="Edit"
 							onClick={this.toggleEdit('edit')}
 						/>
-					</div>
-				) : (
+					) : (
+						<div className={styles.saveAndCancelBtn}>
+							<Button type="submit" label="Save" onClick={this.handleUpdate} />
+							<Button label="Cancel" onClick={this.toggleEdit('cancel')} />
+						</div>
+					)}
 					<div>
-						<Button type="submit" label="Save" onClick={this.handleUpdate} />
-						<Button label="Cancel" onClick={this.toggleEdit('cancel')} />
+						{!toggleAdd ? (
+							<Button customClassName={styles.newBtn} label="New" onClick={this.toggleAdd(true)} />
+						) : (
+							<div className={styles.saveAndCancelBtn} style={{ marginTop: 10 }}>
+								<Button type="submit" label="Save" onClick={this.handleAddTutor} />
+								<Button label="Cancel" onClick={this.toggleAdd(false)} />
+							</div>
+						)}
 					</div>
-				)}
-				{!toggleAdd ? (
-					<Button label="New" onClick={this.toggleAdd(true)} />
-				) : (
-					<div>
-						<Button type="submit" label="Save" onClick={this.handleAddTutor} />
-						<Button label="Cancel" onClick={this.toggleAdd(false)} />
-					</div>
-				)}
+				</div>
 			</form>
 		);
 	}

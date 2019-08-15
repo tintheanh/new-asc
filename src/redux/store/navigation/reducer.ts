@@ -2,6 +2,7 @@ import { NavigationActionTypes, NavigationState, ActionPayload } from './types';
 
 const initialState = {
 	route: 'Users',
+	reportOption: 'Tutor Info',
 	signInId: '',
 	mainTutorModal: false,
 	studentRegisterModal: false,
@@ -15,7 +16,17 @@ const NavigationReducer = (state: NavigationState = initialState, action: Action
 				...state,
 				route: action.payload.route
 			};
+		case NavigationActionTypes.REPORT_OPTION:
+			return {
+				...state,
+				reportOption: action.payload.reportOption
+			};
 		case NavigationActionTypes.SET_SIGNIN_ID:
+			return {
+				...state,
+				signInId: action.payload.signInId
+			};
+		case NavigationActionTypes.CLEAR_SIGNIN_ID:
 			return {
 				...state,
 				signInId: action.payload.signInId

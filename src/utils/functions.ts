@@ -31,7 +31,7 @@ export const getTimeFromUnix = (unix_time: number): string => {
 };
 
 export const timeDiff = (time1: number, time2: number): string => {
-	let difference = time2 - time1;
+	let difference = Math.abs(time2 - time1);
 
 	const hoursDifference = Math.floor(difference / 60 / 60);
 	difference -= hoursDifference * 60 * 60;
@@ -89,4 +89,14 @@ export const preprocessWorkScheduleBeforeUpdate = (work_schedule: Schedule[][]) 
 		}
 		return null;
 	});
+};
+
+export const chunk = (array: any[], size: number) => {
+	const chunked_arr = [];
+	let index = 0;
+	while (index < array.length) {
+		chunked_arr.push(array.slice(index, size + index));
+		index += size;
+	}
+	return chunked_arr;
 };

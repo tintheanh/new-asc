@@ -1,0 +1,32 @@
+.container {
+	margin: 0 24px;
+	background: #fff;
+}
+
+.idAndEmailInput,
+.firstLastNameInput {
+	display: grid;
+	grid-template-columns: auto auto;
+	column-gap: 10px;
+	margin-bottom: 10px;
+}
+
+.saveAndCancelBtn {
+	display: grid;
+	grid-template-columns: 30% 30%;
+	column-gap: 10px;
+}
+
+.editBtn,
+.newBtn {
+	padding-left: 78.5px;
+	padding-right: 78.5px;
+}
+
+.newBtn {
+  margin-top: 10px;
+}
+
+.btnGroup {
+	margin-top: 10px;
+}

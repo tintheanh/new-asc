@@ -2,3 +2,9 @@
 	display: grid;
 	grid-template-columns: 262px auto;
 }
+
+.returnBtn {
+	margin: 0 12px;
+	padding-left: 20px;
+	padding-right: 20px;
+}

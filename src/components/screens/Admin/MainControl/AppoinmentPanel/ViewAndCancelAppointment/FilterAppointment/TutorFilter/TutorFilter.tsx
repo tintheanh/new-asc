@@ -12,7 +12,16 @@ class TutorFilter extends React.Component<any, any> {
 
 	render() {
 		// console.log(this.props.tutors);
-		return <Select options={this.props.tutors} onChange={this.setTutor} value={this.props.selectedTutor} />;
+		return (
+			<div style={{ marginTop: 10 }}>
+				<Select
+					placeholder="Select tutor..."
+					options={this.props.tutors}
+					onChange={this.setTutor}
+					value={this.props.selectedTutor}
+				/>
+			</div>
+		);
 	}
 }
 

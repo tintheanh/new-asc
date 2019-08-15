@@ -1,30 +1,34 @@
 import * as React from 'react';
-import styles from './styles.module.css';
 import { InputFieldProps } from './props';
 
 export const InputField: React.SFC<InputFieldProps> = (props) => {
-	const { className, label, autoFocus, type, value, onTextChange, disabled } = props;
+	const { customClassName, label, autoFocus, type, value, onTextChange, disabled, placeholder } = props;
 	return (
 		<div>
 			{label !== '' ? (
-				<div>
-					<label>{label}</label> <br />
-				</div>
+				<label>
+					{label} <br />
+				</label>
 			) : null}
-			<input
-				className={className}
-				autoFocus={autoFocus}
-				type={type}
-				value={value}
-				onChange={onTextChange}
-				disabled={disabled}
-			/>
+			<div className="form-group">
+				<input
+					style={label ? { marginTop: 12 } : {}}
+					className={`form-control ${customClassName}`}
+					autoFocus={autoFocus}
+					placeholder={placeholder}
+					type={type}
+					value={value}
+					onChange={onTextChange}
+					disabled={disabled}
+				/>
+			</div>
 		</div>
 	);
 };
 
 InputField.defaultProps = {
-	className: '',
+	customClassName: '',
+	placeholder: '',
 	label: '',
 	autoFocus: false,
 	disabled: false

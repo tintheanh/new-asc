@@ -8,6 +8,7 @@
 }
 
 .modalWrapper {
+	border-radius: 4px;
 	background: white;
 	border: 1px solid #d0cccc;
 	box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2), 0 7px 20px 0 rgba(0, 0, 0, 0.17);
@@ -17,7 +18,7 @@
 .modalHeader {
 	height: 40px;
 	line-height: 40px;
-	padding: 5px 20px;
+	padding: 10px 15px;
 }
 
 .modalBody {
@@ -27,7 +28,7 @@
 
 .modalFooter {
 	height: 35px;
-	padding: 15px;
+	padding: 10px 15px;
 }
 
 .closeModalBtn {
@@ -36,6 +37,7 @@
 	float: right;
 	font-size: 30px;
 	margin: 0;
+	z-index: 5000;
 }
 
 .closeModalBtn:hover {
@@ -49,8 +51,10 @@
 	cursor: pointer;
 	font-weight: bold;
 	outline: none;
-	padding: 10px;
+	border-radius: 4px;
+	padding: 10px 14px;
 	float: right;
+	z-index: 5000;
 }
 
 .backDrop {

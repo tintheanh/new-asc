@@ -16,6 +16,7 @@ import DeleteStudent from './DeleteStudent/DeleteStudent';
 import { fetchAllStudents, clear } from 'redux/store/student/action';
 
 // Styles
+import back from 'components/common/back.png';
 import styles from './styles.module.css';
 
 const Students: React.SFC<StudentsProps> = (props) => {
@@ -30,16 +31,21 @@ const Students: React.SFC<StudentsProps> = (props) => {
 	return (
 		<div>
 			<Header title="Students" />
-			<Link className={styles.backBtn} to="/admin">
-				Back
-			</Link>
-			<StudentForm />
-			<div className={styles.studentTable}>
-				<StudentTable />
-			</div>
-			<br />
-			<div>
-				<DeleteStudent />
+			<div style={{ margin: 12 }}>
+				<Link className={styles.backBtn} to="/admin">
+					<img src={back} alt="" width="35" />
+				</Link>
+				<div className={styles.studentTableAndForm}>
+					<div style={{ height: 500 }}>
+						<StudentTable />
+					</div>
+					<div>
+						<StudentForm />
+						<DeleteStudent />
+					</div>
+				</div>
+
+				<br />
 			</div>
 		</div>
 	);

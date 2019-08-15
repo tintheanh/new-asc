@@ -2,9 +2,10 @@
 	position: absolute;
 	top: 0;
 	left: 0;
+	padding: 9px;
 }
 
-.studentTable {
-	width: 500px;
-	height: 60vh;
+.studentTableAndForm {
+	display: grid;
+	grid-template-columns: 450px 50%;
 }

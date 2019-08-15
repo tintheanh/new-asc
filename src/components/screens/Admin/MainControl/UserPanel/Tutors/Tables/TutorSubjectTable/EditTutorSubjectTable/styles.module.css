@@ -5,3 +5,18 @@
 .table {
 	height: 45%;
 }
+
+.upDownBtnGroup {
+	padding: 10px 0;
+	display: grid;
+	grid-template-columns: auto auto;
+	justify-content: center;
+	column-gap: 10px;
+}
+
+.saveBtn {
+	position: relative;
+	top: 12px;
+	left: 312px;
+	height: 33px;
+}

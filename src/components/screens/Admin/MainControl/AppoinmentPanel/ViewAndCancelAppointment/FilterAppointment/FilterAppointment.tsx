@@ -7,6 +7,8 @@ import SubjectFilter from './SubjectFilter/SubjectFilter';
 import DayFilter from './DayFilter/DayFilter';
 import TypeFilter from './TypeFilter/TypeFilter';
 import { applyFilter, clearFilter, removeAppointment } from 'redux/store/appointment/action';
+import { Button } from 'components/common';
+import styles from './styles.module.css';
 
 class FilterAppointment extends React.Component<any, any> {
 	performFilter = () => this.props.applyFilter(this.props.appointments, this.props.filter);
@@ -33,24 +35,27 @@ class FilterAppointment extends React.Component<any, any> {
 	};
 
 	render() {
-		// console.log(this.props.filter);
+		// console.log(this.props.toggleFilter);
 		return (
 			<div>
-				<DateFilter />
-				<TutorFilter />
-				<StudentFilter />
-				<SubjectFilter />
-				<DayFilter />
-				<TypeFilter />
-				<div>
-					<button onClick={this.performFilter}>Apply filter</button>
-					<button onClick={this.props.clearFilter}>Clear</button>
+				<div className={`box-form ${styles.container}`}>
+					<DateFilter />
+					<TutorFilter />
+					<StudentFilter />
+					<SubjectFilter />
+					<DayFilter />
+					<TypeFilter />
+					<div className={styles.applyAndClear}>
+						<Button label="Apply filter" onClick={this.performFilter} />
+						<Button label="Clear" onClick={this.props.clearFilter} />
+					</div>
 				</div>
-				<div>
-					<button disabled={!this.props.selectedAppointment} onClick={this.performRemoveAppointment}>
-						{this.renderBtnText()}
-					</button>
-				</div>
+				<Button
+					customClassName={styles.deleteBtn}
+					label={this.renderBtnText()}
+					disabled={!this.props.selectedAppointment}
+					onClick={this.performRemoveAppointment}
+				/>
 			</div>
 		);
 	}

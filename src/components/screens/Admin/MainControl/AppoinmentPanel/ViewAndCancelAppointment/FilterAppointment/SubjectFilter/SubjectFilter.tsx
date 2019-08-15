@@ -14,9 +14,9 @@ class SubjectFilter extends React.Component<any, any> {
 	render() {
 		// console.log(this.props.subjects);
 		return (
-			<div>
-				<p>Subject</p>
+			<div style={{ marginTop: 12 }}>
 				<Select
+					placeholder="Select subject..."
 					options={this.props.subjects.map((subject: any) => ({ value: subject.id, label: subject.label }))}
 					value={this.props.selectedSubject}
 					onChange={this.setSubject}

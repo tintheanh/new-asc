@@ -939,51 +939,47 @@ export const removeTypeFilter = (type: any) => (dispatch: (arg: ActionPayload) =
 };
 
 export const applyFilter = (appointments: any[], filter: any) => (dispatch: (arg: ActionPayload) => void) => {
+	let criteria = 0;
+	if (filter.dateFilter[0] && filter.dateFilter[1]) criteria++;
+	if (filter.days.size) criteria++;
+	if (filter.student) criteria++;
+	if (filter.subject) criteria++;
+	if (filter.tutor) criteria++;
+	if (filter.type.size) criteria++;
 	const filterAppts = appointments.filter((appt: any) => {
-		let passDate = false;
-		let passDays = false;
-		let passStudent = false;
-		let passTutor = false;
-		let passSubject = false;
-		let passType = false;
+		let metCriteria = 0;
 
-		if (filter.dateFilter[0] && filter.dateFilter[0]) {
+		if (filter.dateFilter[0] && filter.dateFilter[1]) {
 			const resetApptDate = Math.floor(new Date(appt.apptDate * 1000).setHours(0, 0, 0) / 1000);
 			if (
 				resetApptDate >= Math.floor(filter.dateFilter[0].getTime() / 1000) &&
 				resetApptDate <= Math.floor(filter.dateFilter[1].getTime() / 1000)
 			)
-				passDate = true;
-			else passDate = false;
-		} else passDate = false;
+				metCriteria++;
+		}
 
 		if (filter.days.size) {
 			const apptDay = new Date(appt.apptDate * 1000).getDay();
-			if (filter.days.has(apptDay)) passDays = true;
-			else passDays = false;
-		} else passDays = false;
+			if (filter.days.has(apptDay)) metCriteria++;
+		}
 
 		if (filter.student) {
-			if (filter.student.value === appt.student.uid) passStudent = true;
-			else passStudent = false;
-		} else passStudent = false;
+			if (filter.student.value === appt.student.uid) metCriteria++;
+		}
 
 		if (filter.tutor) {
-			if (filter.tutor.value === appt.tutor.uid) passTutor = true;
-			else passTutor = false;
-		} else passTutor = false;
+			if (filter.tutor.value === appt.tutor.uid) metCriteria++;
+		}
 
 		if (filter.subject) {
-			if (filter.subject.value === appt.subject.id) passSubject = true;
-			else passSubject = false;
+			if (filter.subject.value === appt.subject.id) metCriteria++;
 		}
 
 		if (filter.type.size) {
-			if (filter.type.has(appt.status)) passType = true;
-			else passType = false;
-		} else passType = false;
+			if (filter.type.has(appt.status)) metCriteria++;
+		}
 
-		if (passDate || passDays || passStudent || passSubject || passTutor || passType) return appt;
+		if (metCriteria === criteria) return appt;
 	});
 	dispatch({
 		type: AppointmentActionTypes.APPLY_FILTER,

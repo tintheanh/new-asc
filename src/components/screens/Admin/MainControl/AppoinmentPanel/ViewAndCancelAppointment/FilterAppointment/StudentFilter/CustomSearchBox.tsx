@@ -19,6 +19,7 @@ class SearchBox extends React.Component<any, any> {
 			// 	<input type="search" value={this.props.searchToken} onChange={this.performSearch} />
 			// </form>
 			<Select
+				placeholder="Select student..."
 				options={this.props.hits.map((hit: any) => ({
 					value: hit.objectID,
 					label: `${hit.first_name} ${hit.last_name}`

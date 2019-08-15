@@ -4,6 +4,7 @@ import { Header } from 'components/common';
 import styles from './styles.module.css';
 import AppointmentTable from './AppointmentTable/AppointmentTable';
 import FilterAppointment from './FilterAppointment/FilterAppointment';
+import back from 'components/common/back.png';
 
 class ViewAndCancelAppointment extends React.Component<any, any> {
 	render() {
@@ -11,7 +12,7 @@ class ViewAndCancelAppointment extends React.Component<any, any> {
 			<div>
 				<Header title="View/Cancel" />
 				<Link className={styles.backBtn} to="/admin">
-					Back
+					<img src={back} alt="" width="35" />
 				</Link>
 				<div className={styles.container}>
 					<div className={styles.apptTable}>

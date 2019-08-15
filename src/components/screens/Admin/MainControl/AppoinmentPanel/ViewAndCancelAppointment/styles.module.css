@@ -2,18 +2,15 @@
 	position: absolute;
 	top: 0;
 	left: 0;
+	padding: 9px;
 }
 
 .container {
 	display: grid;
-	grid-template-columns: auto auto;
-
+	grid-template-columns: auto 29%;
+	margin: 12px;
 }
 
 .apptTable {
-	width: 75vw;
-}
-
-.filter {
-	width: 25vw;
+	width: 70vw;
 }

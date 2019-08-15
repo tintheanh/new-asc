@@ -3,6 +3,8 @@ import { Tutor } from 'redux/store/tutor/types';
 import { TinySchedule } from 'components/common';
 import { TutorScheduleReportStates } from './props';
 import { workDays } from 'config';
+import logo from 'components/common/mission-logo.png';
+import styles from './styles.module.css';
 
 const ipcRenderer = (window as any).ipcRenderer;
 
@@ -28,13 +30,136 @@ export class TutorScheduleReport extends React.Component<any, TutorScheduleRepor
 		});
 	};
 
+	renderPage = () => {
+		return this.state.data.map((tutor: any, i: number) => {
+			if (i === 0) {
+				return (
+					<section key={i} className="sheet padding-15mm" style={{ width: '100%', height: 800 }}>
+						<div className={styles.header}>
+							<div>
+								<img src={logo} alt="" width="50" />
+							</div>
+							<div>
+								<h2>Report</h2>
+								<h3>Tutor Schedule</h3>
+							</div>
+							<div>
+								<img src={logo} alt="" width="50" />
+							</div>
+						</div>
+						<div>
+							<h4 className={styles.tutorName}>{`${tutor.first_name} ${tutor.last_name}`}</h4>
+							{tutor.work_schedule.map((day: any, j: number) => {
+								if (workDays[j] === 'Saturday') {
+									return (
+										<div key={j}>
+											<div className={styles.dayReport}>
+												<h4>{workDays[j]}</h4>
+												{day.map((shift: any, k: number) => {
+													if (k % 2 === 0)
+														return (
+															<div key={k} className={styles.even}>
+																<p>{`${shift.from.time} - ${shift.to.time}`}</p>
+															</div>
+														);
+													return (
+														<div key={k} className={styles.odd}>
+															<p>{`${shift.from.time} - ${shift.to.time}`}</p>
+														</div>
+													);
+												})}
+											</div>
+										</div>
+									);
+								}
+								return (
+									<div key={j}>
+										<div className={styles.dayReport}>
+											<h4>{workDays[j]}</h4>
+											{day.map((shift: any, k: number) => {
+												if (k % 2 === 0)
+													return (
+														<div key={k} className={styles.even}>
+															<p>{`${shift.from.time} - ${shift.to.time}`}</p>
+														</div>
+													);
+												return (
+													<div key={k} className={styles.odd}>
+														<p>{`${shift.from.time} - ${shift.to.time}`}</p>
+													</div>
+												);
+											})}
+										</div>
+										<div className={styles.divider} />
+									</div>
+								);
+							})}
+						</div>
+					</section>
+				);
+			}
+			return (
+				<section key={i} className="sheet padding-15mm" style={{ width: '100%', height: 800 }}>
+					<div>
+						<h4 className={styles.tutorName}>{`${tutor.first_name} ${tutor.last_name}`}</h4>
+						{tutor.work_schedule.map((day: any, j: number) => {
+							if (workDays[j] === 'Saturday') {
+								return (
+									<div key={j}>
+										<div className={styles.dayReport}>
+											<h4>{workDays[j]}</h4>
+											{day.map((shift: any, k: number) => {
+												if (k % 2 === 0)
+													return (
+														<div key={k} className={styles.even}>
+															<p>{`${shift.from.time} - ${shift.to.time}`}</p>
+														</div>
+													);
+												return (
+													<div key={k} className={styles.odd}>
+														<p>{`${shift.from.time} - ${shift.to.time}`}</p>
+													</div>
+												);
+											})}
+										</div>
+									</div>
+								);
+							}
+							return (
+								<div key={j}>
+									<div className={styles.dayReport}>
+										<h4>{workDays[j]}</h4>
+										{day.map((shift: any, k: number) => {
+											if (k % 2 === 0)
+												return (
+													<div key={k} className={styles.even}>
+														<p>{`${shift.from.time} - ${shift.to.time}`}</p>
+													</div>
+												);
+											return (
+												<div key={k} className={styles.odd}>
+													<p>{`${shift.from.time} - ${shift.to.time}`}</p>
+												</div>
+											);
+										})}
+									</div>
+									<div className={styles.divider} />
+								</div>
+							);
+						})}
+					</div>
+				</section>
+			);
+		});
+	};
+
 	render() {
 		const { data } = this.state;
 		console.log(data);
 		if (data) {
 			return (
-				<div>
-					<h1>Report</h1>
+				<div className="A4" style={{ marginTop: 66 }}>
+					{/* <h1>Report</h1>
 					{data.map((e: Tutor, i: number) => (
 						<div key={i}>
 							<h3>
@@ -42,7 +167,8 @@ export class TutorScheduleReport extends React.Component<any, TutorScheduleRepor
 							</h3>
 							{this.renderSchedule(e)}
 						</div>
-					))}
+					))} */}
+					{this.renderPage()}
 				</div>
 			);
 		}

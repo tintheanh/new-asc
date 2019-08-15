@@ -16,7 +16,7 @@ export const Modal: React.SFC<ModalProps> = (props) => {
 					<div className={styles.modalBody}>{children}</div>
 					<div className={styles.modalFooter}>
 						<button className={styles.btnCancel} onClick={close}>
-							CLOSE
+							EXIT
 						</button>
 					</div>
 				</div>

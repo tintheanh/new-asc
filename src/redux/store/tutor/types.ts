@@ -82,6 +82,7 @@ export interface Tutor {
 
 export interface TutorState {
 	data: {
+		doneTime: any;
 		tutor: Tutor | null;
 		tutors: Tutor[];
 		selectedTutor: Tutor | null;

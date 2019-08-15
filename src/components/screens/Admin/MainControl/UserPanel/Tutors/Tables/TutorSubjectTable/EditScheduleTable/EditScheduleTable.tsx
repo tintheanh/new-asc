@@ -235,8 +235,11 @@ class EditScheduleTable extends React.Component<EditScheduleTableProps, EditSche
 			const { selectedTime, toggleSelectCtrl, toggleSelectShift } = this.state;
 			const { selected } = this.props;
 			return (
+				// <div style={{ position: 'relative', bottom: 70, left: 20 }}>
 				<div>
-					<h1>{selected.first_name}</h1>
+					<h2 style={{ color: 'rgba(0,0,0,0.7)', position: 'relative', bottom: 50 }}>
+						{selected.first_name} {selected.last_name}'s schedule
+					</h2>
 					<div className={styles.tableContainer}>
 						<ReactTable
 							className={styles.hourPickingTable}
@@ -260,15 +263,18 @@ class EditScheduleTable extends React.Component<EditScheduleTableProps, EditSche
 								}
 							}}
 						/>
-						<DayTables
-							schedules={selected.work_schedule}
-							onAddHours={this.onAddHours}
-							toggleSelectCtrl={toggleSelectCtrl}
-							toggleSelectShift={toggleSelectShift}
-							isPickingTime={selectedTime.length !== 0}
-							onDeleteSchedules={this.onDeleteSchedules}
-						/>
-						<Button label="Save" onClick={this.handleUpdate} />
+						<div>
+						{/* <div style={{ position: 'relative', bottom: 20 }}> */}
+							<DayTables
+								schedules={selected.work_schedule}
+								onAddHours={this.onAddHours}
+								toggleSelectCtrl={toggleSelectCtrl}
+								toggleSelectShift={toggleSelectShift}
+								isPickingTime={selectedTime.length !== 0}
+								onDeleteSchedules={this.onDeleteSchedules}
+							/>
+						</div>
+						<Button customClassName={styles.saveBtn} label="Save" onClick={this.handleUpdate} />
 					</div>
 				</div>
 			);

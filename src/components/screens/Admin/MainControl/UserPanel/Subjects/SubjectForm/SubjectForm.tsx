@@ -16,6 +16,7 @@ import {
 	addSubject,
 	resetSubject
 } from 'redux/store/subject/action';
+import styles from './styles.module.css';
 
 class SubjectForm extends React.Component<SubjectFormProps, SubjectFormStates> {
 	state = { edit: false };
@@ -89,39 +90,42 @@ class SubjectForm extends React.Component<SubjectFormProps, SubjectFormStates> {
 		const { edit } = this.state;
 		const { selected, toggleAdd } = this.props;
 		return (
-			<form>
-				<InputField
-					type="text"
-					disabled={this._activateInput()}
-					label="Subject ID"
-					value={selected ? selected.label : ''}
-					onTextChange={this.setInfo('label')}
-				/>
-				<InputField
-					type="text"
-					disabled={this._activateInput()}
-					label="Subject name"
-					value={selected ? selected.full : ''}
-					onTextChange={this.setInfo('full')}
-				/>
+			<form className={`box-form ${styles.container}`}>
+				<div className={styles.nameAndLabel}>
+					<InputField
+						type="text"
+						disabled={this._activateInput()}
+						label="Subject lable"
+						value={selected ? selected.label : ''}
+						onTextChange={this.setInfo('label')}
+					/>
+					<InputField
+						type="text"
+						disabled={this._activateInput()}
+						label="Subject name"
+						value={selected ? selected.full : ''}
+						onTextChange={this.setInfo('full')}
+					/>
+				</div>
 				{!edit ? (
 					<div>
 						<Button
+							customClassName={styles.editBtn}
 							disabled={selected === null || toggleAdd}
 							label="Edit"
 							onClick={this.toggleEdit('edit')}
 						/>
 					</div>
 				) : (
-					<div>
+					<div className={styles.saveAndCancelBtn}>
 						<Button type="submit" label="Save" onClick={this.handleUpdate} />
 						<Button label="Cancel" onClick={this.toggleEdit('cancel')} />
 					</div>
 				)}
 				{!toggleAdd ? (
-					<Button label="New" onClick={this.toggleAdd(true)} />
+					<Button customClassName={styles.newBtn} label="New" onClick={this.toggleAdd(true)} />
 				) : (
-					<div>
+					<div className={styles.saveAndCancelBtn}>
 						<Button type="submit" label="Save" onClick={this.handleAddStudent} />
 						<Button label="Cancel" onClick={this.toggleAdd(false)} />
 					</div>

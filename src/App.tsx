@@ -5,6 +5,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { SignIn, Admin } from './components/screens';
 import { Tutors, Students, Subjects } from './components/screens/Admin/MainControl/UserPanel';
 import { ViewAndCancelAppointment } from './components/screens/Admin/MainControl/AppoinmentPanel';
+import { TutorReport } from './components/screens/Admin/MainControl/ReportPanel';
 import Report, { TutorWorkTrackReport, TutorScheduleReport, TutorSubjectReport } from './components/screens/Reports';
 import configureStore from './redux/configureStore';
 
@@ -30,6 +31,7 @@ class App extends React.Component {
 							<Route exact path="/admin/students" component={Students} />
 							<Route exact path="/admin/subjects" component={Subjects} />
 							<Route exact path="/admin/appointments" component={ViewAndCancelAppointment} />
+							<Route exact path="/admin/report/tutors" component={TutorReport} />
 							<Route
 								path="/tutor-work-report"
 								component={() => <Report component={<TutorWorkTrackReport />} />}

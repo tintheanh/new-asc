@@ -2,6 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import DatePicker from 'react-datepicker';
 import { setDateFromFilter, setDateToFilter } from 'redux/store/appointment/action';
+import styles from './styles.module.css';
 
 class DateFilter extends React.Component<any, any> {
 	setDateFrom = (date: Date) => this.props.setDateFromFilter(date);
@@ -9,19 +10,26 @@ class DateFilter extends React.Component<any, any> {
 	render() {
 		// console.log(this.props.dateFilter);
 		return (
-			<div>
-				<p>From</p>
-				<DatePicker
-					selected={this.props.dateFilter[0]}
-					onChange={this.setDateFrom}
-					maxDate={this.props.dateFilter.length < 2 ? null : this.props.dateFilter[1]}
-				/>
-				<p>To</p>
-				<DatePicker
-					selected={this.props.dateFilter[1]}
-					onChange={this.setDateTo}
-					minDate={this.props.dateFilter[0]}
-				/>
+			<div className={styles.fromTo}>
+				<div className={styles.dateInput}>
+					<p style={{ marginBottom: 5 }}>From</p>
+					<DatePicker
+						className="form-control"
+						selected={this.props.dateFilter[0]}
+						onChange={this.setDateFrom}
+						maxDate={this.props.dateFilter.length < 2 ? null : this.props.dateFilter[1]}
+					/>
+				</div>
+				<div className={styles.dateInput}>
+					<p style={{ marginBottom: 5 }}>To</p>
+					<DatePicker
+						className="form-control"
+						calendarClassName={styles.calendar}
+						selected={this.props.dateFilter[1]}
+						onChange={this.setDateTo}
+						minDate={this.props.dateFilter[0]}
+					/>
+				</div>
 			</div>
 		);
 	}

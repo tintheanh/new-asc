@@ -2,6 +2,7 @@ import { TutorActionTypes, TutorState, ActionPayload } from './types';
 
 const initialState = {
 	data: {
+		doneTime: null,
 		tutor: null,
 		tutors: [],
 		selectedTutor: null,
@@ -49,6 +50,7 @@ const TutorReducer = (state: TutorState = initialState, action: ActionPayload): 
 				error: action.payload.error,
 				data: {
 					...state.data,
+					doneTime: action.payload.data.doneTime,
 					tutor: action.payload.data.tutor
 				}
 			};

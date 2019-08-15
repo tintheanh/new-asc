@@ -1,0 +1,53 @@
+.header {
+	border-top: 1px double #000;
+	border-bottom: 1px double #000;
+	border-bottom-style: double;
+	text-align: center;
+	padding: 6px 0;
+	display: grid;
+	grid-template-columns: auto auto auto;
+	justify-items: center;
+}
+
+.header h2,
+.header h3 {
+	margin: 0;
+	padding: 0;
+	/* font-size: 12px; */
+}
+
+.header h3 {
+	border: 1px solid #000;
+	/* margin: 0 84px; */
+	padding: 2px 24px;
+	background-color: cyan;
+}
+
+.tutorName {
+	border: 1px solid #000;
+	margin-right: 144px;
+	padding: 2px 4px;
+	margin-bottom: 8px;
+}
+
+.reportColumns,
+.subject {
+	display: grid;
+	grid-template-columns: auto auto;
+}
+
+.reportColumns span {
+	text-decoration: underline;
+}
+
+.subject h5 {
+	margin: 2px 0;
+}
+
+.odd {
+	background-color: rgba(0, 0, 0, 0.3);
+}
+
+.even {
+	background-color: #fff;
+}

@@ -11,6 +11,7 @@ import { Button } from 'components/common';
 
 // Action(s)
 import { deleteTutor } from 'redux/store/tutor/action';
+import styles from './styles.module.css';
 
 const deleteFunc = (
 	deleteTutor: (uid: string, tutors: Tutor[]) => void,
@@ -25,7 +26,12 @@ const deleteFunc = (
 const DeleteTutor: React.SFC<DeleteTutorProps> = (props) => {
 	const { deleteTutor, selected, data } = props;
 	return (
-		<Button disabled={props.selected === null} label="Delete" onClick={deleteFunc(deleteTutor, selected, data)} />
+		<Button
+			customClassName={styles.btn}
+			disabled={props.selected === null || props.selected.uid === ''}
+			label="Delete"
+			onClick={deleteFunc(deleteTutor, selected, data)}
+		/>
 	);
 };
 

@@ -16,6 +16,7 @@ import {
 	toggleAddStudent,
 	addStudent
 } from 'redux/store/student/action';
+import styles from './styles.module.css';
 
 class StudentForm extends React.Component<StudentFormProps, StudentFormStates> {
 	state = { edit: false };
@@ -90,59 +91,66 @@ class StudentForm extends React.Component<StudentFormProps, StudentFormStates> {
 		const { selected, toggleAdd } = this.props;
 		const { edit } = this.state;
 		return (
-			<form>
-				<InputField
-					type="number"
-					disabled={this._activateInput()}
-					label="ID"
-					value={selected ? selected.studentId : ''}
-					onTextChange={this.setInfo('studentId')}
-				/>
-				<InputField
-					type="text"
-					disabled={this._activateInput()}
-					label="First name"
-					value={selected ? selected.first_name : ''}
-					onTextChange={this.setInfo('first_name')}
-				/>
-				<InputField
-					type="text"
-					disabled={this._activateInput()}
-					label="Last name"
-					value={selected ? selected.last_name : ''}
-					onTextChange={this.setInfo('last_name')}
-				/>
-				<InputField
-					type="text"
-					disabled={this._activateInput()}
-					label="Email"
-					value={selected ? selected.email : ''}
-					onTextChange={this.setInfo('email')}
-				/>
-				<Checkbox
-					disabled={this._activateInput()}
-					checked={selected ? selected.active : false}
-					labelText="Active"
-					onChange={this.setInfo('active')}
-				/>
+			<form className={`box-form ${styles.container}`}>
+				<div className={styles.idAndEmailInput}>
+					<InputField
+						type="number"
+						disabled={this._activateInput()}
+						label="ID"
+						value={selected ? selected.studentId : ''}
+						onTextChange={this.setInfo('studentId')}
+					/>
+					<InputField
+						type="text"
+						disabled={this._activateInput()}
+						label="Email"
+						value={selected ? selected.email : ''}
+						onTextChange={this.setInfo('email')}
+					/>
+				</div>
+				<div className={styles.firstLastNameInput}>
+					<InputField
+						type="text"
+						disabled={this._activateInput()}
+						label="First name"
+						value={selected ? selected.first_name : ''}
+						onTextChange={this.setInfo('first_name')}
+					/>
+					<InputField
+						type="text"
+						disabled={this._activateInput()}
+						label="Last name"
+						value={selected ? selected.last_name : ''}
+						onTextChange={this.setInfo('last_name')}
+					/>
+				</div>
+				<div style={{ marginTop: 12 }}>
+					<Checkbox
+						disabled={this._activateInput()}
+						checked={selected ? selected.active : false}
+						labelText="Active"
+						onChange={this.setInfo('active')}
+					/>
+				</div>
 				{!edit ? (
 					<div>
 						<Button
+							customClassName={styles.editBtn}
 							disabled={selected === null || toggleAdd}
 							label="Edit"
 							onClick={this.toggleEdit('edit')}
 						/>
 					</div>
 				) : (
-					<div>
+					<div className={styles.saveAndCancelBtn}>
 						<Button type="submit" label="Save" onClick={this.handleUpdate} />
 						<Button label="Cancel" onClick={this.toggleEdit('cancel')} />
 					</div>
 				)}
 				{!toggleAdd ? (
-					<Button label="New" onClick={this.toggleAdd(true)} />
+					<Button customClassName={styles.newBtn} label="New" onClick={this.toggleAdd(true)} />
 				) : (
-					<div>
+					<div className={styles.saveAndCancelBtn}>
 						<Button type="submit" label="Save" onClick={this.handleAddStudent} />
 						<Button label="Cancel" onClick={this.toggleAdd(false)} />
 					</div>

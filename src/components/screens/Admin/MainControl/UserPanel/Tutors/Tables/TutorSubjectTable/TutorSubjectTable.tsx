@@ -12,6 +12,7 @@ import { EditTutorSubjectTable } from '../';
 
 // Action(s)
 import { resetTutor } from 'redux/store/tutor/action';
+import styles from './styles.module.css';
 
 class TutorSubjectTable extends React.Component<TutorSubjectTableProps, TutorSubjectTableStates> {
 	state = { modalSubject: false };
@@ -61,6 +62,7 @@ class TutorSubjectTable extends React.Component<TutorSubjectTableProps, TutorSub
 					// ]}
 				/>
 				<Button
+					customClassName={styles.btn}
 					disabled={selected === null || toggleAdd}
 					label="Edit subjects"
 					onClick={this.handleModalChange().open}

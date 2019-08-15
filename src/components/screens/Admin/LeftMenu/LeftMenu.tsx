@@ -6,17 +6,14 @@ import { LeftMenuProps } from './props';
 import { onChangeRoute } from 'redux/store/navigation/action';
 
 class LeftMenu extends React.Component<LeftMenuProps, any> {
-	startNavigating = (route: string): void => {
-		this.props.onChangeRoute(route);
-	};
+	performChangeRoute = (route: string) => () => this.props.onChangeRoute(route);
 
 	render() {
 		return (
 			<div className={styles.container}>
-				<MenuBtn label="Users" navigate={this.props.onChangeRoute.bind(this, 'Users')} />
-				<MenuBtn label="View Appointments" navigate={this.props.onChangeRoute.bind(this, 'View Appointments')} />
-				{/* <MenuBtn label="View Appoinments" />
-				<MenuBtn label="System" /> */}
+				<MenuBtn type="main-menu" label="Users" navigate={this.performChangeRoute('Users')} />
+				<MenuBtn type="main-menu" label="Appointments" navigate={this.performChangeRoute('Appointments')} />
+				<MenuBtn type="main-menu" label="Reports" navigate={this.performChangeRoute('Reports')} />
 			</div>
 		);
 	}

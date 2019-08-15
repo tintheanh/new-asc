@@ -1,8 +1,8 @@
 import * as React from 'react';
-import logo from './mission-logo.png';
+import logo from 'components/common/mission-logo.png';
 import styles from './styles.module.css';
 
-const Introduction = (props: any) => (
+const Introduction = () => (
 	<div>
 		<img className={styles.logo} src={logo} alt="logo" />
 		<div className={`${styles.instruction} box-form`}>

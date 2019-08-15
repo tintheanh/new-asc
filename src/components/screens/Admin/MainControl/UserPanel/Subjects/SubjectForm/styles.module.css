@@ -1,0 +1,30 @@
+.container {
+	margin: 0 24px;
+	background: #fff;
+	width: 642px;
+}
+
+.nameAndLabel {
+	display: grid;
+	grid-template-columns: auto auto;
+	column-gap: 10px;
+}
+
+.saveAndCancelBtn {
+	display: grid;
+	grid-template-columns: 30% 30%;
+	column-gap: 10px;
+	margin-top: 10px;
+}
+
+.editBtn {
+	padding-left: 80px;
+	padding-right: 80px;
+	margin-top: 10px;
+}
+
+.newBtn {
+	padding-left: 79.5px;
+	padding-right: 79.5px;
+	margin-top: 10px;
+}

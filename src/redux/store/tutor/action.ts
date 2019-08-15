@@ -82,6 +82,7 @@ export const fetchAllTutors = () => async (dispatch: (arg: ActionPayload) => voi
 			type: TutorActionTypes.FETCH_ALL_SUCCESS,
 			payload: {
 				data: {
+					doneTime: null,
 					tutor: null,
 					tutors,
 					selectedTutor: null,
@@ -95,6 +96,7 @@ export const fetchAllTutors = () => async (dispatch: (arg: ActionPayload) => voi
 			type: TutorActionTypes.FETCH_ALL_FAILURE,
 			payload: {
 				data: {
+					doneTime: null,
 					tutor: null,
 					tutors: [],
 					selectedTutor: null,
@@ -117,6 +119,7 @@ export const loginAndFetchTutor = (uid: string) => (dispatch: (arg: ActionPayloa
 						type: TutorActionTypes.FETCH_SUCCESS,
 						payload: {
 							data: {
+								doneTime: null,
 								tutor,
 								tutors: [],
 								selectedTutor: null,
@@ -131,6 +134,7 @@ export const loginAndFetchTutor = (uid: string) => (dispatch: (arg: ActionPayloa
 						type: TutorActionTypes.FETCH_ERROR,
 						payload: {
 							data: {
+								doneTime: null,
 								tutor: null,
 								tutors: [],
 								selectedTutor: null,
@@ -147,6 +151,7 @@ export const loginAndFetchTutor = (uid: string) => (dispatch: (arg: ActionPayloa
 					type: TutorActionTypes.FETCH_ERROR,
 					payload: {
 						data: {
+							doneTime: null,
 							tutor: null,
 							tutors: [],
 							selectedTutor: null,
@@ -175,6 +180,7 @@ export const tutorClockIn = (tutor: Tutor) => (dispatch: (arg: ActionPayload) =>
 				type: TutorActionTypes.CLOCKIN_SUCCESS,
 				payload: {
 					data: {
+						doneTime: null,
 						tutor: updatedTutor,
 						tutors: [],
 						selectedTutor: null,
@@ -189,6 +195,7 @@ export const tutorClockIn = (tutor: Tutor) => (dispatch: (arg: ActionPayload) =>
 				type: TutorActionTypes.CLOCKIN_FAILURE,
 				payload: {
 					data: {
+						doneTime: null,
 						tutor: null,
 						tutors: [],
 						selectedTutor: null,
@@ -208,102 +215,115 @@ export const tutorClockOut = (uid: string, inTime: number) => (dispatch: (arg: A
 
 	// Only valid if work time < 8 hours
 	// console.log(Math.floor((doneTime.out - doneTime.in) / 60 / 60));
-	if (Math.floor((doneTime.out - doneTime.in) / 60 / 60) < 8) {
-		fbdb
-			.ref(`tutors/${uid}/work_track`)
-			.child(String(getEpochOfDate(new Date())))
-			.push(doneTime)
-			.then(() => {
-				const update = {
-					current_log: 0
-				};
+	return new Promise((resolve, reject) => {
+		if (Math.floor((doneTime.out - doneTime.in) / 60 / 60) < 8) {
+			fbdb
+				.ref(`tutors/${uid}/work_track`)
+				.child(String(getEpochOfDate(new Date())))
+				.push(doneTime)
+				.then(() => {
+					const update = {
+						current_log: 0
+					};
 
-				fbdb
-					.ref(`tutors/${uid}`)
-					.update(update)
-					.then(async () => {
-						const tutor = await fetchTutor(uid);
-						dispatch({
-							type: TutorActionTypes.CLOCKOUT_SUCCESS,
-							payload: {
-								data: {
-									tutor,
-									tutors: [],
-									selectedTutor: null,
-									toggleAdd: false
-								},
-								error: ''
-							}
+					fbdb
+						.ref(`tutors/${uid}`)
+						.update(update)
+						.then(async () => {
+							const tutor = await fetchTutor(uid);
+							dispatch({
+								type: TutorActionTypes.CLOCKOUT_SUCCESS,
+								payload: {
+									data: {
+										doneTime,
+										tutor,
+										tutors: [],
+										selectedTutor: null,
+										toggleAdd: false
+									},
+									error: ''
+								}
+							});
+							resolve();
+						})
+						.catch((err) => {
+							dispatch({
+								type: TutorActionTypes.CLOCKOUT_FAILURE,
+								payload: {
+									data: {
+										doneTime: null,
+										tutor: null,
+										tutors: [],
+										selectedTutor: null,
+										toggleAdd: false
+									},
+									error: err.message
+								}
+							});
+							reject(err);
 						});
-					})
-					.catch((err) => {
-						dispatch({
-							type: TutorActionTypes.CLOCKOUT_FAILURE,
-							payload: {
-								data: {
-									tutor: null,
-									tutors: [],
-									selectedTutor: null,
-									toggleAdd: false
-								},
-								error: err.message
-							}
-						});
+				})
+				.catch((err) => {
+					dispatch({
+						type: TutorActionTypes.CLOCKOUT_FAILURE,
+						payload: {
+							data: {
+								doneTime: null,
+								tutor: null,
+								tutors: [],
+								selectedTutor: null,
+								toggleAdd: false
+							},
+							error: err.message
+						}
 					});
-			})
-			.catch((err) => {
-				dispatch({
-					type: TutorActionTypes.CLOCKOUT_FAILURE,
-					payload: {
-						data: {
-							tutor: null,
-							tutors: [],
-							selectedTutor: null,
-							toggleAdd: false
-						},
-						error: err.message
-					}
+					reject(err);
 				});
-			});
-	} else {
-		// reset current_log if work time exceeds 8 hours
-		const update = {
-			current_log: 0
-		};
+		} else {
+			// reset current_log if work time exceeds 8 hours
+			const update = {
+				current_log: 0
+			};
 
-		fbdb
-			.ref(`tutors/${uid}`)
-			.update(update)
-			.then(async () => {
-				const tutor = await fetchTutor(uid);
-				dispatch({
-					type: TutorActionTypes.CLOCKOUT_SUCCESS,
-					payload: {
-						data: {
-							tutor,
-							tutors: [],
-							selectedTutor: null,
-							toggleAdd: false
-						},
-						error: 'Invalid. Your time interval is greater than 8 hours. Will not be counted in the system.'
-					}
+			fbdb
+				.ref(`tutors/${uid}`)
+				.update(update)
+				.then(async () => {
+					const tutor = await fetchTutor(uid);
+					dispatch({
+						type: TutorActionTypes.CLOCKOUT_SUCCESS,
+						payload: {
+							data: {
+								doneTime: null,
+								tutor,
+								tutors: [],
+								selectedTutor: null,
+								toggleAdd: false
+							},
+							error:
+								'Invalid. Your time interval is greater than 8 hours. Will not be counted in the system.'
+						}
+					});
+					resolve();
+				})
+				.catch((err) => {
+					dispatch({
+						type: TutorActionTypes.CLOCKOUT_FAILURE,
+						payload: {
+							data: {
+								doneTime: null,
+								tutor: null,
+								tutors: [],
+								selectedTutor: null,
+								toggleAdd: false
+							},
+							error: err.message
+						}
+					});
+					reject(err);
 				});
-			})
-			.catch((err) => {
-				dispatch({
-					type: TutorActionTypes.CLOCKOUT_FAILURE,
-					payload: {
-						data: {
-							tutor: null,
-							tutors: [],
-							selectedTutor: null,
-							toggleAdd: false
-						},
-						error: err.message
-					}
-				});
-			});
-	}
+		}
+	});
 };
 
 export const logoutAndClearTutor = () => (dispatch: (arg: ActionPayload) => void) => {
@@ -314,6 +334,7 @@ export const logoutAndClearTutor = () => (dispatch: (arg: ActionPayload) => void
 				type: TutorActionTypes.CLEAR_SUCCESS,
 				payload: {
 					data: {
+						doneTime: null,
 						tutor: null,
 						tutors: [],
 						selectedTutor: null,
@@ -328,6 +349,7 @@ export const logoutAndClearTutor = () => (dispatch: (arg: ActionPayload) => void
 				type: TutorActionTypes.CLEAR_FAILURE,
 				payload: {
 					data: {
+						doneTime: null,
 						tutor: null,
 						tutors: [],
 						selectedTutor: null,
@@ -370,6 +392,7 @@ export const addTutor = (tutor: Tutor, tutors: Tutor[]) => (dispatch: (arg: Acti
 									type: TutorActionTypes.ADD_SUCCESS,
 									payload: {
 										data: {
+											doneTime: null,
 											tutor: null,
 											tutors,
 											selectedTutor: null,
@@ -385,6 +408,7 @@ export const addTutor = (tutor: Tutor, tutors: Tutor[]) => (dispatch: (arg: Acti
 									type: TutorActionTypes.ADD_FAILURE,
 									payload: {
 										data: {
+											doneTime: null,
 											tutor: null,
 											tutors: [],
 											selectedTutor: null,
@@ -401,6 +425,7 @@ export const addTutor = (tutor: Tutor, tutors: Tutor[]) => (dispatch: (arg: Acti
 							type: TutorActionTypes.ADD_FAILURE,
 							payload: {
 								data: {
+									doneTime: null,
 									tutor: null,
 									tutors: [],
 									selectedTutor: null,
@@ -417,6 +442,7 @@ export const addTutor = (tutor: Tutor, tutors: Tutor[]) => (dispatch: (arg: Acti
 				type: TutorActionTypes.ADD_FAILURE,
 				payload: {
 					data: {
+						doneTime: null,
 						tutor: null,
 						tutors: [],
 						selectedTutor: null,
@@ -454,6 +480,7 @@ export const updateTutor = (tutor: Tutor, tutors: Tutor[], scheduleOnly: boolean
 						type: TutorActionTypes.UPDATE_SUCCESS,
 						payload: {
 							data: {
+								doneTime: null,
 								tutor: null,
 								tutors: all,
 								selectedTutor: null,
@@ -469,6 +496,7 @@ export const updateTutor = (tutor: Tutor, tutors: Tutor[], scheduleOnly: boolean
 						type: TutorActionTypes.UPDATE_FAILURE,
 						payload: {
 							data: {
+								doneTime: null,
 								tutor: null,
 								tutors: [],
 								selectedTutor: null,
@@ -490,6 +518,7 @@ export const updateTutor = (tutor: Tutor, tutors: Tutor[], scheduleOnly: boolean
 						type: TutorActionTypes.UPDATE_SUCCESS,
 						payload: {
 							data: {
+								doneTime: null,
 								tutor: null,
 								tutors: all,
 								selectedTutor: null,
@@ -505,6 +534,7 @@ export const updateTutor = (tutor: Tutor, tutors: Tutor[], scheduleOnly: boolean
 						type: TutorActionTypes.UPDATE_FAILURE,
 						payload: {
 							data: {
+								doneTime: null,
 								tutor: null,
 								tutors: [],
 								selectedTutor: null,
@@ -524,6 +554,7 @@ export const clear = () => (dispatch: (arg: ActionPayload) => void) => {
 		type: TutorActionTypes.CLEAR,
 		payload: {
 			data: {
+				doneTime: null,
 				tutor: null,
 				tutors: [],
 				selectedTutor: null,
@@ -539,6 +570,7 @@ export const selectAndUpdateTutor = (tutor: Tutor) => (dispatch: (arg: ActionPay
 		type: TutorActionTypes.SELECT_AND_UPDATE_TUTOR,
 		payload: {
 			data: {
+				doneTime: null,
 				tutor: null,
 				tutors: [],
 				selectedTutor: tutor,
@@ -554,6 +586,7 @@ export const toggleAddTutor = (on: boolean) => (dispatch: (arg: ActionPayload) =
 		type: TutorActionTypes.TOGGLE_ADD,
 		payload: {
 			data: {
+				doneTime: null,
 				tutor: null,
 				tutors: [],
 				selectedTutor: empty,
@@ -570,6 +603,7 @@ export const resetTutor = (uid: string, data: Tutor[]) => (dispatch: (arg: Actio
 		type: TutorActionTypes.SELECT_AND_UPDATE_TUTOR,
 		payload: {
 			data: {
+				doneTime: null,
 				tutor: null,
 				tutors: [],
 				selectedTutor: oldTutor,
@@ -598,6 +632,7 @@ export const deleteTutor = (uid: string, data: Tutor[]) => (dispatch: (arg: Acti
 								type: TutorActionTypes.DELETE_SUCCESS,
 								payload: {
 									data: {
+										doneTime: null,
 										tutor: null,
 										tutors: newTutors,
 										selectedTutor: null,
@@ -612,6 +647,7 @@ export const deleteTutor = (uid: string, data: Tutor[]) => (dispatch: (arg: Acti
 								type: TutorActionTypes.DELETE_FAILURE,
 								payload: {
 									data: {
+										doneTime: null,
 										tutor: null,
 										tutors: [],
 										selectedTutor: null,
@@ -627,6 +663,7 @@ export const deleteTutor = (uid: string, data: Tutor[]) => (dispatch: (arg: Acti
 						type: TutorActionTypes.DELETE_FAILURE,
 						payload: {
 							data: {
+								doneTime: null,
 								tutor: null,
 								tutors: [],
 								selectedTutor: null,
@@ -642,6 +679,7 @@ export const deleteTutor = (uid: string, data: Tutor[]) => (dispatch: (arg: Acti
 				type: TutorActionTypes.DELETE_FAILURE,
 				payload: {
 					data: {
+						doneTime: null,
 						tutor: null,
 						tutors: [],
 						selectedTutor: null,

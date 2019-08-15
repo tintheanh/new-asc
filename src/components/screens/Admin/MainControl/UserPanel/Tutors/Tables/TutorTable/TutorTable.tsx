@@ -85,11 +85,13 @@ class TutorTable extends React.Component<TutorTableProps, TutorTableStates> {
 						}
 					}}
 				/>
-				<Checkbox
-					checked={this.state.hideInactive}
-					onChange={this.setInactive}
-					labelText="Hide inactive tutors"
-				/>
+				<div style={{ marginTop: 12 }}>
+					<Checkbox
+						checked={this.state.hideInactive}
+						onChange={this.setInactive}
+						labelText="Hide inactive tutors"
+					/>
+				</div>
 			</div>
 		);
 	}
