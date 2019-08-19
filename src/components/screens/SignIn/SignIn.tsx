@@ -12,9 +12,11 @@ import StudentRegister from './Modals/StudentRegisterModal/StudentRegister/Stude
 import Introduction from './Introduction/Introduction';
 import Clock from './Clock/Clock';
 import SignInForm from './SignInForm/SignInForm';
+
 import MainTutorModal from './Modals/MainTutorModal/MainTutorModal';
 import TutorDatePickerModal from './Modals/TutorDatePickerModal/TutorDatePickerModal';
 import StudentRegisterModal from './Modals/StudentRegisterModal/StudentRegisterModal';
+import StudentAppointmentModal from './Modals/StudentAppointmentModal/StudentAppointmentModal';
 
 // Action(s)
 import { loginAndFetchTutor, logoutAndClearTutor, tutorClockIn, tutorClockOut, clear } from 'redux/store/tutor/action';
@@ -47,6 +49,7 @@ class SignIn extends React.Component<any, any> {
 					<MainTutorModal />
 					<TutorDatePickerModal />
 					<StudentRegisterModal />
+					<StudentAppointmentModal />
 				</div>
 			</div>
 		);

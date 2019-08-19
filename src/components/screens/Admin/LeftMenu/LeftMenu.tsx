@@ -14,6 +14,7 @@ class LeftMenu extends React.Component<LeftMenuProps, any> {
 				<MenuBtn type="main-menu" label="Users" navigate={this.performChangeRoute('Users')} />
 				<MenuBtn type="main-menu" label="Appointments" navigate={this.performChangeRoute('Appointments')} />
 				<MenuBtn type="main-menu" label="Reports" navigate={this.performChangeRoute('Reports')} />
+				<MenuBtn type="main-menu" label="Settings" navigate={this.performChangeRoute('Settings')} />
 			</div>
 		);
 	}

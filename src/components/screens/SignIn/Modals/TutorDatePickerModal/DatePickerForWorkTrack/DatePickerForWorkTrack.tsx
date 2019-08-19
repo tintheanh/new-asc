@@ -32,7 +32,6 @@ class DatePickerForWorkTrack extends React.Component<any, any> {
 
 	render() {
 		const { from, to } = this.state;
-		console.log('test')
 		return (
 			<div className={styles.formWrap}>
 				<div className={styles.inputWrapper}>

@@ -2,10 +2,14 @@ import { NavigationActionTypes, NavigationState, ActionPayload } from './types';
 
 const initialState = {
 	route: 'Users',
-	reportOption: 'Tutor Info',
+	tutorReportOption: 'Tutor Info',
+	subjectReportOption: 'Subject List',
+	appointmentReportOption: 'Appointment By Tutor',
 	signInId: '',
 	mainTutorModal: false,
 	studentRegisterModal: false,
+	studentAppointmentModal: false,
+	studentAppointmentChecking: null,
 	tutorDatePickerModal: false
 };
 
@@ -16,10 +20,20 @@ const NavigationReducer = (state: NavigationState = initialState, action: Action
 				...state,
 				route: action.payload.route
 			};
-		case NavigationActionTypes.REPORT_OPTION:
+		case NavigationActionTypes.TUTOR_REPORT_OPTION:
 			return {
 				...state,
-				reportOption: action.payload.reportOption
+				tutorReportOption: action.payload.tutorReportOption
+			};
+		case NavigationActionTypes.SUBJECT_REPORT_OPTION:
+			return {
+				...state,
+				subjectReportOption: action.payload.subjectReportOption
+			};
+		case NavigationActionTypes.APPOINTMENT_REPORT_OPTION:
+			return {
+				...state,
+				appointmentReportOption: action.payload.appointmentReportOption
 			};
 		case NavigationActionTypes.SET_SIGNIN_ID:
 			return {
@@ -40,6 +54,12 @@ const NavigationReducer = (state: NavigationState = initialState, action: Action
 			return {
 				...state,
 				studentRegisterModal: action.payload.studentRegisterModal
+			};
+		case NavigationActionTypes.TOGGLE_STUDENT_APPOINTMENT_MODAL:
+			return {
+				...state,
+				studentAppointmentModal: action.payload.studentAppointmentModal,
+				studentAppointmentChecking: action.payload.studentAppointmentChecking
 			};
 		case NavigationActionTypes.TOGGLE_TUTOR_DATEPICKER_MODAL:
 			return {

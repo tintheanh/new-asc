@@ -13,7 +13,7 @@
 
 .btnWrapper {
 	display: grid;
-	grid-template-columns: auto auto auto;
+	grid-template-columns: 32.6% 32.6% 32.6%;
 	column-gap: 10px;
 	margin: 0 12px;
 }

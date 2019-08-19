@@ -10,6 +10,12 @@ const ReportPanel = () => {
 				<Link className={`btn active-btn ${styles.btn}`} to="/admin/report/tutors">
 					TUTORS
 				</Link>
+				<Link className={`btn active-btn ${styles.btn}`} to="/admin/report/subjects">
+					SUBJECTS
+				</Link>
+				<Link className={`btn active-btn ${styles.btn}`} to="/admin/report/appointments">
+					APPOINTMENTS
+				</Link>
 			</div>
 		</div>
 	);

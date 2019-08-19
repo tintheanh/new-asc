@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Header } from 'components/common';
-import OptionNavigation from './OptionNavigation/OptionNavigation';
-import ReportMainControl from './ReportMainControl';
+import TutorReportOptionNavigation from './TutorReportOptionNavigation/TutorReportOptionNavigation';
+import TutorReportMainControl from './TutorReportMainControl';
 import back from 'components/common/back.png';
 import styles from './styles.module.css';
 
@@ -15,8 +15,8 @@ class TutorReport extends React.Component<any, any> {
 					<img src={back} alt="" width="35" />
 				</Link>
 				<div className={styles.container}>
-					<OptionNavigation />
-					<ReportMainControl />
+					<TutorReportOptionNavigation />
+					<TutorReportMainControl />
 				</div>
 			</div>
 		);

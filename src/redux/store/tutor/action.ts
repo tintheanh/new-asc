@@ -1,6 +1,7 @@
 import { fbdb, fsdb, auth, functions } from 'index';
 import { TutorActionTypes, Tutor, ActionPayload, empty } from './types';
 import { getEpochOfDate, getEpochOfTime, preprocessWorkScheduleBeforeUpdate } from 'utils/functions';
+import { arraySort } from 'utils/functions';
 
 const fetchTutor = (uid: string): Promise<Tutor> => {
 	return new Promise(async (resolve, reject) => {
@@ -29,6 +30,18 @@ const fetchTutor = (uid: string): Promise<Tutor> => {
 					}
 				});
 
+				let off_time: any[];
+				if (snapshot.val().off_time) {
+					off_time = Object.keys(snapshot.val().off_time).map(
+						(key: string) => snapshot.val().off_time[key]
+					);	
+				} else {
+					off_time = [];
+				}
+				
+
+				// console.log(off_time);
+
 				// Convert array of obj to array of arrays
 				// const work_schedule = objFs!.work_schedule.map(
 				// 	(schedule: { from: { time: string; order: number }; to: { time: string; order: number } }) => {
@@ -51,11 +64,11 @@ const fetchTutor = (uid: string): Promise<Tutor> => {
 					last_name: objFs!.last_name,
 					email: objFs!.email,
 					subjects,
-					off_time: objFs!.off_time,
+					off_time,
 					work_schedule,
 					current_log: objFb.current_log,
 					work_track: objFb.work_track ? objFb.work_track : null
-				};
+				} as Tutor;
 				resolve(tutor);
 			} else {
 				reject(new Error('Could not find data.'));
@@ -468,7 +481,7 @@ export const updateTutor = (tutor: Tutor, tutors: Tutor[], scheduleOnly: boolean
 
 	const index = tutors.findIndex((tt) => tt.uid === tutor.uid);
 	const all = [ ...tutors ];
-	all[index] = { ...tutor, subjects: tutor.subjects, work_schedule: tutor.work_schedule };
+	all[index] = { ...tutor, subjects: arraySort(tutor.subjects, 'label'), work_schedule: tutor.work_schedule };
 
 	return new Promise((resolve, reject) => {
 		if (scheduleOnly) {

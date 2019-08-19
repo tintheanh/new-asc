@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { toggleMainTutorModal, toggleStudentRegisterModal, setSignInId } from 'redux/store/navigation/action';
+import {
+	toggleMainTutorModal,
+	toggleStudentRegisterModal,
+	toggleStudentAppointmentModal,
+	setSignInId
+} from 'redux/store/navigation/action';
 import { Button } from 'components/common';
 import { loginAndFetchTutor } from 'redux/store/tutor/action';
 import { studentLogin } from 'redux/store/student/action';
@@ -15,7 +20,8 @@ class SignInForm extends React.Component<any, any> {
 	componentDidUpdate(prevProps: any) {
 		if (
 			this.props.studentRegisterModal !== prevProps.studentRegisterModal ||
-			this.props.mainTutorModal !== prevProps.mainTutorModal
+			this.props.mainTutorModal !== prevProps.mainTutorModal ||
+			this.props.studentAppointmentModal !== prevProps.studentAppointmentModal
 		) {
 			this.setState({ loading: false });
 		}
@@ -44,7 +50,14 @@ class SignInForm extends React.Component<any, any> {
 				this.props
 					.studentLogin(this.props.signInId)
 					.then(() => {
-						this.props.checkAppointment(this.props.studentData.uid, this.props.todayAppointments);
+						console.log('correct');
+						this.props
+							.checkAppointment(this.props.studentData.uid, this.props.todayAppointments)
+							.then((appt: any) => {
+								console.log('appt found', appt);
+								this.props.toggleStudentAppointmentModal(true, appt);
+							})
+							.catch((err: any) => console.log(err.message));
 					})
 					.catch((_: any) => this.props.toggleStudentRegisterModal(true));
 			}
@@ -52,6 +65,7 @@ class SignInForm extends React.Component<any, any> {
 	};
 
 	render() {
+		// console.log(this.props.todayAppointments);
 		const { loading } = this.state;
 		return (
 			<form className={styles.formContainer} onSubmit={this.handleSubmit}>
@@ -75,7 +89,8 @@ const mapStateToProps = (state: any) => ({
 	studentData: state.student.data.student,
 	todayAppointments: state.appointment.data.todayAppointments,
 	mainTutorModal: state.navigation.mainTutorModal,
-	studentRegisterModal: state.navigation.studentRegisterModal
+	studentRegisterModal: state.navigation.studentRegisterModal,
+	studentAppointmentModal: state.navigation.studentAppointmentModal
 });
 
 const withRouterComp = withRouter(SignInForm);
@@ -86,5 +101,6 @@ export default connect(mapStateToProps, {
 	loginAndFetchTutor,
 	setSignInId,
 	studentLogin,
-	checkAppointment
+	checkAppointment,
+	toggleStudentAppointmentModal
 })(withRouterComp);

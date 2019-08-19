@@ -43,6 +43,52 @@ export const fetchAllSubjects = () => async (dispatch: (arg: ActionPayload) => v
 	}
 };
 
+export const fetchAllSubjectsByTutors = () => async (dispatch: (arg: ActionPayload) => void) => {
+	try {
+		const snapshot = await fsdb.collection('subjects').orderBy('label').get();
+		const subjects: any[] = snapshot.docs.map(async (doc) => {
+			const subject = doc.data();
+			const tutorsRef = await fsdb.collection('tutors').where('subjects', 'array-contains', doc.id).get();
+			const tutors = tutorsRef.docs.map((tutorDoc) => ({
+				name: `${tutorDoc.data().first_name} ${tutorDoc.data().last_name}`,
+				uid: tutorDoc.id
+			}));
+			return {
+				label: subject.label,
+				full: subject.full,
+				tutors,
+				id: doc.id
+			} as Subject;
+		});
+
+		const results = await Promise.all(subjects);
+
+		dispatch({
+			type: SubjectActionTypes.FETCH_ALL_SUBJECTS_SUCCESS,
+			payload: {
+				data: {
+					selectedSubject: null,
+					subjects: results,
+					toggleAdd: false
+				},
+				error: ''
+			}
+		});
+	} catch (err) {
+		dispatch({
+			type: SubjectActionTypes.FETCH_ALL_SUBJECTS_FAILURE,
+			payload: {
+				data: {
+					selectedSubject: null,
+					subjects: [],
+					toggleAdd: false
+				},
+				error: err.message
+			}
+		});
+	}
+};
+
 export const selectAndUpdateSubject = (subject: Subject) => (dispatch: (arg: ActionPayload) => void) => {
 	dispatch({
 		type: SubjectActionTypes.SELECT_AND_UPDATE_SUBJECT,
@@ -277,3 +323,17 @@ export const deleteSubject = (id: string, data: Subject[]) => (dispatch: (arg: A
 			});
 		});
 };
+
+export const clearStore = () => (dispatch: (arg: ActionPayload) => void) => {
+	dispatch({
+		type: SubjectActionTypes.CLEAR_STORE,
+		payload: {
+			data: {
+				selectedSubject: null,
+				subjects: [],
+				toggleAdd: false
+			},
+			error: ''
+		}
+	});
+}

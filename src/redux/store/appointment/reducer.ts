@@ -238,6 +238,8 @@ const AppointmentReducer = (state: AppointmentState = initialState, action: Acti
 				error: action.payload.error
 			};
 		}
+		case AppointmentActionTypes.CLEAR_STORE:
+			return { ...initialState };
 		default:
 			return { ...state };
 	}

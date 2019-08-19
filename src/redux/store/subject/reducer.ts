@@ -81,6 +81,10 @@ const SubjectReducer = (state: SubjectState = initialState, action: ActionPayloa
 					subjects: action.payload.data.subjects
 				}
 			};
+		case SubjectActionTypes.CLEAR_STORE:
+			return {
+				...initialState
+			};
 		case SubjectActionTypes.DELETE_FAILURE:
 			return {
 				...state,

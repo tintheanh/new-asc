@@ -191,12 +191,46 @@ class EditScheduleTable extends React.Component<EditScheduleTableProps, EditSche
 				(a, b) => (a.from.order > b.from.order ? 1 : b.from.order > a.from.order ? -1 : 0)
 			);
 
-			// Check duplicates
-			const filtered = Array.from(new Set(sorted.map((sch) => sch.from.order))).map((order) =>
-				sorted.find((sch) => sch.from.order === order)
-			);
+			console.log(sorted);
 
-			work_schedule[dayOfWeek] = filtered as Schedule[];
+			// let filtered: any[] = [];
+			// if (new Set(sorted.map((sch) => sch.from.order)).size === sorted.length) {
+			// 	filtered = Array.from(new Set(sorted.map((sch) => sch.to.order))).map((order) =>
+			// 		sorted.find((sch) => sch.to.order === order)
+			// 	);
+			// } else {
+			// 	filtered = Array.from(new Set(sorted.map((sch) => sch.from.order))).map((order) =>
+			// 		sorted.find((sch) => sch.from.order === order)
+			// 	);
+			// }
+
+			const merges = [];
+			let isMerged = false;
+			for (let i = 0; i < sorted.length; i++) {
+				if (isMerged) {
+					isMerged = false;
+					continue;
+				}
+				if (i !== sorted.length - 1) {
+					if (sorted[i].to.order >= sorted[i + 1].from.order) {
+						const merge = {
+							from: sorted[i].from,
+							to: sorted[i + 1].to
+						};
+						merges.push(merge);
+						isMerged = true;
+					} else {
+						merges.push(sorted[i]);
+					}
+				} else {
+					merges.push(sorted[i]);
+				}
+			}
+
+			// const filtered = Array.from(new Set(sorted.map((sch) => sch.from.order))).map((order) =>
+			// 	sorted.find((sch) => sch.from.order === order)
+			// );
+			work_schedule[dayOfWeek] = merges as Schedule[];
 
 			const tutor = { ...this.props.selected!, work_schedule: work_schedule as [Schedule[]] };
 
@@ -264,7 +298,7 @@ class EditScheduleTable extends React.Component<EditScheduleTableProps, EditSche
 							}}
 						/>
 						<div>
-						{/* <div style={{ position: 'relative', bottom: 20 }}> */}
+							{/* <div style={{ position: 'relative', bottom: 20 }}> */}
 							<DayTables
 								schedules={selected.work_schedule}
 								onAddHours={this.onAddHours}

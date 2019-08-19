@@ -11,6 +11,7 @@ import * as serviceWorker from './serviceWorker';
 import { APIKEY, AUTHDOMAIN, DATABASEURL, PROJECTID, STORAGEBUCKET, MESSAGINGSENDERID, APPID } from './config';
 import 'react-table/react-table.css';
 import 'react-datepicker/dist/react-datepicker.css';
+import 'rc-time-picker/assets/index.css';
 
 const firebaseConfig = {
 	apiKey: APIKEY,

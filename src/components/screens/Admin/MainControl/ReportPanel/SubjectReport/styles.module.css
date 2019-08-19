@@ -1,0 +1,19 @@
+.backBtn {
+	position: absolute;
+	top: 0;
+	left: 0;
+	padding: 9px;
+}
+
+.container {
+	display: grid;
+	grid-template-columns: 21.8% auto;
+}
+
+.options {
+	display: inline-block;
+	border: 1px solid rgb(152, 152, 152);
+	background-color: #fff;
+	border-radius: 4px;
+	height: 80vh;
+}

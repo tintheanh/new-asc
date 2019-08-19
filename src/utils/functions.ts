@@ -54,6 +54,16 @@ export const timeDiff = (time1: number, time2: number): string => {
 	return `${hoursDifference} hours ${minutesDifference} minutes`;
 };
 
+export const secondsToHms = (d: number) => {
+	const h = Math.floor(d / 3600);
+	const m = Math.floor((d % 3600) / 60);
+
+	const hDisplay = h > 0 ? h + (h == 1 ? ' hour, ' : ' hours, ') : '0 hour ';
+	const mDisplay = m > 0 ? m + (m == 1 ? ' minute' : ' minutes ') : '0 minute';
+
+	return hDisplay + mDisplay;
+};
+
 export const contains = (arr: any[] | null, obj: any, key: string, nestedKey?: string): boolean => {
 	if (!nestedKey) {
 		if (arr) {
@@ -70,9 +80,18 @@ export const contains = (arr: any[] | null, obj: any, key: string, nestedKey?: s
 	}
 };
 
-export const arraySort = (arr: any[] | null, property: string): any[] | [] => {
-	if (arr) return arr.sort((a, b) => (a[property] > b[property] ? 1 : b[property] > a[property] ? -1 : 0));
-	return [];
+export const arraySort = (arr: any[] | null, property: string, nested?: string): any[] | [] => {
+	if (!nested) {
+		if (arr) return arr.sort((a, b) => (a[property] > b[property] ? 1 : b[property] > a[property] ? -1 : 0));
+		return [];
+	} else {
+		if (arr)
+			return arr.sort(
+				(a, b) =>
+					a[property][nested] > b[property][nested] ? 1 : b[property][nested] > a[property][nested] ? -1 : 0
+			);
+		return [];
+	}
 };
 
 export const preprocessWorkScheduleBeforeUpdate = (work_schedule: Schedule[][]) => {
@@ -99,4 +118,36 @@ export const chunk = (array: any[], size: number) => {
 		index += size;
 	}
 	return chunked_arr;
+};
+
+export const processDataForReportPage = (
+	array: any[],
+	property: string,
+	propertyUnited: string,
+	numberOfPiece: number
+) => {
+	const dataWithIds = array.map((tutor: any) => {
+		return tutor[propertyUnited].map((pieceOfData: any) => ({
+			uid: tutor.uid,
+			[property]: pieceOfData
+		}));
+	});
+	console.log(dataWithIds);
+	const flatted = dataWithIds.flat();
+	const chunked = chunk(flatted, numberOfPiece);
+	const results = chunked.map((ch: any) => {
+		const group_to_values = ch.reduce((obj: any, item: any) => {
+			obj[item.uid] = obj[item.uid] || [];
+			obj[item.uid].push(item[property]);
+			return obj;
+		}, {});
+
+		const groups = Object.keys(group_to_values).map((key: any) => {
+			const tutor = array.filter((tt: any) => tt.uid === key)[0];
+			return { ...tutor, [propertyUnited]: group_to_values[key] };
+		});
+		return groups;
+	});
+
+	return results;
 };

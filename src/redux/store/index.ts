@@ -6,6 +6,7 @@ import NavigationReducer from './navigation/reducer';
 import SubjectReducer from './subject/reducer';
 import StudentReducer from './student/reducer';
 import AppointmentReducer from './appointment/reducer';
+import SettingReducer from './setting/reducer';
 
 // const tutorPersistConfig = {
 // 	key: 'auth',
@@ -19,7 +20,8 @@ const rootReducer = combineReducers({
 	navigation: NavigationReducer,
 	subject: SubjectReducer,
 	student: StudentReducer,
-	appointment: AppointmentReducer
+	appointment: AppointmentReducer,
+	setting: SettingReducer
 });
 
 export default rootReducer;

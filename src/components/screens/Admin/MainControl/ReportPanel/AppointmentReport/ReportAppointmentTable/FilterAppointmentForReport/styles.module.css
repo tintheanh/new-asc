@@ -1,0 +1,24 @@
+.container {
+	margin: 0;
+	background: #fff;
+	width: 272px;
+	height: 500px;
+}
+
+.applyAndClear {
+	display: grid;
+	grid-template-columns: 50% 50%;
+	column-gap: 5px;
+	justify-content: center;
+}
+
+.deleteBtn {
+	width: 160px;
+	margin-top: 10px;
+	margin-left: 24px;
+}
+
+.dayAndTypeFilter {
+	display: grid;
+	grid-template-columns: auto auto;
+}

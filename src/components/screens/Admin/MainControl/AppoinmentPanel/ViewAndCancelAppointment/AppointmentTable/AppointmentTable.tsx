@@ -5,7 +5,7 @@ import { fetchAllAppointments, selectAppointment } from 'redux/store/appointment
 
 class AppointmentTable extends React.Component<any, any> {
 	componentDidMount() {
-		this.props.fetchAllAppointments();
+		this.props.fetchAllAppointments('time');
 	}
 
 	performSelectAppointment = (appt: any) => () => this.props.selectAppointment(appt);

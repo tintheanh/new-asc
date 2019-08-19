@@ -1,6 +1,6 @@
 import { fbdb, fsdb } from 'index';
 import { AppointmentActionTypes, ActionPayload } from './types';
-import { getEpochOfTime } from 'utils/functions';
+import { getEpochOfTime, arraySort } from 'utils/functions';
 const allSettled = require('promise.allsettled');
 
 const getShift = (workDay: any[], appt_id: string) => {
@@ -56,37 +56,38 @@ const processAppointments = async (snapshotActive: any) => {
 
 export const fetchTodayAppointments = () => async (dispatch: (arg: ActionPayload) => void) => {
 	try {
-		const todayAppointments: any[] = [];
 		const beginOfday = Math.floor(new Date().setHours(0, 0, 0) / 1000);
 		const endOfDay = Math.floor(new Date().setHours(23, 59, 59) / 1000);
-		const snapshot = await fbdb.ref('appointments').once('value');
-		snapshot.forEach((doc) => {
-			const appt = doc.val();
-			if (appt.apptDate >= beginOfday && appt.apptDate <= endOfDay)
-				todayAppointments.push({ ...appt, id: doc.key });
-		});
-		dispatch({
-			type: AppointmentActionTypes.FETCH_TODAY_SUCCESS,
-			payload: {
-				data: {
-					todayAppointments,
-					studentPrompt: '',
-					appointments: [],
-					filteredAppointments: [],
-					selectedAppointment: null,
-					toggleFilter: false,
-					filter: {
-						dateFilter: [],
-						tutors: [],
-						tutor: null,
-						student: null,
-						subject: null,
-						days: null,
-						type: ''
-					}
-				},
-				error: ''
-			}
+		fbdb.ref('appointments').on('value', (snapshot) => {
+			const todayAppointments: any[] = [];
+			snapshot.forEach((doc) => {
+				const appt = doc.val();
+				if (appt.apptDate >= beginOfday && appt.apptDate <= endOfDay)
+					todayAppointments.push({ ...appt, id: doc.key });
+			});
+			dispatch({
+				type: AppointmentActionTypes.FETCH_TODAY_SUCCESS,
+				payload: {
+					data: {
+						todayAppointments,
+						studentPrompt: '',
+						appointments: [],
+						filteredAppointments: [],
+						selectedAppointment: null,
+						toggleFilter: false,
+						filter: {
+							dateFilter: [],
+							tutors: [],
+							tutor: null,
+							student: null,
+							subject: null,
+							days: null,
+							type: ''
+						}
+					},
+					error: ''
+				}
+			});
 		});
 	} catch (err) {
 		dispatch({
@@ -118,72 +119,133 @@ export const fetchTodayAppointments = () => async (dispatch: (arg: ActionPayload
 export const checkAppointment = (student_id: string, appointments: any[]) => (
 	dispatch: (arg: ActionPayload) => void
 ) => {
-	const now = getEpochOfTime(new Date());
-	const studentAppt = appointments.filter((appt: any) => {
-		if (appt.student_id === student_id) {
-			if (Math.abs(now - appt.apptDate) <= 600) {
-				return appt;
+	return new Promise((resolve, reject) => {
+		const now = getEpochOfTime(new Date());
+		const studentAppt = appointments.filter((appt: any) => {
+			if (appt.student_id === student_id) {
+				if (Math.abs(now - appt.apptDate) <= 600) {
+					return appt;
+				}
 			}
-		}
-	})[0];
+		})[0];
 
-	fbdb
-		.ref(`appointments/${studentAppt.id}`)
-		.remove()
-		.then(() => {
-			const checkedAppt = {
-				apptDate: studentAppt.apptDate,
-				dateCreated: studentAppt.dateCreated,
-				status: 'checked',
-				student_id: studentAppt.student_id,
-				subject_id: studentAppt.subject_id,
-				time: studentAppt.time,
-				tutor_id: studentAppt.tutor_id
-			};
-			console.log(checkedAppt);
+		// console.log('appt found', studentAppt);
+
+		if (studentAppt) {
 			fbdb
-				.ref('past-appointments')
-				.child(studentAppt.id)
-				.set(checkedAppt)
-				.then(async () => {
-					const day = new Date(studentAppt.apptDate * 1000).getDay();
-					const workDayRef = await fbdb
-						.ref(`tutors/${studentAppt.tutor_id}/work_schedule/${day}`)
-						.once('value');
-					const workDay = workDayRef.val();
-					const index = getShift(workDay, studentAppt.id);
-					if (index > -1) {
-						fbdb
-							.ref(
-								`tutors/${studentAppt.tutor_id}/work_schedule/${day}/${index}/appointments/${studentAppt.id}`
-							)
-							.remove()
-							.then(() =>
-								dispatch({
-									type: AppointmentActionTypes.STUDENT_CHECK_APPOINTMENT_SUCCESS,
-									payload: {
-										data: {
-											todayAppointments: [],
-											studentPrompt: 'Done',
-											appointments: [],
-											filteredAppointments: [],
-											selectedAppointment: null,
-											toggleFilter: false,
-											filter: {
-												dateFilter: [],
-												tutors: [],
-												tutor: null,
-												student: null,
-												subject: null,
-												days: null,
-												type: ''
+				.ref(`appointments/${studentAppt.id}`)
+				.remove()
+				.then(() => {
+					const checkedAppt = {
+						id: studentAppt.id,
+						apptDate: studentAppt.apptDate,
+						dateCreated: studentAppt.dateCreated,
+						status: 'checked',
+						student_id: studentAppt.student_id,
+						subject_id: studentAppt.subject_id,
+						time: studentAppt.time,
+						tutor_id: studentAppt.tutor_id
+					};
+					// console.log(checkedAppt);
+					fbdb
+						.ref('past-appointments')
+						.child(studentAppt.id)
+						.set(checkedAppt)
+						.then(async () => {
+							const day = new Date(studentAppt.apptDate * 1000).getDay();
+							const workDayRef = await fbdb
+								.ref(`tutors/${studentAppt.tutor_id}/work_schedule/${day}`)
+								.once('value');
+							const workDay = workDayRef.val();
+							const index = getShift(workDay, studentAppt.id);
+							if (index > -1) {
+								fbdb
+									.ref(
+										`tutors/${studentAppt.tutor_id}/work_schedule/${day}/${index}/appointments/${studentAppt.id}`
+									)
+									.remove()
+									.then(async () => {
+										const [ studentSnapshot, tutorSnapshot, subjectSnapshot ] = await Promise.all([
+											fsdb.collection('students').doc(checkedAppt.student_id).get(),
+											fsdb.collection('tutors').doc(checkedAppt.tutor_id).get(),
+											fsdb.collection('subjects').doc(checkedAppt.subject_id).get()
+										]);
+										const appointment = {
+											id: checkedAppt.id,
+											apptDate: checkedAppt.apptDate,
+											status: checkedAppt.status,
+											student: {
+												uid: checkedAppt.student_id,
+												first_name: studentSnapshot.data()!.first_name,
+												studentId: studentSnapshot.data()!.studentId,
+												last_name: studentSnapshot.data()!.last_name,
+												email: studentSnapshot.data()!.email
+											},
+											subject: {
+												id: checkedAppt.subject_id,
+												label: subjectSnapshot.data()!.label,
+												full: subjectSnapshot.data()!.full
+											},
+											time: checkedAppt.time,
+											tutor: {
+												uid: checkedAppt.tutor_id,
+												first_name: tutorSnapshot.data()!.first_name,
+												last_name: tutorSnapshot.data()!.last_name,
+												email: tutorSnapshot.data()!.email
 											}
-										},
-										error: ''
-									}
-								})
-							)
-							.catch((err) =>
+										};
+										dispatch({
+											type: AppointmentActionTypes.STUDENT_CHECK_APPOINTMENT_SUCCESS,
+											payload: {
+												data: {
+													todayAppointments: [],
+													studentPrompt: 'Done',
+													appointments: [],
+													filteredAppointments: [],
+													selectedAppointment: null,
+													toggleFilter: false,
+													filter: {
+														dateFilter: [],
+														tutors: [],
+														tutor: null,
+														student: null,
+														subject: null,
+														days: null,
+														type: ''
+													}
+												},
+												error: ''
+											}
+										});
+										resolve(appointment);
+									})
+									.catch((err) => {
+										dispatch({
+											type: AppointmentActionTypes.STUDENT_CHECK_APPOINTMENT_FAILURE,
+											payload: {
+												data: {
+													todayAppointments: [],
+													studentPrompt: 'shit',
+													appointments: [],
+													filteredAppointments: [],
+													selectedAppointment: null,
+													toggleFilter: false,
+													filter: {
+														dateFilter: [],
+														tutors: [],
+														tutor: null,
+														student: null,
+														subject: null,
+														days: null,
+														type: ''
+													}
+												},
+												error: err.message
+											}
+										});
+										reject(err);
+									});
+							} else {
 								dispatch({
 									type: AppointmentActionTypes.STUDENT_CHECK_APPOINTMENT_FAILURE,
 									payload: {
@@ -204,37 +266,40 @@ export const checkAppointment = (student_id: string, appointments: any[]) => (
 												type: ''
 											}
 										},
-										error: err.message
+										error: 'Error occurred.'
 									}
-								})
-							);
-					} else {
-						dispatch({
-							type: AppointmentActionTypes.STUDENT_CHECK_APPOINTMENT_FAILURE,
-							payload: {
-								data: {
-									todayAppointments: [],
-									studentPrompt: 'shit',
-									appointments: [],
-									filteredAppointments: [],
-									selectedAppointment: null,
-									toggleFilter: false,
-									filter: {
-										dateFilter: [],
-										tutors: [],
-										tutor: null,
-										student: null,
-										subject: null,
-										days: null,
-										type: ''
-									}
-								},
-								error: 'Error occurred.'
+								});
+								reject(new Error('Error occurred.'));
 							}
+						})
+						.catch((err) => {
+							dispatch({
+								type: AppointmentActionTypes.STUDENT_CHECK_APPOINTMENT_FAILURE,
+								payload: {
+									data: {
+										todayAppointments: [],
+										studentPrompt: 'shit',
+										appointments: [],
+										filteredAppointments: [],
+										selectedAppointment: null,
+										toggleFilter: false,
+										filter: {
+											dateFilter: [],
+											tutors: [],
+											tutor: null,
+											student: null,
+											subject: null,
+											days: null,
+											type: ''
+										}
+									},
+									error: err.message
+								}
+							});
+							reject(err);
 						});
-					}
 				})
-				.catch((err) =>
+				.catch((err) => {
 					dispatch({
 						type: AppointmentActionTypes.STUDENT_CHECK_APPOINTMENT_FAILURE,
 						payload: {
@@ -257,10 +322,10 @@ export const checkAppointment = (student_id: string, appointments: any[]) => (
 							},
 							error: err.message
 						}
-					})
-				);
-		})
-		.catch((err) =>
+					});
+					reject(err);
+				});
+		} else {
 			dispatch({
 				type: AppointmentActionTypes.STUDENT_CHECK_APPOINTMENT_FAILURE,
 				payload: {
@@ -281,13 +346,15 @@ export const checkAppointment = (student_id: string, appointments: any[]) => (
 							type: ''
 						}
 					},
-					error: err.message
+					error: 'No appointment at this time.'
 				}
-			})
-		);
+			});
+			reject(new Error('No appointment at this time.'));
+		}
+	});
 };
 
-export const fetchAllAppointments = () => async (dispatch: (arg: ActionPayload) => void) => {
+export const fetchAllAppointments = (sortBy: string) => async (dispatch: (arg: ActionPayload) => void) => {
 	try {
 		const [ snapshotActive, snapshotPast ] = await allSettled([
 			fbdb.ref('appointments').once('value'),
@@ -308,13 +375,22 @@ export const fetchAllAppointments = () => async (dispatch: (arg: ActionPayload) 
 			appointments = [ ...pastAppointment.value ];
 		else appointments = [];
 
+		let sortedBy: any[] = [];
+		if (sortBy === 'tutor') {
+			sortedBy = arraySort(appointments, 'tutor', 'first_name');
+		} else if (sortBy === 'student') {
+			sortedBy = arraySort(appointments, 'student', 'first_name');
+		} else if (sortBy === 'time') {
+			sortedBy = arraySort(appointments, 'apptDate').reverse();
+		}
+
 		dispatch({
 			type: AppointmentActionTypes.FETCH_ALL_SUCCESS,
 			payload: {
 				data: {
 					todayAppointments: [],
 					studentPrompt: '',
-					appointments,
+					appointments: sortedBy,
 					filteredAppointments: [],
 					selectedAppointment: null,
 					toggleFilter: false,
@@ -1009,6 +1085,32 @@ export const applyFilter = (appointments: any[], filter: any) => (dispatch: (arg
 export const clearFilter = () => (dispatch: (arg: ActionPayload) => void) => {
 	dispatch({
 		type: AppointmentActionTypes.CLEAR_FILTER,
+		payload: {
+			data: {
+				todayAppointments: [],
+				studentPrompt: '',
+				appointments: [],
+				filteredAppointments: [],
+				selectedAppointment: null,
+				toggleFilter: false,
+				filter: {
+					dateFilter: [ null, null ],
+					tutors: [],
+					tutor: null,
+					student: null,
+					subject: null,
+					days: new Set(),
+					type: new Set()
+				}
+			},
+			error: ''
+		}
+	});
+};
+
+export const clearStore = () => (dispatch: (arg: ActionPayload) => void) => {
+	dispatch({
+		type: AppointmentActionTypes.CLEAR_STORE,
 		payload: {
 			data: {
 				todayAppointments: [],

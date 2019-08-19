@@ -1,0 +1,25 @@
+.container {
+
+}
+
+.formWrap {
+	/* width: 80%; */
+	/* margin: auto; */
+}
+
+.inputWrapper {
+}
+
+.input {
+	width: 80%;
+	margin-bottom: 10px;
+}
+
+.labelInput {
+	text-align: left;
+	margin: 5px;
+}
+
+.btnShow {
+	width: 95%;
+}

@@ -30,7 +30,9 @@ export enum AppointmentActionTypes {
 	FETCH_TUTORS_FILTER_FAILURE = '@@appointment/FETCH_TUTORS_FILTER_FAILURE',
 
 	APPLY_FILTER = '@@appointment/APPLY_FILTER',
-	CLEAR_FILTER = '@@appointment/CLEAR_FILTER'
+	CLEAR_FILTER = '@@appointment/CLEAR_FILTER',
+
+	CLEAR_STORE = '@@appointment/CLEAR_STORE'
 }
 
 export interface Appointment {

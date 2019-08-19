@@ -1,26 +1,35 @@
 import * as React from 'react';
 import ReactTable from 'react-table';
 import { connect } from 'react-redux';
-import { Checkbox, Button } from 'components/common';
-import { fetchAllTutors } from 'redux/store/tutor/action';
-import { contains } from 'utils/functions';
+import { Checkbox, Button, DatePicker } from 'components/common';
+import { fetchAllTutors, clear } from 'redux/store/tutor/action';
+import { contains, arraySort, getEpochOfTime } from 'utils/functions';
+import styles from './styles.module.css';
 
 const ipcRenderer = (window as any).ipcRenderer;
 
 // TODO: do performance improvement
 
 class ReportTutorTable extends React.Component<any, any> {
-	state = { selected: [], hideInactive: false };
+	state = { selected: [], hideInactive: false, from: new Date(), to: new Date() };
+
+	static defaultProps = {
+		datepicker: false
+	};
 
 	componentDidMount() {
 		this.props.fetchAllTutors();
 	}
 
-	shouldComponentUpdate(nextProps: any, nextState: any) {
-		if (this.props.tutors !== nextProps.tutors) return true;
-		if (this.state.selected !== nextState.selected) return true;
-		return false;
+	componentWillUnmount() {
+		this.props.clear();
 	}
+
+	// shouldComponentUpdate(nextProps: any, nextState: any) {
+	// 	if (this.props.tutors !== nextProps.tutors) return true;
+	// 	if (this.state.selected !== nextState.selected) return true;
+	// 	return false;
+	// }
 
 	toggleRow = (data: any) => () => {
 		const selected = [ ...this.state.selected ] as any[];
@@ -59,8 +68,25 @@ class ReportTutorTable extends React.Component<any, any> {
 	};
 
 	openReportScreen = (event: string) => () => {
-		ipcRenderer.send(event, this.state.selected);
+		let sending: any;
+		const sorted = arraySort(this.state.selected, 'first_name');
+		if (this.props.datepicker) {
+			this.state.from.setHours(0, 0, 0, 0);
+			sending = {
+				range: {
+					from: getEpochOfTime(this.state.from),
+					to: getEpochOfTime(this.state.to)
+				},
+				tutors: sorted
+			};
+		} else {
+			sending = sorted;
+		}
+
+		ipcRenderer.send(event, sending);
 	};
+
+	handleTimeChange = (key: string) => (date: Date) => this.setState({ [key]: date });
 
 	render() {
 		const col = [
@@ -84,7 +110,10 @@ class ReportTutorTable extends React.Component<any, any> {
 							type="checkbox"
 							className="checkbox"
 							style={{ cursor: 'pointer', position: 'relative', bottom: 3.5, right: 1 }}
-							checked={this.state.selected.length === this.props.tutors.length}
+							checked={
+								this.state.selected.length === this.props.tutors.length &&
+								this.state.selected.length !== 0
+							}
 							onChange={this.toggleSelectAll}
 						/>
 					);
@@ -106,27 +135,53 @@ class ReportTutorTable extends React.Component<any, any> {
 				accessor: (d: any) => (d.active ? 'Yes' : 'No')
 			}
 		];
-		console.log(this.state.selected);
+		const { from, to } = this.state;
 		return (
-			<div>
-				<ReactTable
-					className="report-table"
-					style={{ height: 500, width: 320 }}
-					data={this._processTutorArray()}
-					columns={col}
-					defaultSorted={[ { id: 'firstName', desc: false } ]}
-					showPagination={false}
-				/>
-				<div style={{ marginTop: 12 }}>
-					<Checkbox
-						checked={this.state.hideInactive}
-						onChange={this.setInactive}
-						labelText="Hide inactive tutors"
+			<div className={styles.container}>
+				<div>
+					<ReactTable
+						className="report-table"
+						style={{ height: 470, width: 320 }}
+						data={this._processTutorArray()}
+						columns={col}
+						defaultSorted={[ { id: 'firstName', desc: false } ]}
+						showPagination={false}
 					/>
+					<div style={{ marginTop: 12 }}>
+						<Checkbox
+							checked={this.state.hideInactive}
+							onChange={this.setInactive}
+							labelText="Hide inactive tutors"
+						/>
+					</div>
+					<div style={{ marginTop: 12 }}>
+						<Button label="Show report" onClick={this.openReportScreen(this.props.screenEvent)} />
+					</div>
 				</div>
-				<div style={{ marginTop: 12 }}>
-					<Button label="Show report" onClick={this.openReportScreen('toggle-subject-report')} />
-				</div>
+				{this.props.datepicker ? (
+					<div className={styles.formWrap}>
+						<div className={styles.inputWrapper}>
+							<p className={styles.labelInput}>From:</p>
+							<DatePicker
+								className={`form-control ${styles.input}`}
+								selected={this.state.from}
+								onChange={this.handleTimeChange('from')}
+								todayButton={'Select Today'}
+								maxDate={to}
+							/>
+						</div>
+						<div>
+							<p className={styles.labelInput}>To:</p>
+							<DatePicker
+								className={`form-control ${styles.input}`}
+								selected={this.state.to}
+								onChange={this.handleTimeChange('to')}
+								todayButton={'Select Today'}
+								minDate={from}
+							/>
+						</div>
+					</div>
+				) : null}
 			</div>
 		);
 	}
@@ -136,4 +191,4 @@ const mapStateToProps = (state: any) => ({
 	tutors: state.tutor.data.tutors
 });
 
-export default connect(mapStateToProps, { fetchAllTutors })(ReportTutorTable);
+export default connect(mapStateToProps, { fetchAllTutors, clear })(ReportTutorTable);

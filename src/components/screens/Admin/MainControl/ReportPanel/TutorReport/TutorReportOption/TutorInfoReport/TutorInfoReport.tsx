@@ -6,7 +6,8 @@ class TutorInfoReport extends React.Component<any, any> {
 	render() {
 		return (
 			<div className={`box-form ${styles.container}`}>
-				<ReportTutorTable />
+				<h2 className={styles.title}>Tutor Info</h2>
+				<ReportTutorTable screenEvent="toggle-info-report" />
 			</div>
 		);
 	}

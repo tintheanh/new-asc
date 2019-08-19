@@ -32,6 +32,7 @@ class SubjectTable extends React.Component<SubjectTableProps> {
 					columns={columns}
 					showPagination={false}
 					data={data}
+					pageSize={data.length < 13 ? 13 : data.length}
 					// defaultSorted={[
 					// 	{
 					// 		id: 'label',

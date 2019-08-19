@@ -1,13 +1,15 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { MenuBtnProps } from './props';
+// import { MenuBtnProps } from './props';
 import styles from './styles.module.css';
 
-const MenuBtn: React.SFC<MenuBtnProps> = (props) => {
-	const { label, navigate, route, type, reportOption } = props;
+const MenuBtn: React.SFC<any> = (props) => {
+	const { label, navigate, route, type, tutorReportOption, subjectReportOption, appointmentReportOption } = props;
 	let option;
 	if (type === 'main-menu') option = route;
-	else option = reportOption;
+	else if (type === 'tutor-report-option') option = tutorReportOption;
+	else if (type === 'subject-report-option') option = subjectReportOption;
+	else if (type === 'appointment-report-option') option = appointmentReportOption;
 	return (
 		// <button className={styles.menubtn} style={{ background: isSelected ? 'rgb(49, 129, 246)' : 'grey' }}>
 		<button
@@ -23,7 +25,9 @@ const MenuBtn: React.SFC<MenuBtnProps> = (props) => {
 
 const mapStateToProps = (state: any) => ({
 	route: state.navigation.route,
-	reportOption: state.navigation.reportOption
+	tutorReportOption: state.navigation.tutorReportOption,
+	subjectReportOption: state.navigation.subjectReportOption,
+	appointmentReportOption: state.navigation.appointmentReportOption
 });
 
 export default connect(mapStateToProps, null)(MenuBtn);

@@ -5,6 +5,14 @@
 	padding: 9px;
 }
 
+.refreshBtn {
+	position: absolute;
+	top: 0;
+	left: 44px;
+	padding: 9px;
+	cursor: pointer;
+}
+
 .container {
 	display: grid;
 	grid-template-columns: auto 29%;

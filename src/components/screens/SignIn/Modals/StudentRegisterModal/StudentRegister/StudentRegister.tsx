@@ -62,12 +62,7 @@ class StudentRegister extends React.Component<any, any> {
 					/>
 				</div>
 				<div className={styles.inputWrapper}>
-					<InputField
-						type="email"
-						label="Email:"
-						value={email}
-						onTextChange={this.onValueChange('email')}
-					/>
+					<InputField type="email" label="Email:" value={email} onTextChange={this.onValueChange('email')} />
 				</div>
 				<Button customClassName={styles.saveBtn} type="submit" label="Sign in" />
 			</form>

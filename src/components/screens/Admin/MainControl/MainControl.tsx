@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { MainControlProps } from './props';
-import { UserPanel, AppoinmentPanel, ReportPanel } from './index';
+import { UserPanel, AppoinmentPanel, ReportPanel, SettingPanel } from './index';
 
 class MainControl extends React.Component<MainControlProps, any> {
 	render() {
@@ -14,6 +14,8 @@ class MainControl extends React.Component<MainControlProps, any> {
 				return <AppoinmentPanel />;
 			case 'Reports':
 				return <ReportPanel />;
+			case 'Settings':
+				return <SettingPanel />;
 			default:
 				return null;
 		}

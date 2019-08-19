@@ -12,6 +12,7 @@ import { TutorTable, TutorSubjectTable } from './Tables';
 import TutorForm from './TutorForm/TutorForm';
 import EditSchedule from './Tables/EditSchedule/EditSchedule';
 import DeleteTutor from './DeleteTutor/DeleteTutor';
+import OffTimes from './OffTimes/OffTimes';
 
 // Action(s)
 import { fetchAllTutors, clear } from 'redux/store/tutor/action';
@@ -48,6 +49,7 @@ const Tutors: React.SFC<TutorsProps> = (props) => {
 				<TutorForm />
 				<div>
 					<EditSchedule />
+					<OffTimes />
 					<DeleteTutor />
 				</div>
 			</div>

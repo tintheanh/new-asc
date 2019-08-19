@@ -1,0 +1,23 @@
+.backBtn {
+	position: absolute;
+	top: 0;
+	left: 0;
+	padding: 9px;
+}
+
+.container {
+	display: grid;
+  grid-template-columns: auto;
+  border: 1px solid rgb(152, 152, 152);
+  background: #fff;
+  border-radius: 4px;
+  margin: 12px;
+}
+
+.btnWrapper {
+	width: 188px;
+	margin: 0 12px;
+	display: grid;
+	grid-template-columns: 50% 50%;
+	column-gap: 12px;
+}

@@ -13,7 +13,9 @@ export enum SubjectActionTypes {
 	ADD_FAILURE = '@@subject/ADD_FAILURE',
 
 	DELETE_SUCCESS = '@@subject/DELETE_SUCCESS',
-	DELETE_FAILURE = '@@subject/DELETE_FAILURE'
+	DELETE_FAILURE = '@@subject/DELETE_FAILURE',
+
+	CLEAR_STORE = '@@subject/CLEAR_STORE'
 }
 
 export const empty = {

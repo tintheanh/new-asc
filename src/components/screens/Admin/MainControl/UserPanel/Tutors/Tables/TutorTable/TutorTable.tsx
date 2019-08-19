@@ -55,6 +55,7 @@ class TutorTable extends React.Component<TutorTableProps, TutorTableStates> {
 					data={this._processTutorArray()}
 					columns={columns}
 					showPagination={false}
+					pageSize={this._processTutorArray().length < 8 ? 8 : this._processTutorArray().length}
 					// defaultSorted={[
 					// 	{
 					// 		id: 'fist_name',
