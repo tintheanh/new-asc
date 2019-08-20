@@ -116,14 +116,14 @@ export const fetchTodayAppointments = () => async (dispatch: (arg: ActionPayload
 	}
 };
 
-export const checkAppointment = (student_id: string, appointments: any[]) => (
+export const checkAppointment = (student_id: string, appointments: any[], settings: any) => (
 	dispatch: (arg: ActionPayload) => void
 ) => {
 	return new Promise((resolve, reject) => {
 		const now = getEpochOfTime(new Date());
 		const studentAppt = appointments.filter((appt: any) => {
 			if (appt.student_id === student_id) {
-				if (Math.abs(now - appt.apptDate) <= 600) {
+				if (now - appt.apptDate <= settings.after * 60 || appt.apptDate - now >= settings.before * 60) {
 					return appt;
 				}
 			}

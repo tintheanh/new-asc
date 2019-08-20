@@ -210,9 +210,13 @@ class EditTutorSubjectTable extends React.Component<EditTutorSubjectTableProps, 
 
 			return (
 				<div className={styles.container}>
+					<h3 className={styles.title}>
+						{this.props.selected.first_name} {this.props.selected.last_name}'s subjects
+					</h3>
 					<ReactTable
 						className={styles.table}
 						data={this.props.selected.subjects}
+						pageSize={this.props.selected.subjects.length < 6 ? 6 : this.props.selected.subjects.length}
 						columns={columns}
 						showPagination={false}
 						sortable={false}
@@ -247,9 +251,11 @@ class EditTutorSubjectTable extends React.Component<EditTutorSubjectTableProps, 
 							onClick={this.onSending('remove')}
 						/>
 					</div>
+					<h3 className={styles.title}>Center's subjects</h3>
 					<ReactTable
 						className={styles.table}
 						data={this._preprocessSubjects()}
+						pageSize={this._preprocessSubjects().length < 6 ? 6 : this._preprocessSubjects().length}
 						columns={columns}
 						showPagination={false}
 						sortable={false}

@@ -1,7 +1,7 @@
 .container {
 	display: grid;
-	grid-template-columns: auto auto;
-	/* column-gap: 24px; */
+	grid-template-columns: 60% auto;
+	/* column-gap: 12px; */
 }
 
 .dateInputWrapper {
@@ -10,12 +10,29 @@
 
 .label {
 	text-align: left;
-	margin-left: 18px;
+	margin-left: 15px;
+	margin-bottom: 5px;
 }
+
+.dateInput {
+	width: 250px;
+}
+
+.timeInput {
+	width: 275px;
+	margin-top: 10px;
+}
+
 .btnWrapper {
 	display: grid;
-	grid-template-columns: 45% 45%;
+	grid-template-columns: 46% 46%;
 	column-gap: 10px;
 	/* margin: 0 16px; */
-	margin-left: 18px
+	margin-left: 12px;
+}
+
+.saveBtn {
+	position: relative;
+	top: 170px;
+	left: 56px;
 }

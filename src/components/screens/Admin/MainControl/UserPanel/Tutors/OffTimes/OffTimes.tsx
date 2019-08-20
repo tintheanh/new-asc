@@ -32,8 +32,8 @@ class OffTimes extends React.Component<any, any> {
 					label="Off Times"
 					onClick={this.handleModalChange().open}
 				/>
-				<Modal width="40%" show={this.state.modalOffTime} close={this.handleModalChange().close}>
-					<EditOffTimes />
+				<Modal width="65%" show={this.state.modalOffTime} close={this.handleModalChange().close}>
+					<EditOffTimes close={this.handleModalChange().close} />
 				</Modal>
 			</div>
 		);

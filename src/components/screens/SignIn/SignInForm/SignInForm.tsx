@@ -9,6 +9,7 @@ import {
 } from 'redux/store/navigation/action';
 import { Button } from 'components/common';
 import { loginAndFetchTutor } from 'redux/store/tutor/action';
+import { fetchAppointmentSettings } from 'redux/store/setting/action';
 import { studentLogin } from 'redux/store/student/action';
 import { checkAppointment } from 'redux/store/appointment/action';
 import { InputField } from 'components/common';
@@ -16,6 +17,9 @@ import styles from './styles.module.css';
 
 class SignInForm extends React.Component<any, any> {
 	state = { loading: false };
+	componentDidMount() {
+		this.props.fetchAppointmentSettings();
+	}
 
 	componentDidUpdate(prevProps: any) {
 		if (
@@ -51,13 +55,22 @@ class SignInForm extends React.Component<any, any> {
 					.studentLogin(this.props.signInId)
 					.then(() => {
 						console.log('correct');
-						this.props
-							.checkAppointment(this.props.studentData.uid, this.props.todayAppointments)
-							.then((appt: any) => {
-								console.log('appt found', appt);
-								this.props.toggleStudentAppointmentModal(true, appt);
-							})
-							.catch((err: any) => console.log(err.message));
+						if (this.props.settings) {
+							this.props
+								.checkAppointment(
+									this.props.studentData.uid,
+									this.props.todayAppointments,
+									this.props.settings.visit_minute_interval
+								)
+								.then((appt: any) => {
+									console.log('appt found', appt);
+									this.props.toggleStudentAppointmentModal(true, appt);
+								})
+								.catch((err: any) => {
+									alert(err.message);
+									this.setState({ loading: false });
+								});
+						}
 					})
 					.catch((_: any) => this.props.toggleStudentRegisterModal(true));
 			}
@@ -66,6 +79,7 @@ class SignInForm extends React.Component<any, any> {
 
 	render() {
 		// console.log(this.props.todayAppointments);
+		console.log(this.props.settings);
 		const { loading } = this.state;
 		return (
 			<form className={styles.formContainer} onSubmit={this.handleSubmit}>
@@ -84,6 +98,7 @@ class SignInForm extends React.Component<any, any> {
 }
 
 const mapStateToProps = (state: any) => ({
+	settings: state.setting.data.appointmentSettingFetched,
 	tutorData: state.tutor.data.tutor,
 	signInId: state.navigation.signInId,
 	studentData: state.student.data.student,
@@ -102,5 +117,6 @@ export default connect(mapStateToProps, {
 	setSignInId,
 	studentLogin,
 	checkAppointment,
-	toggleStudentAppointmentModal
+	toggleStudentAppointmentModal,
+	fetchAppointmentSettings
 })(withRouterComp);

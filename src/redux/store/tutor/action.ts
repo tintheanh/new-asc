@@ -30,15 +30,14 @@ const fetchTutor = (uid: string): Promise<Tutor> => {
 					}
 				});
 
-				let off_time: any[];
-				if (snapshot.val().off_time) {
-					off_time = Object.keys(snapshot.val().off_time).map(
-						(key: string) => snapshot.val().off_time[key]
-					);	
-				} else {
-					off_time = [];
-				}
-				
+				// let off_time: any[];
+				// if (snapshot.val().off_time) {
+				// 	off_time = Object.keys(snapshot.val().off_time).map(
+				// 		(key: string) => snapshot.val().off_time[key]
+				// 	);
+				// } else {
+				// 	off_time = [];
+				// }
 
 				// console.log(off_time);
 
@@ -49,6 +48,9 @@ const fetchTutor = (uid: string): Promise<Tutor> => {
 				// 		return [];
 				// 	}
 				// );
+
+				const off_time = objFs!.off_time.map((time: any) => ({ from: time.from.seconds, to: time.to.seconds }));
+				console.log(off_time);
 
 				const work_schedule = objFb.work_schedule.map((work: any) => {
 					if (work !== 'none') return work;
@@ -522,6 +524,11 @@ export const updateTutor = (tutor: Tutor, tutors: Tutor[], scheduleOnly: boolean
 				});
 		} else {
 			const subjects = tutor.subjects.map((e) => e.id);
+			const newOffTimes = updateForFs.off_time.map((time: any) => ({
+				from: new Date(time.from * 1000),
+				to: new Date(time.to * 1000)
+			})) as any;
+			updateForFs.off_time = newOffTimes;
 			fsdb
 				.collection('tutors')
 				.doc(tutor.uid)

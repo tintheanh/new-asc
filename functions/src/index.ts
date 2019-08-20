@@ -8,6 +8,17 @@ const env = functions.config();
 const client = algoliasearch(env.algolia.appid, env.algolia.apikey);
 const index = client.initIndex('students');
 
+const getShift = (workDay: any[], appt_id: string) => {
+	for (let i = 0; i < workDay.length; i++) {
+		if (workDay[i].appointments) {
+			if (workDay[i].appointments[appt_id]) {
+				return i;
+			}
+		}
+	}
+	return -1;
+};
+
 export const indexStudent = functions.firestore.document('students/{studentID}').onCreate((snap, _) => {
 	const data = snap.data();
 	const objId = snap.id;
@@ -65,3 +76,70 @@ export const removeUndefinedSubjectsFromTutors = functions.firestore
 			console.log(err.message);
 		}
 	});
+
+export const checkPastAppointments = functions.pubsub.topic('check-my-appointments').onPublish(async (message) => {
+	return admin.database().ref('appointments').once('value').then((apptRef) => {
+		if (apptRef) {
+			const now = Math.floor(new Date().getTime() / 1000);
+			console.log(now);
+			apptRef.forEach((doc) => {
+				if (doc.val().apptDate <= now) {
+					const apptKey = doc.key;
+					admin
+						.database()
+						.ref(`appointments/${apptKey}`)
+						.remove()
+						.then(() => {
+							const pastAppt = { ...doc.val() };
+							pastAppt.status = 'no-show';
+							admin
+								.database()
+								.ref('past-appointments')
+								.child(apptKey as string)
+								.set(pastAppt)
+								.then(async () => {
+									const { tutor_id, apptDate, student_id } = pastAppt;
+									const day = new Date((apptDate - 25200) * 1000).getDay();
+									const workDayRef = await admin
+										.database()
+										.ref(`tutors/${tutor_id}/work_schedule/${day}`)
+										.once('value');
+									const workDay = workDayRef.val();
+									const index = getShift(workDay, apptKey as string);
+									if (index > -1) {
+										admin
+											.database()
+											.ref(
+												`tutors/${tutor_id}/work_schedule/${day}/${index}/appointments/${apptKey}`
+											)
+											.remove()
+											.then(async () => {
+												// console.log('student', student_id);
+												const studentRef = await admin
+													.firestore()
+													.collection('students')
+													.doc(student_id)
+													.get();
+												if (studentRef.exists) {
+													const update = {
+														no_show: studentRef.data()!.no_show + 1
+													};
+													admin
+														.firestore()
+														.collection('students')
+														.doc(student_id)
+														.update(update)
+														.then(() => console.log('Done.'))
+														.catch((err) => console.log(err.message));
+												}
+											})
+											.catch((err) => console.log(err.message));
+									} else console.log('cannot find index');
+								});
+						})
+						.catch((err) => console.log(err.message));
+				}
+			});
+		}
+	});
+});

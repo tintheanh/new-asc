@@ -1,9 +1,12 @@
 .container {
-	height: 500px;
+	height: 600px;
+}
+.title {
+	margin: 4px 0;
 }
 
 .table {
-	height: 45%;
+	height: 40%;
 }
 
 .upDownBtnGroup {
@@ -16,7 +19,7 @@
 
 .saveBtn {
 	position: relative;
-	top: 12px;
+	top: 26px;
 	left: 312px;
 	height: 33px;
 }
