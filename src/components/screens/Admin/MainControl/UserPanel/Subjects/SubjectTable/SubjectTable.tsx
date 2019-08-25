@@ -46,7 +46,7 @@ class SubjectTable extends React.Component<SubjectTableProps> {
 								return {
 									onClick: this.performSelectSubject(subject),
 									style: {
-										background: rowInfo.original.id === selected.id ? '#00afec' : 'none',
+										background: rowInfo.original.id === selected.id ? 'rgba(22, 96, 27, 0.7)' : 'none',
 										color: rowInfo.original.id === selected.id ? 'white' : 'black'
 									}
 								};

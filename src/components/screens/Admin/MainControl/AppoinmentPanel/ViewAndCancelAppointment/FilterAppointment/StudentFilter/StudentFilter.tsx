@@ -17,7 +17,7 @@ class FilterAppointment extends React.Component<any, any> {
 	}
 	render() {
 		return (
-			<div style={{ marginTop: 12 }}>
+			<div style={{ marginTop: 8 }}>
 				<InstantSearch indexName="students" searchClient={searchClient}>
 					<CustomSearchBox />
 				</InstantSearch>

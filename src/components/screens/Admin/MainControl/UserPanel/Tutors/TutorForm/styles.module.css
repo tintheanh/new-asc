@@ -1,5 +1,5 @@
 .container {
-	margin: 0 24px;
+	margin: 0 12px;
 	background: #fff;
 }
 
@@ -17,10 +17,15 @@
 	column-gap: 10px;
 }
 
-.editBtn,
+
 .newBtn {
-	padding-left: 78.5px;
-	padding-right: 78.5px;
+	padding-left: 80px;
+	padding-right: 80px;
+}
+
+.editBtn {
+	padding-left: 80.5px;
+	padding-right: 80.5px;
 }
 
 .newBtn {

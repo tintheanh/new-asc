@@ -1,38 +1,38 @@
 .container {
-	display: grid;
-	grid-template-columns: 60% auto;
-	/* column-gap: 12px; */
+  display: grid;
+  grid-template-columns: 60% auto;
+  /* column-gap: 12px; */
 }
 
 .dateInputWrapper {
-	margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .label {
-	text-align: left;
-	margin-left: 15px;
-	margin-bottom: 5px;
+  text-align: left;
+  margin-left: 15px;
+  margin-bottom: 5px;
 }
 
 .dateInput {
-	width: 250px;
+  width: 250px;
 }
 
 .timeInput {
-	width: 275px;
-	margin-top: 10px;
+  width: 275px;
+  margin-top: 10px;
 }
 
 .btnWrapper {
-	display: grid;
-	grid-template-columns: 46% 46%;
-	column-gap: 10px;
-	/* margin: 0 16px; */
-	margin-left: 12px;
+  display: grid;
+  grid-template-columns: 46% 46%;
+  column-gap: 10px;
+  /* margin: 0 16px; */
+  margin-left: 12px;
 }
 
 .saveBtn {
-	position: relative;
-	top: 170px;
-	left: 56px;
+  position: relative;
+  top: 162px;
+  left: 52px;
 }

@@ -51,7 +51,7 @@ class TutorSubjectTable extends React.Component<TutorSubjectTableProps, TutorSub
 				<ReactTable
 					style={expandFull}
 					data={selected ? selected.subjects : []}
-					pageSize={selected ? selected.subjects.length < 8 ? 8 : selected.subjects.length : 8}
+					pageSize={selected ? selected.subjects.length < 7 ? 7 : selected.subjects.length : 7}
 					columns={columns}
 					showPagination={false}
 					NoDataComponent={() => null}

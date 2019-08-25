@@ -1,26 +1,26 @@
 .container {
-	display: grid;
-	grid-template-columns: 40% auto;
+  display: grid;
+  grid-template-columns: 40% auto;
 }
 
 .formWrap {
-	/* width: 80%; */
-	/* margin: auto; */
+  /* width: 80%; */
+  /* margin: auto; */
 }
 
 .inputWrapper {
 }
 
 .input {
-	width: 80%;
-	margin-bottom: 10px;
+  width: 80%;
+  margin-bottom: 10px;
 }
 
 .labelInput {
-	text-align: left;
-	margin: 5px;
+  text-align: left;
+  margin: 5px;
 }
 
 .btnShow {
-	width: 95%;
+  width: 95%;
 }

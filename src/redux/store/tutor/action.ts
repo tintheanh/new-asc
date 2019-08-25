@@ -50,12 +50,18 @@ const fetchTutor = (uid: string): Promise<Tutor> => {
 				// );
 
 				const off_time = objFs!.off_time.map((time: any) => ({ from: time.from.seconds, to: time.to.seconds }));
-				console.log(off_time);
 
-				const work_schedule = objFb.work_schedule.map((work: any) => {
-					if (work !== 'none') return work;
-					return [];
-				});
+				let work_schedule: any[];
+				if (objFb.work_schedule) {
+					work_schedule = objFb.work_schedule.map((work: any) => {
+						if (work !== 'none') return work;
+						return [];
+					});
+				} else {
+					work_schedule = [[], [], [], [], [], [], []]
+				}
+
+				
 
 				const tutor = {
 					uid: doc.id,
@@ -86,6 +92,7 @@ export const fetchAllTutors = () => async (dispatch: (arg: ActionPayload) => voi
 		const snapshot = await fsdb.collection('tutors').orderBy('first_name').get();
 		const tutors: Tutor[] = await Promise.all(
 			snapshot.docs.map((doc) => {
+			
 				if (doc.exists) {
 					const tutorId = doc.id;
 					return fetchTutor(tutorId);
@@ -394,6 +401,7 @@ export const addTutor = (tutor: Tutor, tutors: Tutor[]) => (dispatch: (arg: Acti
 				const clone = { ...tutor };
 				clone.uid = uid;
 				tutors.push(clone);
+				const sorted = arraySort(tutors, 'first_name');
 				fsdb
 					.collection('tutors')
 					.doc(uid)
@@ -409,7 +417,7 @@ export const addTutor = (tutor: Tutor, tutors: Tutor[]) => (dispatch: (arg: Acti
 										data: {
 											doneTime: null,
 											tutor: null,
-											tutors,
+											tutors: sorted,
 											selectedTutor: null,
 											toggleAdd: false
 										},
@@ -481,6 +489,8 @@ export const updateTutor = (tutor: Tutor, tutors: Tutor[], scheduleOnly: boolean
 		return 'none';
 	});
 
+	
+
 	const index = tutors.findIndex((tt) => tt.uid === tutor.uid);
 	const all = [ ...tutors ];
 	all[index] = { ...tutor, subjects: arraySort(tutor.subjects, 'label'), work_schedule: tutor.work_schedule };
@@ -523,6 +533,11 @@ export const updateTutor = (tutor: Tutor, tutors: Tutor[], scheduleOnly: boolean
 					reject(err);
 				});
 		} else {
+			if (tutor.staff_id !== tutors.filter((tt) => tt.uid === tutor.uid)[0].staff_id) {
+				const updateUserEmail = functions.httpsCallable('updateUserEmail');
+
+				updateUserEmail({ uid:tutor.uid, newEmail: tutor.staff_id }).then(() => console.log('update email successfully.')).catch(err => console.warn(err.message));
+			}
 			const subjects = tutor.subjects.map((e) => e.id);
 			const newOffTimes = updateForFs.off_time.map((time: any) => ({
 				from: new Date(time.from * 1000),

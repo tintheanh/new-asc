@@ -1,15 +1,18 @@
 .fromTo {
-	display: grid;
-	grid-template-columns: auto auto;
-	column-gap: 10px;
+  display: grid;
+  grid-template-columns: auto auto;
+  column-gap: 10px;
 }
 
 .dateInput {
-	width: 117px;
+  width: 117px;
 }
 
-.calendar:parent {
-	position: absolute;
-	right: 100px!important;
-	transform: none !important;
+.datePicker {
+  height: 18px;
+  width: 91px;
+}
+
+.calendar {
+  width: auto;
 }

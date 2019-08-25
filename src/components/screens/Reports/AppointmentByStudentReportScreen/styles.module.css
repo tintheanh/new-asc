@@ -1,98 +1,98 @@
 .page {
-	width: 100% !important;
-	height: 842px !important;
+  width: 100% !important;
+  height: 842px !important;
 }
 .header {
-	border-top: 1px double #000;
-	border-bottom: 1px double #000;
-	border-bottom-style: double;
-	text-align: center;
-	/* padding: 6px 0; */
-	display: grid;
-	grid-template-columns: auto auto auto;
-	justify-items: center;
+  border-top: 1px double #000;
+  border-bottom: 1px double #000;
+  border-bottom-style: double;
+  text-align: center;
+  /* padding: 6px 0; */
+  display: grid;
+  grid-template-columns: auto auto auto;
+  justify-items: center;
 }
 .header img {
-	margin-top: 5px;
+  margin-top: 5px;
 }
 
 .header h2,
 .header h3 {
-	margin: 0;
-	padding: 0;
-	/* font-size: 12px; */
+  margin: 0;
+  padding: 0;
+  /* font-size: 12px; */
 }
 
 .header h3 {
-	border: 1px solid #000;
-	/* margin: 0 84px; */
-	padding: 2px 24px;
-	background-color: cyan;
+  border: 1px solid #000;
+  /* margin: 0 84px; */
+  padding: 2px 24px;
+  background-color: yellow;
 }
 
 .studentName {
-	border: 1px solid #000;
-	margin-right: 144px;
-	padding: 2px 4px;
-	margin-bottom: 8px;
+  border: 1px solid #000;
+  margin-right: 144px;
+  padding: 2px 4px;
+  margin-bottom: 8px;
 }
 
 .apptContainer {
-	display: grid;
-	grid-template-columns: auto auto auto auto auto;
-	/* column-gap: 35px; */
+  display: grid;
+  grid-template-columns: auto auto auto auto auto;
+  /* column-gap: 35px; */
 }
 
 .apptContainer {
-	display: grid;
-	grid-template-columns: auto auto auto auto auto;
+  display: grid;
+  grid-template-columns: auto auto auto auto auto;
 }
 
 .label {
   text-decoration: underline;
-	font-weight: 700;
+  font-weight: 700;
 }
 
 .odd {
-	background-color: rgba(150, 150, 150, 0.3);
+  background-color: #f2f1f1;
 }
 
 .even {
-	background-color: rgba(160, 160, 160, 0.1);
+  background-color: #d1d1d1;
 }
 .pageNum {
-	position: relative;
-	bottom: 58px;
-	text-align: center;
+  position: relative;
+  bottom: 58px;
+  text-align: center;
 }
 
 @media print {
-	.page {
-		height: 771.68pt !important;
-	}
-	.header h2 {
-		font-size: 22pt;
-	}
-	.header h3 {
-		font-size: 19pt;
-	}
-	.header img {
-		width: 54pt;
-		margin: 0;
-	}
-	.studentName {
-		font-size: 16pt;
-	}
-	.reportColumns h4 {
-		font-size: 15pt;
-		margin-bottom: 3pt;
-	}
-	.subject {
-		font-size: 14pt;
-	}
-	.pageNum {
-		/* position: relative !important;
+  .page {
+    height: 771.68pt !important;
+  }
+  .header h2 {
+    font-size: 22pt;
+  }
+  .header h3 {
+    font-size: 19pt;
+  }
+  .header img {
+    width: 54pt;
+    margin: 0;
+  }
+  .studentName {
+    font-size: 16pt;
+  }
+  .reportColumns h4 {
+    font-size: 15pt;
+    margin-bottom: 3pt;
+  }
+  .subject {
+    font-size: 14pt;
+  }
+  .pageNum {
+    /* position: relative !important;
 		top: -40pt !important; */
-		margin-top: -40pt !important;
-	}
+    margin-top: -40pt !important;
+  }
 }

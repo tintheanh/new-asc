@@ -1,18 +1,19 @@
 .container {
-	margin: 0 24px;
-	background: #fff;
-	width: 272px;
+  margin: 0 24px;
+  padding: 12px;
+  background: #fff;
+  width: 248px;
 }
 
 .applyAndClear {
-	display: grid;
-	grid-template-columns: 50% 50%;
-	column-gap: 5px;
-	justify-content: center;
+  display: grid;
+  grid-template-columns: 50% 50%;
+  column-gap: 5px;
+  justify-content: center;
 }
 
 .deleteBtn {
-	width: 160px;
-	margin-top: 10px;
-	margin-left: 24px;
+  width: 160px;
+  margin-top: 10px;
+  margin-left: 24px;
 }

@@ -1,25 +1,25 @@
 .container {
-	margin: 12px 12px 12px 0;
-	display: inline-block;
-	border: 1px solid rgb(152, 152, 152);
-	background-color: #fff;
-	border-radius: 4px;
-	height: 80vh;
+  margin: 12px 12px 12px 0;
+  display: inline-block;
+  border: 1px solid rgb(152, 152, 152);
+  background-color: #fff;
+  border-radius: 4px;
+  height: 80vh;
 }
 .title {
-	text-align: center;
-	opacity: 0.6;
+  text-align: center;
+  opacity: 0.6;
 }
 
 .btnWrapper {
-	display: grid;
-	grid-template-columns: 31.3% auto auto;
-	column-gap: 10px;
-	margin: 0 12px;
+  display: grid;
+  grid-template-columns: 32.6% auto auto;
+  column-gap: 10px;
+  margin: 0 12px;
 }
 
 .btn {
-	text-decoration: none;
-	padding: 12px 0;
-	font-weight: 700;
+  text-decoration: none;
+  padding: 12px 0;
+  font-weight: 700;
 }

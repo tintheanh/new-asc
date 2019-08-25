@@ -61,7 +61,7 @@ class StudentTable extends React.Component<StudentTableProps, StudentTableStates
 								return {
 									onClick: this.performSelectStudent(student),
 									style: {
-										background: rowInfo.original.uid === selected.uid ? '#00afec' : 'none',
+										background: rowInfo.original.uid === selected.uid ? 'rgba(22, 96, 27, 0.7)' : 'none',
 										color: rowInfo.original.uid === selected.uid ? 'white' : 'black'
 									}
 								};

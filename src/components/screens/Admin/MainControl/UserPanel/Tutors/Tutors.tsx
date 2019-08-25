@@ -21,40 +21,39 @@ import { fetchAllTutors, clear } from 'redux/store/tutor/action';
 import back from 'components/common/back.png';
 import styles from './styles.module.css';
 
-const Tutors: React.SFC<TutorsProps> = (props) => {
-	const { fetchAllTutors, clear } = props;
-	React.useEffect(() => {
-		// didMount
-		fetchAllTutors();
+class Tutors extends React.Component<any, any> {
+  componentDidMount() {
+    this.props.fetchAllTutors();
+  }
+  render() {
+    return (
+      <div>
+        <Header title="Tutors" />
+        <Link className={styles.backBtn} to="/admin">
+          <img src={back} alt="" width="35" />
+        </Link>
+        <div className={styles.tableContainer}>
+          <div className={styles.tutorTable}>
+            <TutorTable />
+          </div>
+          <div className={styles.subjectTable}>
+            <TutorSubjectTable />
+          </div>
+        </div>
+        <div className={styles.tutorModifyContainer}>
+          <TutorForm />
+          <div>
+            <EditSchedule />
+            <OffTimes />
+            <DeleteTutor />
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
 
-		// willUnmount
-		return () => clear();
-	}, []);
-
-	return (
-		<div>
-			<Header title="Tutors" />
-			<Link className={styles.backBtn} to="/admin">
-				<img src={back} alt="" width="35" />
-			</Link>
-			<div className={styles.tableContainer}>
-				<div className={styles.tutorTable}>
-					<TutorTable />
-				</div>
-				<div className={styles.subjectTable}>
-					<TutorSubjectTable />
-				</div>
-			</div>
-			<div className={styles.tutorModifyContainer}>
-				<TutorForm />
-				<div>
-					<EditSchedule />
-					<OffTimes />
-					<DeleteTutor />
-				</div>
-			</div>
-		</div>
-	);
-};
-
-export default connect(null, { fetchAllTutors, clear })(Tutors);
+export default connect(
+  null,
+  { fetchAllTutors, clear }
+)(Tutors);

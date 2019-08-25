@@ -1,36 +1,36 @@
 .container {
-	margin: 0 24px;
+  margin: 0 24px;
   background: #fff;
-  height: 270px;
+  height: 286px;
   width: 664px;
 }
 .idAndEmailInput,
 .firstLastNameInput {
-	display: grid;
-	grid-template-columns: auto auto;
+  display: grid;
+  grid-template-columns: auto auto;
   column-gap: 10px;
   margin-bottom: 10px;
 }
 
 .saveAndCancelBtn {
-	display: grid;
-	grid-template-columns: 30% 30%;
-	column-gap: 10px;
-	margin-top: 10px;
+  display: grid;
+  grid-template-columns: 30% 30%;
+  column-gap: 10px;
+  margin-top: 10px;
 }
 
 .editBtn {
-	padding-left: 83px;
-	padding-right: 83px;
-	margin-top: 10px;
+  padding-left: 81.5px;
+  padding-right: 81.5px;
+  margin-top: 10px;
 }
 
 .newBtn {
-	padding-left: 82.5px;
-	padding-right: 82.5px;
-	margin-top: 10px;
+  padding-left: 81px;
+  padding-right: 81px;
+  margin-top: 10px;
 }
 
 .btnGroup {
-	margin-top: 10px;
+  margin-top: 10px;
 }

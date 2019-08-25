@@ -1,96 +1,96 @@
 .page {
-	width: 100% !important;
-	height: 842px !important;
+  width: 100% !important;
+  height: 842px !important;
 }
 
 .header {
-	border-top: 1px double #000;
-	border-bottom: 1px double #000;
-	border-bottom-style: double;
-	text-align: center;
-	/* padding: 6px 0; */
-	display: grid;
-	grid-template-columns: auto auto auto;
-	justify-items: center;
+  border-top: 1px double #000;
+  border-bottom: 1px double #000;
+  border-bottom-style: double;
+  text-align: center;
+  /* padding: 6px 0; */
+  display: grid;
+  grid-template-columns: auto auto auto;
+  justify-items: center;
 }
 
 .header h2,
 .header h3 {
-	margin: 0;
-	padding: 0;
-	/* font-size: 12px; */
+  margin: 0;
+  padding: 0;
+  /* font-size: 12px; */
 }
 
 .header h3 {
-	border: 1px solid #000;
-	/* margin: 0 84px; */
-	padding: 2px 24px;
-	background-color: cyan;
+  border: 1px solid #000;
+  /* margin: 0 84px; */
+  padding: 2px 24px;
+  background-color: yellow;
 }
 
 .tutorName {
-	border: 1px solid #000;
-	margin-right: 144px;
-	padding: 2px 4px;
-	margin-bottom: 8px;
+  border: 1px solid #000;
+  margin-right: 144px;
+  padding: 2px 4px;
+  margin-bottom: 8px;
 }
 
 .dayReport {
-	margin-top: 14px;
+  margin-top: 14px;
 }
 .dayReport h4 {
-	margin: 0;
-	margin-bottom: 4px;
+  margin: 0;
+  margin-bottom: 4px;
 }
 
 .divider {
-	border-bottom: 1px solid #000;
-	padding: 8px 0;
+  border-bottom: 1px solid #000;
+  padding: 8px 0;
 }
 
 .odd {
-	padding: 4px;
-	background-color: rgba(150, 150, 150, 0.3);
+  padding: 4px;
+  background-color: #f2f1f1;
 }
 
 .even {
-	padding: 4px;
-	background-color: rgba(160, 160, 160, 0.1);
+  padding: 4px;
+  background-color: #d1d1d1;
 }
 
 .pageNum {
-	position: relative;
-	bottom: 58px;
-	text-align: center;
+  position: relative;
+  bottom: 58px;
+  text-align: center;
 }
 
 @media print {
-	.page {
-		height: 771.68pt !important;
-	}
-	.header h2 {
-		font-size: 22pt;
-	}
-	.header h3 {
-		font-size: 19pt;
-	}
-	img {
-		width: 54pt;
-	}
-	.dayReport h4 {
-		font-size: 15pt;
-		margin-bottom: 3pt;
-	}
-	.tutorName {
-		font-size: 16pt;
-	}
-	.odd,
-	.even {
-		font-size: 14pt;
-	}
-	.pageNum {
-		/* position: relative !important;
+  .page {
+    height: 771.68pt !important;
+  }
+  .header h2 {
+    font-size: 22pt;
+  }
+  .header h3 {
+    font-size: 19pt;
+  }
+  img {
+    width: 54pt;
+  }
+  .dayReport h4 {
+    font-size: 15pt;
+    margin-bottom: 3pt;
+  }
+  .tutorName {
+    font-size: 16pt;
+  }
+  .odd,
+  .even {
+    font-size: 14pt;
+  }
+  .pageNum {
+    /* position: relative !important;
 		top: -40pt !important; */
-		margin-top: -40pt !important;
-	}
+    margin-top: -40pt !important;
+  }
 }

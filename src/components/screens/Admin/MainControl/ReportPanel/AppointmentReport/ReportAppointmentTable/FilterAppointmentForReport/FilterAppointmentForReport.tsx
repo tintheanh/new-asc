@@ -14,73 +14,78 @@ import styles from './styles.module.css';
 const ipcRenderer = (window as any).ipcRenderer;
 
 class FilterAppointmentForReport extends React.Component<any, any> {
-	performFilterAndOpenReportScreen = (event: string) => () => {
-		this.props.applyFilter(this.props.data, this.props.filter);
+  performFilterAndOpenReportScreen = (event: string) => () => {
+    this.props.applyFilter(this.props.data, this.props.filter);
 
-		setTimeout(() => {
-			let sending: any;
+    setTimeout(() => {
+      let sending: any;
 
-			if (this.props.filter.dateFilter[0] && this.props.filter.dateFilter[1]) {
-				sending = {
-					dateFilter: [
-						getEpochOfTime(this.props.filter.dateFilter[0]),
-						getEpochOfTime(this.props.filter.dateFilter[1])
-					],
-					appointments: this.props.data
-				};
-			} else {
-				sending = {
-					dateFilter: this.props.filter.dateFilter,
-					appointments: this.props.data
-				};
-			}
-			ipcRenderer.send(event, sending);
-			this.props.clearFilter();
-		}, 100);
-	};
+      if (this.props.filter.dateFilter[0] && this.props.filter.dateFilter[1]) {
+        sending = {
+          dateFilter: [
+            getEpochOfTime(this.props.filter.dateFilter[0]),
+            getEpochOfTime(this.props.filter.dateFilter[1])
+          ],
+          appointments: this.props.data
+        };
+      } else {
+        sending = {
+          dateFilter: this.props.filter.dateFilter,
+          appointments: this.props.data
+        };
+      }
+      ipcRenderer.send(event, sending);
+      this.props.clearFilter();
+    }, 100);
+  };
 
-	componentWillUnmount() {
-		this.props.clearFilter();
-	}
+  componentWillUnmount() {
+    this.props.clearFilter();
+  }
 
-	render() {
-		console.log(this.props.data);
-		// console.log(this.props.toggleFilter);
-		return (
-			<div>
-				<div className={`box-form ${styles.container}`}>
-					<DateFilter />
-					<TutorFilter />
-					<StudentFilter />
-					<SubjectFilter />
-					<div className={styles.dayAndTypeFilter}>
-						<DayFilter />
-						<TypeFilter />
-					</div>
+  render() {
+    console.log(this.props.data);
+    // console.log(this.props.toggleFilter);
+    return (
+      <div>
+        <div className={`box-form ${styles.container}`}>
+          <DateFilter />
+          <TutorFilter />
+          <StudentFilter />
+          <SubjectFilter />
+          <div className={styles.dayAndTypeFilter}>
+            <DayFilter />
+            <TypeFilter />
+          </div>
 
-					<div className={styles.applyAndClear}>
-						<Button
-							label="Show report"
-							onClick={this.performFilterAndOpenReportScreen(this.props.screenEvent)}
-						/>
-						<Button label="Clear" onClick={this.props.clearFilter} />
-					</div>
-				</div>
-			</div>
-		);
-	}
+          <div className={styles.applyAndClear}>
+            <Button
+              label="Show report"
+              onClick={this.performFilterAndOpenReportScreen(
+                this.props.screenEvent
+              )}
+            />
+            <Button label="Clear" onClick={this.props.clearFilter} />
+          </div>
+        </div>
+      </div>
+    );
+  }
 }
 const mapStateToProps = (state: any) => {
-	if (!state.appointment.data.toggleFilter) {
-		return {
-			data: state.appointment.data.appointments,
-			filter: state.appointment.data.filter
-		};
-	}
-	return {
-		data: state.appointment.data.filteredAppointments,
-		filter: state.appointment.data.filter
-	};
+  if (!state.appointment.data.toggleFilter) {
+    return {
+      data: state.appointment.data.appointments,
+      filter: state.appointment.data.filter
+    };
+  }
+  return {
+    data: state.appointment.data.filteredAppointments,
+    filter: state.appointment.data.filter
+  };
 };
 
-export default connect(mapStateToProps, { applyFilter, clearFilter })(FilterAppointmentForReport);
+export default connect(
+  mapStateToProps,
+  { applyFilter, clearFilter }
+)(FilterAppointmentForReport);

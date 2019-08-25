@@ -3,7 +3,7 @@ import ReactTable from 'react-table';
 import { contains } from 'utils/functions';
 
 import { DayTablesProps, DayTablesStates } from './props';
-import { Schedule } from 'config';
+import { Schedule, data } from 'config';
 
 import styles from './styles.module.css';
 import { workDays } from 'config';
@@ -152,6 +152,7 @@ class DayTables extends React.Component<DayTablesProps, DayTablesStates> {
 							className={styles.scheduleTable}
 							data={dataSch}
 							columns={columns}
+							pageSize={dataSch.length < 4 ? 4: dataSch.length}
 							showPagination={false}
 							sortable={false}
 							NoDataComponent={() => null}
@@ -164,7 +165,7 @@ class DayTables extends React.Component<DayTablesProps, DayTablesStates> {
 											background:
 												currentDay === i &&
 												contains(selectedSchedules, schedule, 'from', 'order')
-													? '#00afec'
+													? 'rgba(22, 96, 27, 0.7)'
 													: 'none',
 											color:
 												currentDay === i &&

@@ -288,7 +288,7 @@ class EditScheduleTable extends React.Component<EditScheduleTableProps, EditSche
 									return {
 										onClick: this.selectTimes(hour),
 										style: {
-											background: contains(selectedTime, hour, 'order') ? '#00afec' : 'none',
+											background: contains(selectedTime, hour, 'order') ? 'rgba(22, 96, 27, 0.7)' : 'none',
 											color: contains(selectedTime, hour, 'order') ? 'white' : 'black'
 										}
 									};

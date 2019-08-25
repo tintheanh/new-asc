@@ -15,10 +15,10 @@
 
 .container {
 	display: grid;
-	grid-template-columns: auto 29%;
+	grid-template-columns: auto auto;
 	margin: 12px;
 }
 
 .apptTable {
-	width: 70vw;
+	width: 72vw;
 }
