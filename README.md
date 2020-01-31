@@ -20,9 +20,10 @@ A cross-platform managing software, which is currently being used at Mission Col
     * Email reminder settings
     * Tracking hours settings
 
-## Technologies uses:
+## Technologies use:
 * Typescript
 * Electron
+* Bootstrap
 * React
 * Redux
 * Firebase real-time database
