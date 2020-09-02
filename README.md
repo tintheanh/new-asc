@@ -1,5 +1,5 @@
 # Mission College Academic Support Center Management Software
-A cross-platform managing software, which is currently being used at Mission College Academic Support Center, Santa Clara, California
+A cross-platform management software, which is currently being used at Mission College Academic Support Center, Santa Clara, California
 
 ![screenshot](https://i.imgur.com/IeGbtzV.png)
 
